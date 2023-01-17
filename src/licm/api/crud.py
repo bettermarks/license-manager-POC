@@ -1,5 +1,5 @@
-from bm.api.models import LicenseSchema
-from bm.db import licenses, database
+from licm.api.models import LicenseSchema
+from licm.db import licenses, database
 
 
 async def post(payload: LicenseSchema):

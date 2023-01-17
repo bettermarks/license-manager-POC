@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from bm.api import licenses
-from bm.db import database, engine, metadata
+from licm.api import licenses
+from licm.db import database, engine, metadata
 
 metadata.create_all(engine)
 

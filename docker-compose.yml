@@ -3,13 +3,13 @@ version: '3.8'
 services:
   licm:
     build: .
-    command: uvicorn bm.main:bm --reload --workers 1 --host 0.0.0.0 --port 8000
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
     volumes:
-      - ./src/:/usr/src/bm/
+      - ./src/:/usr/src/app/
     ports:
       - 8002:8000
     environment:
-      - DATABASE_URL=postgresql://licm:licm@db/licm_dev
+      - DATABASE_URL=postgresql://licm:licm@postgres/licm_dev
     depends_on:
       - postgres
   

@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-from bm.api import crud
+from licm.api import crud
 
 
 def test_create_license(test_app, monkeypatch):

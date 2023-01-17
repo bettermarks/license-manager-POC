@@ -8,20 +8,10 @@ COPY . /code
 WORKDIR /code
 
 RUN python3 -m pip install --no-cache-dir -IU pip 
-# TODO:shiv
+# RUN python3 -m pip install --no-cache-dir -IU shiv
 
 RUN pip install --no-cache-dir .
 RUN pip install --no-cache-dir -r requirements-dev.in
-# RUN pytest --cov bm
+# RUN pytest --cov app
 
-# CMD [“uvicorn”, bm.main:app”, “ --host=0.0.0.0”, “--reload”]
-
-# RUN shiv . --compile-pyc -c bm-ucm -o app.pyz
-
-
-# # install dependencies
-# RUN set -eux \
-#     && apk add --no-cache --virtual .build-deps build-base \
-#          openssl-dev libffi-dev gcc musl-dev python3-dev \
-#         postgresql-dev bash \
-#     && rm -rf /root/.cache/pip
+# RUN shiv . --compile-pyc -c app-ucm -o app.pyz

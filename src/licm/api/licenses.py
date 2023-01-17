@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException, Path
 
-from bm.api import crud
-from bm.api.models import LicenseDB, LicenseSchema
+from licm.api import crud
+from licm.api.models import LicenseDB, LicenseSchema
 
 router = APIRouter()
 
