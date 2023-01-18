@@ -12,6 +12,6 @@ RUN python3 -m pip install --no-cache-dir -IU pip
 
 RUN pip install --no-cache-dir .
 RUN pip install --no-cache-dir -r requirements-dev.in
-# RUN pytest --cov app
+# RUN pytest --cov licm
 
-# RUN shiv . --compile-pyc -c app-ucm -o app.pyz
+# RUN shiv . --compile-pyc -c app-licm -o app.pyz
