@@ -1,34 +1,35 @@
+from licm.db import database
 from licm.api.models import LicenseSchema
-from licm.db import licenses, database
+from licm.model import license
 
 
 async def post(payload: LicenseSchema):
-    query = licenses.insert().values(
+    query = license.license.insert().values(
         title=payload.title, description=payload.description
     )
     return await database.execute(query=query)
 
 
 async def get(id: int):
-    query = licenses.select().where(id == licenses.c.id)
+    query = license.license.select().where(id == license.license.c.id)
     return await database.fetch_one(query=query)
 
 
 async def get_all():
-    query = licenses.select()
+    query = license.license.select()
     return await database.fetch_all(query=query)
 
 
 async def put(id: int, payload: LicenseSchema):
     query = (
-        licenses.update()
-        .where(id == licenses.c.id)
+        license.license.update()
+        .where(id == license.license.c.id)
         .values(title=payload.title, description=payload.description)
-        .returning(licenses.c.id)
+        .returning(license.license.c.id)
     )
     return await database.execute(query=query)
 
 
 async def delete(id: int):
-    query = licenses.delete().where(id == licenses.c.id)
+    query = license.license.delete().where(id == license.license.c.id)
     return await database.execute(query=query)
