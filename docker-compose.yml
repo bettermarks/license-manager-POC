@@ -17,8 +17,10 @@ services:
     image: postgres:15.1-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - 5433:5432
     expose:
-      - 5432
+      - 5433
     environment:
       - POSTGRES_USER=licm
       - POSTGRES_PASSWORD=licm
