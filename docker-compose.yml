@@ -3,7 +3,7 @@ version: '3.8'
 services:
   licm:
     build: .
-    command: uvicorn licm.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    command: sh -c 'sleep 3 && alembic upgrade head && sleep 3 && uvicorn licm.main:app --reload --workers 1 --host 0.0.0.0 --port 8000'
     volumes:
       - ./src/:/usr/src/licm/
     ports:
