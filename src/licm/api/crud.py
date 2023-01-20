@@ -4,25 +4,25 @@ from licm.model import license
 
 
 async def post(payload: LicenseSchema):
-    query = license.license.insert().values(
+    query = license.License.insert().values(
         title=payload.title, description=payload.description
     )
     return await database.execute(query=query)
 
 
 async def get(id: int):
-    query = license.license.select().where(id == license.license.c.id)
+    query = license.License.select().where(id == license.license.c.id)
     return await database.fetch_one(query=query)
 
 
 async def get_all():
-    query = license.license.select()
+    query = license.License.select()
     return await database.fetch_all(query=query)
 
 
 async def put(id: int, payload: LicenseSchema):
     query = (
-        license.license.update()
+        license.License.update()
         .where(id == license.license.c.id)
         .values(title=payload.title, description=payload.description)
         .returning(license.license.c.id)
@@ -31,5 +31,5 @@ async def put(id: int, payload: LicenseSchema):
 
 
 async def delete(id: int):
-    query = license.license.delete().where(id == license.license.c.id)
+    query = license.License.delete().where(id == license.license.c.id)
     return await database.execute(query=query)

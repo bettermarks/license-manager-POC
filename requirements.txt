@@ -4,6 +4,8 @@
 #
 #    pip-compile requirements.in
 #
+alembic==1.9.2
+    # via -r requirements.in
 anyio==3.6.2
     # via starlette
 asyncpg==0.27.0
@@ -16,12 +18,14 @@ databases[postgresql]==0.7.0
     # via -r requirements.in
 fastapi==0.89.1
     # via -r requirements.in
-greenlet==2.0.1
-    # via sqlalchemy
 h11==0.14.0
     # via uvicorn
 idna==3.4
     # via anyio
+mako==1.2.4
+    # via alembic
+markupsafe==2.1.2
+    # via mako
 psycopg2-binary==2.9.5
     # via -r requirements.in
 pydantic==1.10.4
@@ -31,6 +35,7 @@ sniffio==1.3.0
 sqlalchemy==1.4.46
     # via
     #   -r requirements.in
+    #   alembic
     #   databases
 starlette==0.22.0
     # via fastapi

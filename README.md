@@ -1,6 +1,7 @@
 # license-manager-POC
+A POC for a generic license manager ...
 
-
+## Application Start (DEV)
 To start the application, you can either start it on your local machine:
 ```sh
 cd <license-manager-POC>
@@ -30,3 +31,15 @@ In any case, you can now use the API:
 (If you run the app by not using Docker)
 * API docs: http://localhost:8000/docs
 * license API: http://localhost:8000/licenses
+
+## Migrations with 'alembic'
+
+* generate new migrations:
+    ```sh
+    alembic revision --autogenerate -m "<some meaningful title>"
+    ```
+
+* apply the migrations:
+    ```sh
+    alembic upgrade head
+    ```
