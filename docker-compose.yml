@@ -9,7 +9,11 @@ services:
     ports:
       - 8002:8000
     environment:
-      - DATABASE_URL=postgresql://licm:licm@postgres/licm_dev
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=licm
+      - DATABASE_PASSWORD=licm
+      - DATABASE_NAME=licm
     depends_on:
       - postgres
   
@@ -24,7 +28,6 @@ services:
     environment:
       - POSTGRES_USER=licm
       - POSTGRES_PASSWORD=licm
-      - POSTGRES_DB=licm_dev
-
+      - POSTGRES_DB=licm
 volumes:
   postgres_data:

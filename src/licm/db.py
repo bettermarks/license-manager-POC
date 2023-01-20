@@ -1,23 +1,38 @@
 import os
+import urllib
+import logging
 
-from sqlalchemy import Column, DateTime, Integer, MetaData, String, Table, create_engine
-from sqlalchemy.sql import func
+from sqlalchemy import create_engine, MetaData
 
 from databases import Database
+from licm import config
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+
+def postgres_dsn(host, port, user, password, database, ssl=False):
+    return (
+        f"postgresql://{user}:{urllib.parse.quote(password)}"
+        f"@{host}:{port}"
+        f"/{database}"
+        f"{'?sslmode=require' if ssl else ''}"
+    )
+
+
+def get_var(var):
+    return os.getenv(var) or getattr(config, var)
+
+
+DATABASE_URL = postgres_dsn(
+    get_var("DATABASE_HOST"),
+    get_var("DATABASE_PORT"),
+    get_var("DATABASE_USER"),
+    get_var("DATABASE_PASSWORD"),
+    get_var("DATABASE_NAME")
+)
+
+print(f"DATABASE_URL = {DATABASE_URL}")
 
 # SQLAlchemy
 engine = create_engine(DATABASE_URL)
 metadata = MetaData()
-licenses = Table(
-    "licenses",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("title", String(50)),
-    Column("description", String(50)),
-    Column("created_date", DateTime, default=func.now(), nullable=False),
-)
-
 # databases query builder
 database = Database(DATABASE_URL)
