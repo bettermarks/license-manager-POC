@@ -2,13 +2,10 @@ import logging
 from fastapi import FastAPI
 
 from licm.api import licenses
-from licm.db import database, engine, metadata
+from licm.db import database
 
 # init logging
 logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
-
-# create Tables etc. from SQLAlchemy Table etc. definitions
-# metadata.create_all(engine)
 
 app = FastAPI()
 

@@ -7,8 +7,8 @@ from alembic import context
 from licm.db import DATABASE_URL
 
 # import the models here ...
-from licm.model import license
-from licm.model import product
+from licm.model.base import Base
+from licm.model import product, license, user_class_management_provider, hierarchy_levels
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -21,10 +21,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-target_metadata = [
-    license.Base.metadata,
-    product.Base.metadata
-]
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
