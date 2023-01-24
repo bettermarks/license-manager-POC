@@ -10,8 +10,7 @@ class HierarchyProvider(Base):
     description = Column(String(256))
     hierarchy_url = Column(String(256), nullable=False, index=True)
 
-    hierarchy_levels = relationship("HierarchyLevel", back_populates="hierarchy_provider")
-    products = relationship("Product", back_populates="hierarchy_provider")
+    # hierarchy_levels = relationship("HierarchyLevel", back_populates="hierarchy_provider")
 
     __table_args__ = (
         UniqueConstraint("eid", name="uix_hierarchy_provider"),
