@@ -1,7 +1,5 @@
-databases[postgresql]
-psycopg2-binary
-SQLAlchemy
 asyncpg
+SQLAlchemy[asyncio]
 fastapi
 uvicorn
 alembic

@@ -1,8 +1,7 @@
 import logging
 from fastapi import FastAPI
 
-from licm.api import licenses
-from licm.db import database
+from licm.api import product
 
 # init logging
 logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
@@ -12,12 +11,14 @@ app = FastAPI()
 
 @app.on_event("startup")
 async def startup():
-    await database.connect()
+    # TODO
+    pass
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    await database.disconnect()
+    # TODO
+    pass
 
 
-app.include_router(licenses.router, prefix="/licenses", tags=["licenses"])
+app.include_router(product.router, prefix="/products", tags=["products"])

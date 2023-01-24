@@ -1,6 +1,10 @@
+import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy import create_engine
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+from sqlalchemy.engine import Connection
+from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from alembic import context
 
@@ -8,7 +12,8 @@ from licm.db import DATABASE_URL
 
 # import the models here ...
 from licm.model.base import Base
-from licm.model import product, license, user_class_management_provider, hierarchy_levels
+from licm.model import product, hierarchy_provider, hierarchy_level
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -20,8 +25,7 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
-# for 'autogenerate' support
-target_metadata = Base.metadata
+target_metadata = Base.metadata              # RSC modified
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -41,22 +45,32 @@ def run_migrations_offline() -> None:
     script output.
 
     """
+    url = config.get_main_option("sqlalchemy.url")
+
     # RSC 2023-01-19: We do apply the url dynamically for security reasons
     # No, we don't do this ... : url = config.get_main_option("sqlalchemy.url")
     # We will do that:
     url = DATABASE_URL
+
     context.configure(
-        url=url,
-        target_metadata=target_metadata,
-        literal_binds=True,
-        dialect_opts={"paramstyle": "named"},
-    )
+       url=url,
+       target_metadata=target_metadata,
+       literal_binds=True,
+       dialect_opts={"paramstyle": "named"},
+   )
+
+    with context.begin_transaction():
+       context.run_migrations()
+
+
+def do_run_migrations(connection: Connection) -> None:
+    context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
         context.run_migrations()
 
 
-def run_migrations_online() -> None:
+async def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
@@ -67,24 +81,23 @@ def run_migrations_online() -> None:
     # for details, refer to
     # https://allan-simon.github.io/blog/posts/python-alembic-with-environment-variables/
     # So, we don't do this ... :
-    # connectable = engine_from_config(
-    #    config.get_section(config.config_ini_section),
-    #    prefix="sqlalchemy.",
-    #    poolclass=pool.NullPool,
-    # )
-    # Instead, we will do this:
-    connectable = create_engine(DATABASE_URL)
+    # connectable = AsyncEngine(
+    #    engine_from_config(
+    #        config.get_section(config.config_ini_section),
+    #        prefix="sqlalchemy.",
+    #        poolclass=pool.NullPool,
+    #        future=True,
+    #    )
+    # )    # Instead, we will do this:
+    connectable = create_async_engine(DATABASE_URL)
 
-    with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+    async with connectable.connect() as connection:
+        await connection.run_sync(do_run_migrations)
 
-        with context.begin_transaction():
-            context.run_migrations()
+    await connectable.dispose()
 
 
 if context.is_offline_mode():
     run_migrations_offline()
 else:
-    run_migrations_online()
+    asyncio.run(run_migrations_online())
