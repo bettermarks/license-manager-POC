@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from licm.client import http_get
 from licm.db import get_session
 from licm.model.hierarchy_provider import HierarchyProvider
 from licm.model.product import Product
@@ -51,3 +52,9 @@ async def load_initial_products():
 
 async def load_initial_hierarchy_providers():
     await load_data(INITIAL_HIERARCHY_PROVIDERS)
+
+
+async def load_hierarchy_levels_for_providers():
+    for p in INITIAL_HIERARCHY_PROVIDERS:
+        # response = http_get(p.url, {})
+        response = {"school": 1, "class": 2, "student": 3, "teacher": 3}

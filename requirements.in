@@ -3,3 +3,4 @@ SQLAlchemy[asyncio]
 fastapi
 uvicorn
 alembic
+requests

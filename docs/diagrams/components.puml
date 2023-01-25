@@ -1,0 +1,10 @@
+@startuml
+component  [Hierarchy Provider (HP)] as HP
+component  [License Manager (LM)] as LM
+component  [Application (APP)] as APP
+
+APP --> HP : uses
+APP --> LM : uses
+LM --> HP : uses
+
+@enduml
