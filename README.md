@@ -1,5 +1,9 @@
 # license-manager-POC
-A POC for a generic license manager ...
+A POC for a generic License Manager ...
+
+## Concept
+The concept for implementing such a License Manager can be found here:
+[License Manager concept](./docs/concept.md)
 
 ## Application Start (DEV)
 To start the application, you can either start it on your local machine:

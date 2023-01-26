@@ -1,11 +1,10 @@
 # License Manager Concept
 
-The License Manager (LM) is basically some web service 
-providing a Rest API. The LM API accepts and handles
+The License Manager (LM) is basically some Rest API. The LM API accepts and handles
 
 * requests from authenticated users to buy (get) licenses
 * requests from authenticated users to (implicitly) redeem a 
-  license and get permissions to access some application
+  license and get permissions to access some (connected) application
 
 ## Components
 
@@ -32,7 +31,7 @@ identifier, we call it 'external identifier' (EID).
 The Hierarchy Provider (HP) stores those entities and their hierarchical relations.
 
 ## The Hierarchy Provider
-The HP is some web service, that provides an API, where authenticated users
+The HP is also an API, where authenticated users
 or other services as Clients can get information about hierarchies of specific
 entities. In order to fulfill the requirements for some environment including an LM,
 the following routes must be implemented by an HP:
@@ -81,8 +80,12 @@ the web service calls are provided to the users by the application. We are curre
 implementing a POC for such routes. We will implement the following routes:
 
 ### Getting Products
+This route returns all 'available products'. For the POC, there is just one product, that is associated with
+'full access'. Fine granular permissions within a product are not dealt with in the POC. But we already know, that
+the place, where to define specific permissions (f.e. permissions to have access to specific books), is the
+'product'.
 ```
-GET /license-management/products
+GET /products
 ```
 would return something like
 ```
@@ -91,9 +94,12 @@ would return something like
 ]
 ```
 
-### Buying a license
+### Purchasing a license
+The process of purchasing a license will be a multistep process (getting pricing information, add a license product 
+with number of seats and duration to a 'shopping cart', purchase ...). We will not implement such a multistep process
+in the POC, we will just add one route as follows:
 ```
-POST /license-management/users/{user EID}/license/buy
+POST /users/{user EID}/license/purchase
 ```
 with some request body like
 ```
@@ -106,13 +112,15 @@ with some request body like
   "end": "2023-12-31"
 }
 ```
-The request body will be interpreted like so: The requesting user wants to add (buy) a
+The request body will be interpreted like so: The requesting user wants to add (purchase) a
 license for a product with EID='full_access' and an 'entity level' 'class'. He wants to 
 buy the license to be valid from first of January 2023 to the last of December 2023. The
 license should be valid for 50 'seats', that means, that 50 students (and/or teachers? TODO)
 can use the license at the same time. The license should be valid for the students
 (and teachers? TODO), that are members of classes with EID='34535356324' resp. 
 EID='2346445645646". 
+
+#### What happens when this route is being called:
 
 
 
