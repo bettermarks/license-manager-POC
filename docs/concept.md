@@ -94,12 +94,12 @@ would return something like
 ]
 ```
 
-### Purchasing a license
+### Purchasing a License
 The process of purchasing a license will be a multistep process (getting pricing information, add a license product
 with number of seats and duration to a 'shopping cart', purchase ...). We will not implement such a multistep process
 in the POC, we will just add one route as follows:
 ```
-POST /users/{user EID}/license/purchase
+POST /users/{user EID}/purchase-license
 ```
 with some request body like
 ```json
@@ -123,18 +123,18 @@ EID='2346445645646".
 #### What happens when this route is being called:
 Let us assume, the purchase function is called via
 ```
-POST /users/1111111/license/purchase
+POST /users/1111111/purchase-license
 ```
 using the request body given above.
-The request handling function will first check,
-* If the requesting user (given user_id), is loggend in and has issued the request. -> If not, return an error
-* If the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
-  * In order to check this, zhe HP is called via ```GET /hierarchy/users/1111111```.
+The request handling function will perform the following steps:
+* Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
+* Check, if the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
+  * In order to check this, the HP is called via ```GET /hierarchy/users/1111111```.
     The result would be something like this:
     ```json
     [
       "school(999)/class(34535356324)/teacher(1111111)",
-      "school(999)/class(34535356324)/teacher(1111111)",
+      "school(999)/class(2346445645646)/teacher(1111111)",
       "school(888)/teacher(1111111)"
     ]
     ```
@@ -144,8 +144,90 @@ The request handling function will first check,
 * The license will be stored in the database like so:
   Create a new row in the 'license' table:
 
-  | product EID | purchaser	EID | owner level | owner EID	|
-    |-------------|---------------|-------------|-------------|
+  |license ID|product EID|purchaser EID|owner level| owner EIDs|seats|start|end|
+  |-----------|-------|-----|------------|--------|-----|-----|-----| 
+  |1|full_access|1111111|class|['34535356324','2346445645646']|50|2023-01-01|2023-12-31| 
+
+* Some information about successful purchase of the license will be returned to the requesting user.
+
+### Implicit Redeeming a License and Getting Permissions
+After each login to the APP, some call to the LM should follow directly after login (via redirect or by
+using some other mechanism). Using the route
+```
+GET /users/{user EID}/permissions
+```
+without any parameters (TODO: is this really a GET request?) would check for the permissions of the given user
+and implicitly redeem, if NO license seat can be found for this user. 
+
+We are facing four different use cases here:
+
+1. The case 'user does not have a seat yet, but can occupy one' (has been described above)
+2. The case 'user has already occupied a seat and the license AND the hierarchy structure for the user is still valid'
+3. The case 'user has a seat', but hte license has expired.
+4. The case 'user has a seat, but no longer fulfills the hierarchy criteria'
+
+Case 1 will be described below, cases 2, 3, and 4 can be implemented in a similar way and will not be 
+described explicitly here.
+
+#### What happens when this route is being called:
+Let us assume, that the calling student with EID='123456789' is member of the class with EID='34535356324', for which
+the (teacher) with EID='1111111' already purchased a license. The student logs in for the first time. So, the student
+will call the following route (implicitly) from the APP:
+```
+GET /users/123456789/permissions
+```
+The request handling function will perform these steps:
+* Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
+* Now, the evaluating function would query the license seats table, if there is already a seat 'taken' by the
+  requesting student. The table 'license_seat' could currently look like this:
+
+  | license ID | user EID |created|  
+  |-----------|------|--------| 
+  |1|777777|2023-01-05| 
+
+  Using a query like
+  ```sql
+  SELECT 
+     lic.product_eid 
+  FROM 
+     license_seat s
+     INNER JOIN license l ON l.license_id = s.license_id
+  WHERE
+     s.user_eid = '123456789' 
+  ```
+  The query returns no product, therefore we have to go to the next step. If the query would have got a result,
+  we also would go to the next step, as we maybe have to 'free a seat'. (The latter 'free a seat' use case will 
+  not be described here, also the case 'seat is still valid' and #license seat is expired')
+
+* Send a new request to the HP: ```GET /hierarchy/users/123456789```.
+  The result would be something like this:
+  ```json
+  ["school(999)/class(2346445645646)/student(123456789)"]
+  ```
+  Ok, we will use some simple parser, that gets out some data of that result:
+  ```
+  {
+    "school": "999",
+    "class": "2346445645646"
+  }
+  ```
+  We will look up in the license table using some simple query (not written down here) and we will
+  have a match for a license with 'level' 'class' and owner-EID='2346445645646'. The license with
+  license ID=1 matches the criteria. So we can reserve a seat (as long as there are seats open, which
+  we can easily confirm using a simple count query). The seats table after the insert would look like this:
+
+  | license ID | user EID  | created    |  
+  |-----------|------------|--------| 
+  |1| 777777    | 2023-01-05 | 
+  |1| 123456789 | 2023-01-26 | 
+ 
+  The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user.
+
+### Open Questions:
+We did not touch yet the question, how we should handle the case of
+different products from different licenses, the user could get. We would need some 'merge' strategy to give the
+user most permissions, that can be got from 'his' licenses. For the POC, as we just do have one product with
+'full access' or 'nothing', this question does not need to be answered. Nevertheless, we should keep it in mind!
 
 
 
@@ -153,9 +235,3 @@ The request handling function will first check,
 
 
 
-
-
-##### TODO
-for 'level 0' all entities (that is 'students'
-and 'teachers', as we already know from having asked the HP about 'hierarchy levels'), that
-have the given 'entities' in their 
