@@ -44,7 +44,7 @@ This route returns the hierarchy levels, that are used in the specific
 hierarchy structure of the domain. Those hierarchy levels are used to 
 identify entities, which are associated with some given hierarchy level 
 (see below). A call to the route returns something like
-```
+```json
 {
     "student": 0, 
     "teacher": 0, 
@@ -60,7 +60,7 @@ entity named 'class' and a 'level 2' entity named 'school'.
 GET /hierarchy/users/{user EID}
 ```
 This route gets the hierarchy path(s) for a given user and returns something like
-```
+```json
 [
     "school(999)/class(566)/teacher(glu::123)",
     "school(999)/class(344)/teacher(glu::123)",
@@ -88,7 +88,7 @@ the place, where to define specific permissions (f.e. permissions to have access
 GET /products
 ```
 would return something like
-```
+```json
 [
  {"eid": "full_access", "name": "Full access to bettermarks"} 
 ]
@@ -102,7 +102,7 @@ in the POC, we will just add one route as follows:
 POST /users/{user EID}/license/purchase
 ```
 with some request body like
-```
+```json
 {
   "product": "full_access"
   "level": "class"
@@ -121,7 +121,31 @@ can use the license at the same time. The license should be valid for the studen
 EID='2346445645646". 
 
 #### What happens when this route is being called:
+Let us assume, the purchase function is called via
+```
+POST /users/1111111/license/purchase
+```
+using the request body given above.
+The request handling function will first check,
+* If the requesting user (given user_id), is loggend in and has issued the request. -> If not, return an error
+* If the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
+  * In order to check this, zhe HP is called via ```GET /hierarchy/users/1111111```. 
+    The result would be something like this:
+    ```json
+    [
+      "school(999)/class(34535356324)/teacher(1111111)",
+      "school(999)/class(34535356324)/teacher(1111111)",
+      "school(888)/teacher(1111111)"
+    ]
+    ```
+    We now apply a simple string search to the result list checking, if ALL entities in the request body have a
+    match in the result list AND have correct 'level' (as given in the request body). -> If not, return an error!
+    Yes, they have! So the license purchase request is valid in this case!
+* The license will be stored in the database like so:
+  Create a new row in the 'license' table:
 
+  | product EID | purchaser	EID | owner level | owner EID	|
+  |-------------|---------------|-------------|-------------|
 
 
 
