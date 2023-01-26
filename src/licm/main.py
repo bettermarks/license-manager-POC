@@ -1,25 +1,25 @@
 import logging
 from fastapi import FastAPI
 
-from licm.api import licenses
-from licm.db import database, engine, metadata
+from licm.api import product
+from licm.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
-logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.INFO)
-
-# create Tables etc. from SQLAlchemy Table etc. definitions
-metadata.create_all(engine)
+# init logging
+logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
 
 app = FastAPI()
 
 
 @app.on_event("startup")
 async def startup():
-    await database.connect()
+    await load_initial_products()
+    await load_initial_hierarchy_providers()
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    await database.disconnect()
+    # TODO
+    pass
 
 
-app.include_router(licenses.router, prefix="/licenses", tags=["licenses"])
+app.include_router(product.router, prefix="/products", tags=["products"])
