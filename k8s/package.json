@@ -1,0 +1,35 @@
+{
+  "name": "k8s",
+  "version": "1.0.0",
+  "main": "main.js",
+  "types": "main.ts",
+  "license": "Apache-2.0",
+  "private": true,
+  "scripts": {
+    "import": "cdk8s import",
+    "synth": "cdk8s synth",
+    "compile": "tsc --build",
+    "watch": "tsc --build -w",
+    "test": "jest",
+    "build": "npm run test && npm run synth",
+    "upgrade": "npm i cdk8s@latest cdk8s-cli@latest",
+    "upgrade:next": "npm i cdk8s@next cdk8s-cli@next",
+    "prettier": "prettier --write ."
+  },
+  "dependencies": {
+    "cdk8s": "^2.5.85",
+    "cdk8s-plus-24": "^2.3.8",
+    "constructs": "^10.1.194",
+    "prettier": "^2.8.1",
+    "ts-node": "^10.9.1",
+    "utility-types": "^3.10.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "@types/node": "^18.11.18",
+    "cdk8s-cli": "^2.1.90",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.6",
+    "typescript": "^4.9.4"
+  }
+}

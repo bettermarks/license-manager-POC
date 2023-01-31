@@ -8,11 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from alembic import context
 
-from licm.db import DATABASE_URL
+from licensing.db import DATABASE_URL
 
 # import the models here ...
-from licm.model.base import Base
-from licm.model import product, hierarchy_provider, hierarchy_level
+from licensing.model.base import Base
+from licensing.model import product, hierarchy_provider, hierarchy_level
 
 
 # this is the Alembic Config object, which provides

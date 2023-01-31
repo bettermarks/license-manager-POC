@@ -27,7 +27,7 @@ def parse_requirements_file(path):
 
 
 setuptools.setup(
-    name="LicM",
+    name="licensing",
     version="0.0.1",
     author="bettermarks GmbH",
     author_email="bmdevops@bettermarks.com",

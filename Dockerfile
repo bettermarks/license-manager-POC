@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.11.0-alpine as builder
+FROM python:3.11.0-slim
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
@@ -12,6 +12,6 @@ RUN python3 -m pip install --no-cache-dir -IU pip
 
 RUN pip install --no-cache-dir .
 RUN pip install --no-cache-dir -r requirements-dev.in
-# RUN pytest --cov licm
+# RUN pytest --cov licensing
 
-# RUN shiv . --compile-pyc -c app-licm -o app.pyz
+# RUN shiv . --compile-pyc -c app-licensing -o app.pyz
