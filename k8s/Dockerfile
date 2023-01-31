@@ -4,12 +4,12 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 WORKDIR /code
-COPY ./requirements* /code
+COPY ./requirements* /code/
 
 RUN python3 -m pip install --no-cache-dir -IU pip 
 # RUN python3 -m pip install --no-cache-dir -IU shiv
 
-COPY . /code
+COPY . /code/
 RUN pip install --no-cache-dir .
 # RUN shiv . --compile-pyc -c app-ucm -o app.pyz
 

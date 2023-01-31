@@ -1,20 +1,19 @@
 import { Testing } from "cdk8s";
-import { GluLocalChart } from "../lib/glu/glu-local";
+import { LicensingChart } from "../lib/charts/licensing";
 import { Segment } from "../lib/types";
 
-describe("glu-local-chart", () => {
+describe("licensing-local-chart", () => {
   beforeEach(() => {
     jest.useFakeTimers("modern").setSystemTime(new Date("2008-12-01"));
   });
   test("should match with snapshot", () => {
     const app = Testing.app();
-    const chart = new GluLocalChart(app, "test-chart", {
-      image: "bm-glu",
+    const chart = new LicensingChart(app, "test-chart", {
+      name: "licensing",
+      image: "bm-licensing",
       segment: Segment.LOC00,
       postgresSecret: "pgChart.secret.name",
-      gluApplicationSecret: "loc00-glu-application-secret",
-      gluOidcPrivateKeySecret: "loc00-glu-oidc-rsa-private-key",
-      serviceAccountName: "glu-service-account",
+      applicationSecret: "loc00-licensing-application-secret",
     });
     const results = Testing.synth(chart);
     expect(results).toMatchSnapshot();
