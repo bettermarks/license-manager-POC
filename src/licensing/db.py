@@ -1,11 +1,10 @@
-import os
 import urllib
 from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from licensing import config
+from licensing.config import settings
 
 
 def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, ssl: bool = False) -> str:
@@ -16,17 +15,12 @@ def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, s
         f"{'?sslmode=require' if ssl else ''}"
     )
 
-
-def get_var(var: str) -> str:
-    return os.getenv(var) or getattr(config, var)
-
-
 DATABASE_URL = postgres_dsn(
-    get_var("DATABASE_HOST"),
-    get_var("DATABASE_PORT"),
-    get_var("DATABASE_USER"),
-    get_var("DATABASE_PASSWORD"),
-    get_var("DATABASE_NAME")
+    settings.database_host,
+    settings.database_port,
+    settings.database_user,
+    settings.database_password,
+    settings.database_name
 )
 
 # SQLAlchemy
