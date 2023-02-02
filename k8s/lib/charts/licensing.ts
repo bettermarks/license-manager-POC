@@ -6,9 +6,9 @@ import {
   KubeIngress,
   Quantity,
   ResourceRequirements,
-  KubeRole, 
-  KubeServiceAccount, 
-  KubeRoleBinding    
+  KubeRole,
+  KubeServiceAccount,
+  KubeRoleBinding
 } from "../../imports/k8s";
 import { Construct } from "constructs";
 import { Namespace, NodeSelector, Segment } from "../types";
@@ -54,12 +54,12 @@ export type LicensingChartProps = ChartProps & {
    * API replicas
    * @default 3
   */
- apiReplicas?: number;
+  apiReplicas?: number;
   /**
    * Secret names for AWS ECR registry
    * @default []
   */
- imagePullSecrets?: ReadonlyArray<string>;
+  imagePullSecrets?: ReadonlyArray<string>;
 };
 
 /**
@@ -71,7 +71,7 @@ export class LicensingChart extends Chart {
 
     const {
       namespace = Namespace.DEFAULT,
-      apiReplicas = 3,
+      apiReplicas = 1,
       apiResources,
       applicationSecret,
       image,
@@ -128,18 +128,23 @@ export class LicensingChart extends Chart {
             namespace
           }).configMap.name,
         },
-      },      
+      },
       {
         secretRef: {
           name: postgresSecret,
         },
       },
-      {
-        secretRef: {
-          name: applicationSecret,
-        },
-      },
+      ...(applicationSecret)
+        ? [
+          {
+            secretRef: {
+              name: applicationSecret,
+            },
+          },
+        ]
+        : []
     ];
+
     /**
      * DeploymentID is a unique identifier for each deployment
      */
@@ -174,7 +179,10 @@ export class LicensingChart extends Chart {
           name: `${name}-migration`,
           image: image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: ["python3.8", "manage.py", "migrate"],
+          command: ["bash", "-c"],
+          args: [
+            "alembic upgrade head"
+          ],
           envFrom: applicationEnv,
           resources: migrationJobResources,
         },
@@ -184,17 +192,7 @@ export class LicensingChart extends Chart {
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
           args: [
-            `python3.8 manage.py loaddata system.yaml && \\
-             python3.8 manage.py update_or_create_su --username=$(SUPERUSER_NAME) --email=$(SUPERUSER_EMAIL) --password=$(SUPERUSER_PASSWORD) && \\
-             python3.8 manage.py bm_fixtures && \\
-             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)\\
-                --client_secret=$(OAUTH2_CLIENT_SECRET_EDU)\\
-                --name="NSP $(SEGMENT)"\\
-                --redirect_uris=$(OAUTH2_REDIRECT_URI_GLU) && \\
-             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)_kong\\
-                --client_secret=$(OAUTH2_CLIENT_SECRET_KONG)\\
-                --name="NSP $(SEGMENT) kong"\\
-                --redirect_uris=$(OAUTH2_REDIRECT_URI_KONG)`,
+            `echo "TODO: load_initial_products here"`,
           ],
           envFrom: applicationEnv,
           resources: loadFixturesJobResources,

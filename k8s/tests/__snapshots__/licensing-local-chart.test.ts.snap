@@ -1,0 +1,296 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`licensing-local-chart should match with snapshot 1`] = `
+Array [
+  Object {
+    "apiVersion": "v1",
+    "imagePullSecrets": Array [],
+    "kind": "ServiceAccount",
+    "metadata": Object {
+      "name": "licensing-service-account",
+    },
+  },
+  Object {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "Role",
+    "metadata": Object {
+      "name": "licensing-role",
+    },
+    "rules": Array [
+      Object {
+        "apiGroups": Array [
+          "",
+        ],
+        "resources": Array [
+          "pods",
+        ],
+        "verbs": Array [
+          "get",
+          "list",
+          "watch",
+        ],
+      },
+    ],
+  },
+  Object {
+    "apiVersion": "rbac.authorization.k8s.io/v1",
+    "kind": "RoleBinding",
+    "metadata": Object {
+      "name": "licensing-role-binding",
+    },
+    "roleRef": Object {
+      "apiGroup": "rbac.authorization.k8s.io",
+      "kind": "Role",
+      "name": "licensing-role",
+    },
+    "subjects": Array [
+      Object {
+        "kind": "ServiceAccount",
+        "name": "licensing-service-account",
+      },
+    ],
+  },
+  Object {
+    "apiVersion": "v1",
+    "data": Object {
+      "DATABASE_HOST": "localhost",
+      "DATABASE_NAME": "licm",
+      "DATABASE_PORT": "5432",
+      "DATABASE_USER": "postgres",
+      "LOG_HANDLER": "console",
+      "LOG_LEVEL": "DEBUG",
+    },
+    "immutable": false,
+    "kind": "ConfigMap",
+    "metadata": Object {
+      "name": "licensing-configmap",
+      "namespace": "default",
+    },
+  },
+  Object {
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": Object {
+      "name": "licensing-deployment",
+      "namespace": "default",
+    },
+    "spec": Object {
+      "replicas": 3,
+      "selector": Object {
+        "matchLabels": Object {
+          "app": "licensing",
+        },
+      },
+      "template": Object {
+        "metadata": Object {
+          "labels": Object {
+            "app": "licensing",
+            "deploymentId": "licensing-11defd82800",
+          },
+        },
+        "spec": Object {
+          "containers": Array [
+            Object {
+              "envFrom": Array [
+                Object {
+                  "configMapRef": Object {
+                    "name": "licensing-configmap",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "pgChart.secret.name",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "loc00-licensing-application-secret",
+                  },
+                },
+              ],
+              "image": "bm-licensing",
+              "imagePullPolicy": "IfNotPresent",
+              "livenessProbe": Object {
+                "httpGet": Object {
+                  "path": "/status",
+                  "port": 8000,
+                },
+                "initialDelaySeconds": 10,
+              },
+              "name": "licensing",
+              "ports": Array [
+                Object {
+                  "containerPort": 8000,
+                },
+              ],
+              "readinessProbe": Object {
+                "httpGet": Object {
+                  "path": "/status",
+                  "port": 8000,
+                },
+                "initialDelaySeconds": 10,
+              },
+            },
+          ],
+          "initContainers": Array [
+            Object {
+              "command": Array [
+                "sh",
+                "-c",
+                "until pg_isready --host \${DATABASE_HOST}; do sleep 1; done",
+              ],
+              "envFrom": Array [
+                Object {
+                  "configMapRef": Object {
+                    "name": "licensing-configmap",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "pgChart.secret.name",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "loc00-licensing-application-secret",
+                  },
+                },
+              ],
+              "image": "postgres:14",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "licensing-wait-for-database",
+              "resources": Object {
+                "limits": Object {
+                  "cpu": 0.2,
+                  "memory": "64Mi",
+                },
+                "requests": Object {
+                  "cpu": 0.1,
+                  "memory": "32Mi",
+                },
+              },
+            },
+            Object {
+              "command": Array [
+                "python3.8",
+                "manage.py",
+                "migrate",
+              ],
+              "envFrom": Array [
+                Object {
+                  "configMapRef": Object {
+                    "name": "licensing-configmap",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "pgChart.secret.name",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "loc00-licensing-application-secret",
+                  },
+                },
+              ],
+              "image": "bm-licensing",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "licensing-migration",
+            },
+            Object {
+              "args": Array [
+                "python3.8 manage.py loaddata system.yaml && \\\\
+             python3.8 manage.py update_or_create_su --username=$(SUPERUSER_NAME) --email=$(SUPERUSER_EMAIL) --password=$(SUPERUSER_PASSWORD) && \\\\
+             python3.8 manage.py bm_fixtures && \\\\
+             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)\\\\
+                --client_secret=$(OAUTH2_CLIENT_SECRET_EDU)\\\\
+                --name=\\"NSP $(SEGMENT)\\"\\\\
+                --redirect_uris=$(OAUTH2_REDIRECT_URI_GLU) && \\\\
+             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)_kong\\\\
+                --client_secret=$(OAUTH2_CLIENT_SECRET_KONG)\\\\
+                --name=\\"NSP $(SEGMENT) kong\\"\\\\
+                --redirect_uris=$(OAUTH2_REDIRECT_URI_KONG)",
+              ],
+              "command": Array [
+                "bash",
+                "-c",
+              ],
+              "envFrom": Array [
+                Object {
+                  "configMapRef": Object {
+                    "name": "licensing-configmap",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "pgChart.secret.name",
+                  },
+                },
+                Object {
+                  "secretRef": Object {
+                    "name": "loc00-licensing-application-secret",
+                  },
+                },
+              ],
+              "image": "bm-licensing",
+              "imagePullPolicy": "IfNotPresent",
+              "name": "licensing-load-fixtures",
+            },
+          ],
+          "serviceAccountName": "licensing-service-account",
+        },
+      },
+    },
+  },
+  Object {
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": Object {
+      "name": "licensing-service",
+      "namespace": "default",
+    },
+    "spec": Object {
+      "ports": Array [
+        Object {
+          "port": 80,
+          "targetPort": 8000,
+        },
+      ],
+      "selector": Object {
+        "app": "licensing",
+      },
+      "type": "ClusterIP",
+    },
+  },
+  Object {
+    "apiVersion": "networking.k8s.io/v1",
+    "kind": "Ingress",
+    "metadata": Object {
+      "name": "licensing-ingress",
+    },
+    "spec": Object {
+      "ingressClassName": "nginx",
+      "rules": Array [
+        Object {
+          "http": Object {
+            "paths": Array [
+              Object {
+                "backend": Object {
+                  "service": Object {
+                    "name": "licensing-service",
+                    "port": Object {
+                      "number": 80,
+                    },
+                  },
+                },
+                "path": "/",
+                "pathType": "Prefix",
+              },
+            ],
+          },
+        },
+      ],
+    },
+  },
+]
+`;

@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -51,6 +52,8 @@ def run_migrations_offline() -> None:
     # No, we don't do this ... : url = config.get_main_option("sqlalchemy.url")
     # We will do that:
     url = DATABASE_URL
+    log = logging.get_logger()
+    log.info(f"DATBASE_URL: {DATABASE_URL}")
 
     context.configure(
        url=url,

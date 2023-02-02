@@ -25,7 +25,7 @@ if (SEGMENT === Segment.LOC00) {
     name: "licensing-db" 
   });
   new LicensingChart(app, "licensing", {
-    name: "lisensing",
+    name: "licensing",
     namespace: Namespace.DEFAULT,
     image: IMAGE_NAME,
     segment: SEGMENT,
@@ -40,7 +40,7 @@ if (SEGMENT === Segment.LOC00) {
 } else {
   new LicensingChart(app, "licensing", {
     namespace: Namespace.LICENSING,
-    name: "lisensing",
+    name: "licensing",
     image: `${IMAGE_REPO}:${IMAGE_TAG}`,
     segment: SEGMENT,
     postgresSecret: POSTGRES_SECRET,

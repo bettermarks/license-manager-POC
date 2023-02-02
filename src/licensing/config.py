@@ -2,9 +2,9 @@ from functools import lru_cache
 from pydantic import BaseSettings
 
 class Settings(BaseSettings):
-    database_user: str = "postgres"
-    database_password: str = "root"
-    database_host: str = "localhost"
+    database_user: str = "licm"
+    database_password: str = "licm"
+    database_host: str = "postgres"
     database_port: str = "5432"
     database_name: str = "licm"
 

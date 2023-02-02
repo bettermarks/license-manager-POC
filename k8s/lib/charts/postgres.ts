@@ -18,6 +18,7 @@ export class PostgresChart extends Chart {
    * - DATABASE_USER
    * - DATABASE_PASSWORD
    * - DATABASE_NAME
+   * - POSTGRES_PASSWORD
    */
   readonly secret: ISecret;
 
@@ -35,6 +36,7 @@ export class PostgresChart extends Chart {
         DATABASE_USER: "licm",
         DATABASE_PASSWORD: "licm",
         DATABASE_NAME: "licm",
+        POSTGRES_PASSWORD: "root"
       },
     });
 
