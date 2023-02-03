@@ -31,12 +31,13 @@ export class PostgresChart extends Chart {
         namespace,
       },
       stringData: {
-        DATABASE_HOST: "postgres",
         DATABASE_PORT: "5432",
-        DATABASE_USER: "licm",
-        DATABASE_PASSWORD: "licm",
-        DATABASE_NAME: "licm",
-        POSTGRES_PASSWORD: "root"
+        DATABASE_USER: "postgres",
+        DATABASE_PASSWORD: "postgres",
+        DATABASE_NAME: "postgres",
+        POSTGRES_PASSWORD: "postgres",
+        POSTGRES_USER:"postgres",
+        POSTGRES_DB:"postgres"
       },
     });
 

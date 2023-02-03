@@ -23,6 +23,16 @@ DATABASE_URL = postgres_dsn(
     settings.database_name
 )
 
+print(
+    f"""
+    settings.database_host={settings.database_host},
+    settings.database_port={settings.database_port},
+    settings.database_user={settings.database_user},
+    settings.database_password={settings.database_password},
+    settings.database_name={settings.database_name}
+    """
+)
+
 # SQLAlchemy
 engine = create_async_engine(DATABASE_URL, future=True, echo=True)
 async_session_factory = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)

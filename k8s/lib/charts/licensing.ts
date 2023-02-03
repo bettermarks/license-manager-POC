@@ -213,14 +213,14 @@ export class LicensingChart extends Chart {
           readinessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/status",
+              path: "/products",
             },
             initialDelaySeconds: 10,
           },
           livenessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/status",
+              path: "/products",
             },
             initialDelaySeconds: 10,
           },
@@ -241,6 +241,7 @@ export class LicensingChart extends Chart {
         ingressClassName: "nginx",
         rules: [
           {
+            host: "lm.bettermarks.loc",
             http: {
               paths: [
                 {

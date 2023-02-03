@@ -75,7 +75,7 @@ Array [
       "namespace": "default",
     },
     "spec": Object {
-      "replicas": 3,
+      "replicas": 1,
       "selector": Object {
         "matchLabels": Object {
           "app": "licensing",
@@ -112,7 +112,7 @@ Array [
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/products",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -125,7 +125,7 @@ Array [
               ],
               "readinessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/products",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -171,10 +171,12 @@ Array [
               },
             },
             Object {
+              "args": Array [
+                "alembic upgrade head",
+              ],
               "command": Array [
-                "python3.8",
-                "manage.py",
-                "migrate",
+                "bash",
+                "-c",
               ],
               "envFrom": Array [
                 Object {
@@ -199,17 +201,7 @@ Array [
             },
             Object {
               "args": Array [
-                "python3.8 manage.py loaddata system.yaml && \\\\
-             python3.8 manage.py update_or_create_su --username=$(SUPERUSER_NAME) --email=$(SUPERUSER_EMAIL) --password=$(SUPERUSER_PASSWORD) && \\\\
-             python3.8 manage.py bm_fixtures && \\\\
-             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)\\\\
-                --client_secret=$(OAUTH2_CLIENT_SECRET_EDU)\\\\
-                --name=\\"NSP $(SEGMENT)\\"\\\\
-                --redirect_uris=$(OAUTH2_REDIRECT_URI_GLU) && \\\\
-             python3.8 manage.py oauth_clients --client_id=bm_edu_$(SEGMENT)_kong\\\\
-                --client_secret=$(OAUTH2_CLIENT_SECRET_KONG)\\\\
-                --name=\\"NSP $(SEGMENT) kong\\"\\\\
-                --redirect_uris=$(OAUTH2_REDIRECT_URI_KONG)",
+                "echo \\"TODO: load_initial_products here\\"",
               ],
               "command": Array [
                 "bash",
@@ -272,6 +264,7 @@ Array [
       "ingressClassName": "nginx",
       "rules": Array [
         Object {
+          "host": "lm.bettermarks.loc",
           "http": Object {
             "paths": Array [
               Object {
