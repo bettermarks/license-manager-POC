@@ -1,0 +1,91 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 22 (0x16)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=Bettermarks DEV, C=DE, ST=BERLIN, L=BERLIN, O=bettermarks.com/emailAddress=bmdev@bettermarks.de
+        Validity
+            Not Before: Oct 17 08:37:10 2022 GMT
+            Not After : Oct 17 08:37:10 2023 GMT
+        Subject: C=DE, ST=BERLIN, O=bettermarks.com, OU=secret squirrelz, CN=*.bettermarks.loc
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:9f:5a:09:20:92:51:4a:71:97:b4:f3:14:be:e2:
+                    45:8c:c5:a3:ad:24:53:d5:79:89:64:34:3f:c4:5a:
+                    9d:b5:96:10:c5:0b:1f:97:e9:24:d1:42:ac:13:01:
+                    67:87:bb:85:2d:51:aa:14:a3:39:d4:60:00:4a:be:
+                    fe:20:eb:3a:75:60:1c:98:0c:97:34:33:25:46:7f:
+                    00:a7:e0:4a:bb:aa:e7:5d:09:73:fb:50:2b:60:6d:
+                    d2:27:d7:1e:7a:83:96:f3:45:64:d7:f3:2f:75:cc:
+                    c0:53:a5:f9:a6:a3:58:cd:86:b0:37:a2:bc:34:58:
+                    92:ae:cf:ed:fc:42:81:37:9b:31:7c:71:61:f8:f0:
+                    ce:d5:a6:c1:36:65:7d:c8:cd:d5:06:66:1f:98:f8:
+                    5a:77:a0:26:b1:3a:4c:3f:2d:49:15:af:ec:34:91:
+                    8a:30:50:fd:8e:d2:47:a1:50:2d:8e:f3:da:f2:92:
+                    b3:4a:8f:49:40:5d:c1:08:64:89:5f:08:26:a5:31:
+                    32:23:a1:b4:64:09:34:6f:05:41:3b:29:60:43:72:
+                    e3:82:ed:b2:94:8e:d1:43:81:14:e1:f0:a9:6f:d8:
+                    10:14:bc:01:cc:b2:1e:b4:e3:96:0e:5d:3c:17:73:
+                    93:43:fc:10:b2:05:e1:44:0b:18:96:c1:fa:2f:8b:
+                    db:91
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                E6:A3:70:C3:64:DA:6F:CA:E8:FB:64:69:60:BF:5A:86:7F:85:4F:30
+            X509v3 Authority Key Identifier: 
+                keyid:09:DC:67:D8:8F:38:5B:FE:93:8F:0C:61:F8:62:0D:8C:68:69:1C:53
+                DirName:/CN=Bettermarks DEV/C=DE/ST=BERLIN/L=BERLIN/O=bettermarks.com/emailAddress=bmdev@bettermarks.de
+                serial:C2:AE:59:3F:99:63:72:BD
+
+            Netscape CA Revocation Url: 
+                https://static.bettermarks.org/ca-crl.pem
+            X509v3 Subject Alternative Name: 
+                DNS:bettermarks.loc, DNS:*.bettermarks.loc
+    Signature Algorithm: sha256WithRSAEncryption
+         20:72:54:c9:c6:07:a1:a0:03:5b:31:9f:b0:8f:1b:be:43:b3:
+         63:6b:1b:f2:5b:0a:b8:0a:de:55:7f:20:e0:5b:60:c1:68:ac:
+         4e:c2:15:c6:aa:cf:11:97:57:56:66:72:9e:d7:89:1c:ee:68:
+         e8:b4:6e:c7:a4:28:f7:6c:13:26:d4:5a:50:b1:76:a1:17:10:
+         fa:d3:1f:3b:eb:7c:32:10:7f:67:e4:46:51:c0:9f:66:d0:e9:
+         63:d9:7b:cb:40:dc:1e:75:79:38:72:8e:b4:99:3f:b5:6b:22:
+         66:9d:9e:c8:87:26:1d:8b:78:f0:ad:de:0f:64:e6:d9:b0:3b:
+         00:19:21:b5:4b:c5:07:cc:43:82:b4:ab:a0:73:23:8c:60:07:
+         d9:2e:eb:bc:1d:31:b3:c5:af:e1:d2:53:d8:0c:ea:6e:f3:df:
+         80:88:2d:c1:f4:2c:30:93:71:d9:cc:77:e6:1a:ab:28:4a:10:
+         a5:6b:b4:89:5a:93:ce:5e:f6:9c:72:81:7f:4a:ec:97:dc:12:
+         b8:9a:b5:b1:25:db:57:0f:83:db:bd:d1:4d:ae:f8:a9:83:d7:
+         3e:6e:a1:48:16:78:1f:6f:97:f3:14:18:a3:a7:65:c1:1e:9b:
+         7a:66:d7:09:fc:a2:10:5d:8b:f2:21:86:58:ff:58:69:93:66:
+         04:0b:12:21
+-----BEGIN CERTIFICATE-----
+MIIEzDCCA7SgAwIBAgIBFjANBgkqhkiG9w0BAQsFADCBiDEYMBYGA1UEAxMPQmV0
+dGVybWFya3MgREVWMQswCQYDVQQGEwJERTEPMA0GA1UECBMGQkVSTElOMQ8wDQYD
+VQQHEwZCRVJMSU4xGDAWBgNVBAoTD2JldHRlcm1hcmtzLmNvbTEjMCEGCSqGSIb3
+DQEJARYUYm1kZXZAYmV0dGVybWFya3MuZGUwHhcNMjIxMDE3MDgzNzEwWhcNMjMx
+MDE3MDgzNzEwWjBvMQswCQYDVQQGEwJERTEPMA0GA1UECBMGQkVSTElOMRgwFgYD
+VQQKEw9iZXR0ZXJtYXJrcy5jb20xGTAXBgNVBAsTEHNlY3JldCBzcXVpcnJlbHox
+GjAYBgNVBAMUESouYmV0dGVybWFya3MubG9jMIIBIjANBgkqhkiG9w0BAQEFAAOC
+AQ8AMIIBCgKCAQEAn1oJIJJRSnGXtPMUvuJFjMWjrSRT1XmJZDQ/xFqdtZYQxQsf
+l+kk0UKsEwFnh7uFLVGqFKM51GAASr7+IOs6dWAcmAyXNDMlRn8Ap+BKu6rnXQlz
++1ArYG3SJ9ceeoOW80Vk1/MvdczAU6X5pqNYzYawN6K8NFiSrs/t/EKBN5sxfHFh
++PDO1abBNmV9yM3VBmYfmPhad6AmsTpMPy1JFa/sNJGKMFD9jtJHoVAtjvPa8pKz
+So9JQF3BCGSJXwgmpTEyI6G0ZAk0bwVBOylgQ3Ljgu2ylI7RQ4EU4fCpb9gQFLwB
+zLIetOOWDl08F3OTQ/wQsgXhRAsYlsH6L4vbkQIDAQABo4IBVzCCAVMwCQYDVR0T
+BAIwADAdBgNVHQ4EFgQU5qNww2Tab8ro+2RpYL9ahn+FTzAwgb0GA1UdIwSBtTCB
+soAUCdxn2I84W/6Tjwxh+GINjGhpHFOhgY6kgYswgYgxGDAWBgNVBAMTD0JldHRl
+cm1hcmtzIERFVjELMAkGA1UEBhMCREUxDzANBgNVBAgTBkJFUkxJTjEPMA0GA1UE
+BxMGQkVSTElOMRgwFgYDVQQKEw9iZXR0ZXJtYXJrcy5jb20xIzAhBgkqhkiG9w0B
+CQEWFGJtZGV2QGJldHRlcm1hcmtzLmRlggkAwq5ZP5ljcr0wOAYJYIZIAYb4QgEE
+BCsWKWh0dHBzOi8vc3RhdGljLmJldHRlcm1hcmtzLm9yZy9jYS1jcmwucGVtMC0G
+A1UdEQQmMCSCD2JldHRlcm1hcmtzLmxvY4IRKi5iZXR0ZXJtYXJrcy5sb2MwDQYJ
+KoZIhvcNAQELBQADggEBACByVMnGB6GgA1sxn7CPG75Ds2NrG/JbCrgK3lV/IOBb
+YMForE7CFcaqzxGXV1Zmcp7XiRzuaOi0bsekKPdsEybUWlCxdqEXEPrTHzvrfDIQ
+f2fkRlHAn2bQ6WPZe8tA3B51eThyjrSZP7VrImadnsiHJh2LePCt3g9k5tmwOwAZ
+IbVLxQfMQ4K0q6BzI4xgB9ku67wdMbPFr+HSU9gM6m7z34CILcH0LDCTcdnMd+Ya
+qyhKEKVrtIlak85e9pxygX9K7JfcEriatbEl21cPg9u90U2u+KmD1z5uoUgWeB9v
+l/MUGKOnZcEem3pm1wn8ohBdi/Ihhlj/WGmTZgQLEiE=
+-----END CERTIFICATE-----

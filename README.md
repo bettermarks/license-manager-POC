@@ -10,7 +10,7 @@ To start the application, you can either start it on your local machine:
 ```sh
 cd <license-manager-POC>
 export PYTHONPATH=$PWD/src
-uvicorn licm.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+uvicorn licensing.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
 ```
 Before you can start for the first time, please create a database manually 
 on your local postgreSQL database using the SQL query

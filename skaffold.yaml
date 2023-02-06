@@ -1,0 +1,16 @@
+apiVersion: skaffold/v2beta16
+kind: Config
+build:
+  artifacts:
+    - image: bm-licensing
+      docker:
+        dockerfile: k8s/Dockerfile
+deploy:
+  kustomize:
+    paths:
+      - "k8s"
+portForward:
+  - resourceType: Service
+    resourceName: ingress-nginx-controller
+    port: 443
+    localPort: 8443

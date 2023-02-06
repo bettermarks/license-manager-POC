@@ -1,10 +1,10 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licm.client import http_get
-from licm.db import get_session
-from licm.model.hierarchy_provider import HierarchyProvider
-from licm.model.product import Product
+from licensing.client import http_get
+from licensing.db import get_session
+from licensing.model.hierarchy_provider import HierarchyProvider
+from licensing.model.product import Product
 
 INITIAL_PRODUCTS = [
     Product(

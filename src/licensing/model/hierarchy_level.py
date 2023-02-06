@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, Integer, ForeignKey, BigInteger, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from licm.model.base import Base
+from licensing.model.base import Base
 
 
 class HierarchyLevel(Base):

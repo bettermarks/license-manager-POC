@@ -1,4 +1,5 @@
 import asyncio
+import logging
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
@@ -8,11 +9,11 @@ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
 from alembic import context
 
-from licm.db import DATABASE_URL
+from licensing.db import DATABASE_URL
 
 # import the models here ...
-from licm.model.base import Base
-from licm.model import product, hierarchy_provider, hierarchy_level
+from licensing.model.base import Base
+from licensing.model import product, hierarchy_provider, hierarchy_level
 
 
 # this is the Alembic Config object, which provides
@@ -51,6 +52,8 @@ def run_migrations_offline() -> None:
     # No, we don't do this ... : url = config.get_main_option("sqlalchemy.url")
     # We will do that:
     url = DATABASE_URL
+    log = logging.get_logger()
+    log.info(f"DATBASE_URL: {DATABASE_URL}")
 
     context.configure(
        url=url,

@@ -1,0 +1,126 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`postgres-chart should match with snapshot 1`] = `
+Array [
+  Object {
+    "apiVersion": "v1",
+    "immutable": false,
+    "kind": "Secret",
+    "metadata": Object {
+      "name": "licensing-db",
+      "namespace": "dummy-namespace",
+    },
+    "stringData": Object {
+      "DATABASE_HOST": "licensing-db",
+      "DATABASE_NAME": "postgres",
+      "DATABASE_PASSWORD": "postgres",
+      "DATABASE_PORT": "5432",
+      "DATABASE_USER": "postgres",
+      "POSTGRES_DB": "postgres",
+      "POSTGRES_PASSWORD": "postgres",
+      "POSTGRES_USER": "postgres",
+    },
+  },
+  Object {
+    "apiVersion": "v1",
+    "immutable": false,
+    "kind": "ConfigMap",
+    "metadata": Object {
+      "name": "licensing-db-init-db-script",
+      "namespace": "dummy-namespace",
+    },
+  },
+  Object {
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": Object {
+      "labels": Object {
+        "app": "licensing-db",
+      },
+      "name": "licensing-db",
+      "namespace": "dummy-namespace",
+    },
+    "spec": Object {
+      "replicas": 1,
+      "selector": Object {
+        "matchLabels": Object {
+          "app": "licensing-db",
+        },
+      },
+      "template": Object {
+        "metadata": Object {
+          "labels": Object {
+            "app": "licensing-db",
+          },
+        },
+        "spec": Object {
+          "containers": Array [
+            Object {
+              "envFrom": Array [
+                Object {
+                  "secretRef": Object {
+                    "name": "licensing-db",
+                  },
+                },
+              ],
+              "image": "postgres:14",
+              "imagePullPolicy": "IfNotPresent",
+              "livenessProbe": Object {
+                "initialDelaySeconds": 10,
+                "tcpSocket": Object {
+                  "port": 5432,
+                },
+              },
+              "name": "licensing-db",
+              "ports": Array [
+                Object {
+                  "containerPort": 5432,
+                },
+              ],
+              "readinessProbe": Object {
+                "initialDelaySeconds": 10,
+                "tcpSocket": Object {
+                  "port": 5432,
+                },
+              },
+              "volumeMounts": Array [
+                Object {
+                  "mountPath": "/docker-entrypoint-initdb.d/",
+                  "name": "licensing-db-init-db-script-volume",
+                },
+              ],
+            },
+          ],
+          "volumes": Array [
+            Object {
+              "configMap": Object {
+                "name": "licensing-db-init-db-script",
+              },
+              "name": "licensing-db-init-db-script-volume",
+            },
+          ],
+        },
+      },
+    },
+  },
+  Object {
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": Object {
+      "name": "licensing-db",
+      "namespace": "dummy-namespace",
+    },
+    "spec": Object {
+      "ports": Array [
+        Object {
+          "port": 5432,
+        },
+      ],
+      "selector": Object {
+        "app": "licensing-db",
+      },
+      "type": "ClusterIP",
+    },
+  },
+]
+`;

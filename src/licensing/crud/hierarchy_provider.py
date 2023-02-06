@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from licm.model import hierarchy_provider as model
-from licm.schema import hierarchy_provider as schema
+from licensing.model import hierarchy_provider as model
+from licensing.schema import hierarchy_provider as schema
 
 
 def get_hierarchy_provider(session: Session, eid: str):

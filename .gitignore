@@ -14,7 +14,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -131,3 +130,7 @@ dmypy.json
 
 # MAC
 .DS_Store
+
+# K8s
+k8s/node_modules
+k8s/dist

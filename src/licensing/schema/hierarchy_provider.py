@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from licm.schema.hierarchy_level import HierarchyLevel
+from licensing.schema.hierarchy_level import HierarchyLevel
 
 
 class HierarchyProviderBase(BaseModel):

@@ -11,5 +11,5 @@ tag_format = "$version"
 version_files = [
     "VERSION",
 	"setup.py:version",
-	"src/licm/__init__.py"
+	"src/licensing/__init__.py"
 ]

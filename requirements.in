@@ -4,3 +4,4 @@ fastapi
 uvicorn
 alembic
 requests
+pydantic[dotenv]

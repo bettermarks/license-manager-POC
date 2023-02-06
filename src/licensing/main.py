@@ -1,8 +1,8 @@
 import logging
 from fastapi import FastAPI
 
-from licm.api import product
-from licm.load_initial_data import load_initial_products, load_initial_hierarchy_providers
+from licensing.api import product, status
+from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
 # init logging
 logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
@@ -23,3 +23,4 @@ async def shutdown():
 
 
 app.include_router(product.router, prefix="/products", tags=["products"])
+app.include_router(status.router, prefix="/status", tags=["debug"])

@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, BigInteger, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 
-from licm.model.base import Base
+from licensing.model.base import Base
 
 
 class Product(Base):
