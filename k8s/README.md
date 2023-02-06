@@ -204,6 +204,15 @@ class LicensingChart {
    +KubeIngress
 }
 
+class IngressNginxChart {
+   +Helm ingressNginx
+}
+
+class LicensingService {
+   +KubeDeployment
+   +KubeService
+}
+
 App --> PostgresChart
 App --> LicensingChart
 App --> IngressNginxChart
