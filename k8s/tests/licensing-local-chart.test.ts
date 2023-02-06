@@ -11,6 +11,7 @@ describe("licensing-local-chart", () => {
     const chart = new LicensingChart(app, "test-chart", {
       name: "licensing",
       image: "bm-licensing",
+      namespace: "dummy-namespace",
       segment: Segment.LOC00,
       postgresSecret: "pgChart.secret.name",
       applicationSecret: "loc00-licensing-application-secret",

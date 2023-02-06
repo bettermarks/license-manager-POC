@@ -11,7 +11,7 @@ import {
   KubeRoleBinding
 } from "../../imports/k8s";
 import { Construct } from "constructs";
-import { Namespace, NodeSelector, Segment } from "../types";
+import { NodeSelector, Segment } from "../types";
 
 import { LicensingService } from "../services/licensing-service";
 import { APPLICATION_CONFIG } from "../config";
@@ -70,7 +70,7 @@ export class LicensingChart extends Chart {
     super(scope, id, props);
 
     const {
-      namespace = Namespace.DEFAULT,
+      namespace,
       apiReplicas = 1,
       apiResources,
       applicationSecret,
@@ -87,7 +87,7 @@ export class LicensingChart extends Chart {
     const serviceAccount = new KubeServiceAccount(this, `${name}-service-account`, {
       metadata: {
         name: `${name}-service-account`,
-        namespace: props.namespace,
+        namespace,
       },
       imagePullSecrets: imagePullSecrets?.map((secretRef) => ({ name: secretRef })),
     });
@@ -95,7 +95,7 @@ export class LicensingChart extends Chart {
     const role = new KubeRole(this, `${name}-role`, {
       metadata: {
         name: `${name}-role`,
-        namespace: props.namespace,
+        namespace,
       },
       rules: [
         {
@@ -109,7 +109,7 @@ export class LicensingChart extends Chart {
     new KubeRoleBinding(this, `${name}-role-binding`, {
       metadata: {
         name: `${name}-role-binding`,
-        namespace: props.namespace,
+        namespace,
       },
       roleRef: {
         apiGroup: role.apiGroup,

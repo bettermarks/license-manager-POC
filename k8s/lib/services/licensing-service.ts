@@ -22,7 +22,7 @@ export type LicensingServiceProps = {
   servicePort?: number;
   containerPort?: number;
   deploymentId: string;
-  namespace: string;
+  namespace?: string;
 };
 export class LicensingService extends Construct {
   readonly service?: KubeService;

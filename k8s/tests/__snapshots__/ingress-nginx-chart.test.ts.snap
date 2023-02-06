@@ -18,7 +18,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -42,7 +42,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -59,6 +59,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -192,6 +193,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -202,7 +204,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -221,7 +223,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -369,7 +371,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -380,7 +382,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -399,7 +401,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [
@@ -432,7 +434,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [
@@ -474,7 +476,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "minReadySeconds": 0,
@@ -658,6 +660,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "nginx",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "controller": "k8s.io/ingress-nginx",
@@ -677,6 +680,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "webhooks": Array [
       Object {
@@ -686,7 +690,7 @@ Array [
         "clientConfig": Object {
           "service": Object {
             "name": "ingress-nginx-controller-admission",
-            "namespace": "default",
+            "namespace": "dummy-namespace",
             "path": "/networking/v1/ingresses",
           },
         },
@@ -732,7 +736,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -753,6 +757,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -787,6 +792,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -797,7 +803,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx-admission",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -819,7 +825,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -854,7 +860,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -865,7 +871,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx-admission",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -887,7 +893,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission-create",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "template": Object {
@@ -962,7 +968,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission-patch",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "template": Object {
@@ -1042,7 +1048,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -1066,7 +1072,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -1083,6 +1089,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -1216,6 +1223,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -1226,7 +1234,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -1245,7 +1253,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -1393,7 +1401,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -1404,7 +1412,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -1423,7 +1431,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [
@@ -1456,7 +1464,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [
@@ -1498,7 +1506,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-controller",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "minReadySeconds": 0,
@@ -1533,7 +1541,7 @@ Array [
                 "--validating-webhook=:8443",
                 "--validating-webhook-certificate=/usr/local/certificates/cert",
                 "--validating-webhook-key=/usr/local/certificates/key",
-                "--default-ssl-certificate=default/loc00-tls-secret",
+                "--default-ssl-certificate=dummy-namespace/loc00-tls-secret",
               ],
               "env": Array [
                 Object {
@@ -1670,6 +1678,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "nginx",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "controller": "k8s.io/ingress-nginx",
@@ -1689,6 +1698,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "webhooks": Array [
       Object {
@@ -1698,7 +1708,7 @@ Array [
         "clientConfig": Object {
           "service": Object {
             "name": "ingress-nginx-controller-admission",
-            "namespace": "default",
+            "namespace": "dummy-namespace",
             "path": "/networking/v1/ingresses",
           },
         },
@@ -1744,7 +1754,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -1765,6 +1775,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -1799,6 +1810,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -1809,7 +1821,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx-admission",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -1831,7 +1843,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -1866,7 +1878,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -1877,7 +1889,7 @@ Array [
       Object {
         "kind": "ServiceAccount",
         "name": "ingress-nginx-admission",
-        "namespace": "default",
+        "namespace": "dummy-namespace",
       },
     ],
   },
@@ -1899,7 +1911,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission-create",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "template": Object {
@@ -1974,7 +1986,7 @@ Array [
         "helm.sh/chart": "ingress-nginx-4.4.2",
       },
       "name": "ingress-nginx-admission-patch",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "template": Object {

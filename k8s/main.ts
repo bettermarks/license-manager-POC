@@ -22,18 +22,19 @@ const app = new App();
 if (SEGMENT === Segment.LOC00) {
   const pgChart = new PostgresChart(app, "postgres", { 
     image: POSTGRES_IMAGE, 
-    name: "licensing-db" 
+    name: "licensing-db",
+    namespace: Namespace.LICENSING,
   });
   new LicensingChart(app, "licensing", {
     name: "licensing",
-    namespace: Namespace.DEFAULT,
+    namespace: Namespace.LICENSING,
     image: IMAGE_NAME,
     segment: SEGMENT,
     postgresSecret: pgChart.secret.name,
     imagePullSecrets: [],
   });
   new IngressNginxChart(app, "ingress-nginx", {
-    namespace: Namespace.DEFAULT,
+    namespace: Namespace.LICENSING,
     replicas: 1,
     tlsSecret: "loc00-tls-secret",
   });

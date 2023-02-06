@@ -8,6 +8,7 @@ Array [
     "kind": "Secret",
     "metadata": Object {
       "name": "licensing-db",
+      "namespace": "dummy-namespace",
     },
     "stringData": Object {
       "DATABASE_HOST": "licensing-db",
@@ -26,6 +27,7 @@ Array [
     "kind": "ConfigMap",
     "metadata": Object {
       "name": "licensing-db-init-db-script",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -36,6 +38,7 @@ Array [
         "app": "licensing-db",
       },
       "name": "licensing-db",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "replicas": 1,
@@ -105,6 +108,7 @@ Array [
     "kind": "Service",
     "metadata": Object {
       "name": "licensing-db",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [

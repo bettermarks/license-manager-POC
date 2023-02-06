@@ -5,7 +5,7 @@ import { ApplicationConfig } from "./types";
 export type LicensingConfigMapProps = {
   name: string;
   appConfig: ApplicationConfig;
-  namespace: string;
+  namespace?: string;
 };
 
 export class LicensingConfigMap extends Construct {

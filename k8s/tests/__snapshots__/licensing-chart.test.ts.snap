@@ -8,6 +8,7 @@ Array [
     "kind": "ServiceAccount",
     "metadata": Object {
       "name": "licensing-service-account",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -15,6 +16,7 @@ Array [
     "kind": "Role",
     "metadata": Object {
       "name": "licensing-role",
+      "namespace": "dummy-namespace",
     },
     "rules": Array [
       Object {
@@ -37,6 +39,7 @@ Array [
     "kind": "RoleBinding",
     "metadata": Object {
       "name": "licensing-role-binding",
+      "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
@@ -64,7 +67,7 @@ Array [
     "kind": "ConfigMap",
     "metadata": Object {
       "name": "licensing-configmap",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
   },
   Object {
@@ -72,7 +75,7 @@ Array [
     "kind": "Deployment",
     "metadata": Object {
       "name": "licensing-api-deployment",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "replicas": 3,
@@ -284,7 +287,7 @@ Array [
     "kind": "Service",
     "metadata": Object {
       "name": "licensing-api-service",
-      "namespace": "default",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ports": Array [
@@ -304,6 +307,7 @@ Array [
     "kind": "Ingress",
     "metadata": Object {
       "name": "licensing-ingress",
+      "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ingressClassName": "nginx",

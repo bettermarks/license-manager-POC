@@ -8,6 +8,7 @@ describe("ingress-nginx-chart", () => {
     const chart = new IngressNginxChart(app, "test-chart", {
       replicas: 1,
       tlsSecret: "loc00-tls-secret",
+      namespace: "dummy-namespace"
     });
     const results = Testing.synth(chart);
     expect(results).toMatchSnapshot();
@@ -16,6 +17,7 @@ describe("ingress-nginx-chart", () => {
     const app = Testing.app();
     const chart = new IngressNginxChart(app, "test-chart", {
       nodeSelector: APP_NODE_POOL_LABELS,
+      namespace: "dummy-namespace"
     });
     const results = Testing.synth(chart);
     expect(results).toMatchSnapshot();
