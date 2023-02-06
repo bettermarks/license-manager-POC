@@ -1,4 +1,4 @@
-from fastapi import HTTPException, APIRouter
+from fastapi import APIRouter
 from typing import List
 
 from licensing.db import get_session

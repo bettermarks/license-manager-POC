@@ -145,21 +145,22 @@ export class LicensingChart extends Chart {
         : []
     ];
 
+    const apiName = `${name}-api`;
     /**
      * DeploymentID is a unique identifier for each deployment
      */
     const deploymentId = Date.now().toString(16);  // TODO: this should be rethought
-    const licensingService = new LicensingService(this, `${name}-service`, {
-      name: name,
+    const licensingService = new LicensingService(this, `${apiName}-service`, {
+      name: apiName,
       namespace,
       replicas: apiReplicas,
       serviceAccountName: serviceAccount.name,
       nodeSelector: nodeSelector,
-      deploymentId: `${name}-${deploymentId}`,
+      deploymentId: `${apiName}-${deploymentId}`,
 
       initContainers: [
         {
-          name: `${name}-wait-for-database`,
+          name: `${apiName}-wait-for-database`,
           image: POSTGRES_IMAGE,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["sh", "-c", "until pg_isready --host ${DATABASE_HOST}; do sleep 1; done"],
@@ -176,7 +177,7 @@ export class LicensingChart extends Chart {
           },
         },
         {
-          name: `${name}-migration`,
+          name: `${apiName}-migration`,
           image: image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
@@ -187,7 +188,7 @@ export class LicensingChart extends Chart {
           resources: migrationJobResources,
         },
         {
-          name: `${name}-load-fixtures`,
+          name: `${apiName}-load-fixtures`,
           image: image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
@@ -200,7 +201,7 @@ export class LicensingChart extends Chart {
       ],
       containers: [
         {
-          name: name,
+          name: apiName,
           image: image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           ports: [
@@ -213,14 +214,14 @@ export class LicensingChart extends Chart {
           readinessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/products",
+              path: "/status",
             },
             initialDelaySeconds: 10,
           },
           livenessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/products",
+              path: "/status",
             },
             initialDelaySeconds: 10,
           },

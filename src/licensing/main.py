@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 
-from licensing.api import product
+from licensing.api import product, status
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
 # init logging
@@ -23,3 +23,4 @@ async def shutdown():
 
 
 app.include_router(product.router, prefix="/products", tags=["products"])
+app.include_router(status.router, prefix="/status", tags=["debug"])
