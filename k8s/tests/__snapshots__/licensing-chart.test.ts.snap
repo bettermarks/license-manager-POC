@@ -71,21 +71,21 @@ Array [
     "apiVersion": "apps/v1",
     "kind": "Deployment",
     "metadata": Object {
-      "name": "licensing-deployment",
+      "name": "licensing-api-deployment",
       "namespace": "default",
     },
     "spec": Object {
       "replicas": 3,
       "selector": Object {
         "matchLabels": Object {
-          "app": "licensing",
+          "app": "licensing-api",
         },
       },
       "template": Object {
         "metadata": Object {
           "labels": Object {
-            "app": "licensing",
-            "deploymentId": "licensing-11defd82800",
+            "app": "licensing-api",
+            "deploymentId": "licensing-api-11defd82800",
           },
         },
         "spec": Object {
@@ -112,12 +112,12 @@ Array [
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
-                  "path": "/products",
+                  "path": "/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
               },
-              "name": "licensing",
+              "name": "licensing-api",
               "ports": Array [
                 Object {
                   "containerPort": 8000,
@@ -125,7 +125,7 @@ Array [
               ],
               "readinessProbe": Object {
                 "httpGet": Object {
-                  "path": "/products",
+                  "path": "/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -168,7 +168,7 @@ Array [
               ],
               "image": "postgres:14",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-wait-for-database",
+              "name": "licensing-api-wait-for-database",
               "resources": Object {
                 "limits": Object {
                   "cpu": 0.2,
@@ -207,7 +207,7 @@ Array [
               ],
               "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-migration",
+              "name": "licensing-api-migration",
               "resources": Object {
                 "limits": Object {
                   "cpu": 1,
@@ -246,7 +246,7 @@ Array [
               ],
               "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-load-fixtures",
+              "name": "licensing-api-load-fixtures",
               "resources": Object {
                 "limits": Object {
                   "cpu": 1,
@@ -267,7 +267,7 @@ Array [
             Object {
               "labelSelector": Object {
                 "matchLabels": Object {
-                  "app": "licensing",
+                  "app": "licensing-api",
                 },
               },
               "maxSkew": 1,
@@ -283,7 +283,7 @@ Array [
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": Object {
-      "name": "licensing-service",
+      "name": "licensing-api-service",
       "namespace": "default",
     },
     "spec": Object {
@@ -294,7 +294,7 @@ Array [
         },
       ],
       "selector": Object {
-        "app": "licensing",
+        "app": "licensing-api",
       },
       "type": "ClusterIP",
     },
@@ -315,7 +315,7 @@ Array [
               Object {
                 "backend": Object {
                   "service": Object {
-                    "name": "licensing-service",
+                    "name": "licensing-api-service",
                     "port": Object {
                       "number": 80,
                     },

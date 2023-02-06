@@ -435,10 +435,6 @@ Array [
       "namespace": "default",
     },
     "spec": Object {
-      "ipFamilies": Array [
-        "IPv4",
-      ],
-      "ipFamilyPolicy": "SingleStack",
       "ports": Array [
         Object {
           "appProtocol": "http",
@@ -1463,10 +1459,6 @@ Array [
       "namespace": "default",
     },
     "spec": Object {
-      "ipFamilies": Array [
-        "IPv4",
-      ],
-      "ipFamilyPolicy": "SingleStack",
       "ports": Array [
         Object {
           "appProtocol": "http",
