@@ -1,7 +1,5 @@
 from pydantic import BaseModel, Field
 
-from licensing.schema.hierarchy_level import HierarchyLevel
-
 
 class HierarchyProviderBase(BaseModel):
     eid: str = Field(..., min_length=3, max_length=64)
@@ -16,7 +14,6 @@ class HierarchyProviderCreate(HierarchyProviderBase):
 
 class HierarchyProvider(HierarchyProviderBase):
     id: int
-    hierarchy_levels: list[HierarchyLevel] = []
 
     class Config:
         orm_mode = True

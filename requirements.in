@@ -1,5 +1,6 @@
 asyncpg
 SQLAlchemy[asyncio]
+sqlmodel
 fastapi
 uvicorn
 alembic

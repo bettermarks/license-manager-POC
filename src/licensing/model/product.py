@@ -1,15 +1,11 @@
-from sqlalchemy import Column, String, BigInteger, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlmodel import Field
 
-from licensing.model.base import Base
+from licensing.model.base import Model
 
 
-class Product(Base):
-    eid = Column(String(64), nullable=False, index=True)
-    name = Column(String(64))
-    description = Column(String(256))
+class Product(Model, table=True):
+    eid: str = Field(max_length=256, nullable=False, index=True, sa_column_kwargs={"unique": True})
+    name: str = Field(max_length=256, nullable=False, index=True)
+    description: str = Field(max_length=256)
 
-    __table_args__ = (
-        UniqueConstraint("eid", name="uix_product"),
-    )
 
