@@ -1,13 +1,11 @@
-from sqlalchemy import UniqueConstraint
-from sqlmodel import Field
+from sqlalchemy import Column, String, UniqueConstraint
+from sqlalchemy.orm import relationship
 
 from licensing.model.base import Model
 
 
-class HierarchyProvider(Model, table=True):
-    eid: str = Field(max_length=256, nullable=False, index=True, sa_column_kwargs={"unique": True})
-    name: str = Field(max_length=256, nullable=False, index=True)
-    description: str = Field(max_length=256)
-    hierarchy_url: str = Field(max_length=256, nullable=False, index=True)
-
-
+class HierarchyProvider(Model):
+    eid = Column(String(64), nullable=False, index=True, unique=True)
+    name = Column(String(64), nullable=False, index=True)
+    description = Column(String(256))
+    hierarchy_url = Column(String(256), nullable=False, index=True)

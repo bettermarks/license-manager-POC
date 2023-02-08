@@ -1,6 +1,5 @@
 asyncpg
-SQLAlchemy[asyncio]
-sqlmodel
+SQLAlchemy[asyncio]==2.0.2
 fastapi
 uvicorn
 alembic

@@ -5,16 +5,16 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.engine import Connection
-from sqlmodel import SQLModel
 
 from licensing.db import DATABASE_URL
+from licensing.model.base import Model
 
 config = context.config
 
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-target_metadata = SQLModel.metadata
+target_metadata = Model.metadata
 
 target_metadata.naming_convention = {
     "ix": "ix_%(column_0_label)s",
