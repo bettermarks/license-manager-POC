@@ -8,15 +8,20 @@ from licensing.load_initial_data import load_initial_products, load_initial_hier
 # init logging
 logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
 
-# some metadata for our API
+# some metadata for our API (will be nicely printed out via /docs)
 tags_metadata = [
     {
         "name": "Products",
-        "description": "Operations with products. A product is basically something, a user can purchase.",
+        "description": (
+            "Operations with products. A product is basically something, "
+            "a user can purchase."
+        ),
     },
     {
         "name": "Debug",
-        "description": "The API status and other useful (debug) information",
+        "description": (
+            "The API status and other useful (debug) information"
+        ),
     },
 ]
 
