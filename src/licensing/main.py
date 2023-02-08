@@ -36,13 +36,13 @@ app = FastAPI(
 
 @app.on_event("startup")
 async def startup():
+    # TODO how could initial data be loaded? This seems not to be the right place ...
     await load_initial_products()
     await load_initial_hierarchy_providers()
 
 
 @app.on_event("shutdown")
 async def shutdown():
-    # TODO
     pass
 
 
