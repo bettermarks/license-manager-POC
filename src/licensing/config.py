@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     debug: bool = False
     project_name: str = "License Manager POC"
     version: str = "0.0.1"
-    description: str = "A generic Licenses manager application"
+    description: str = "A generic license managing application"
 
     # DB settings
     database_user: str

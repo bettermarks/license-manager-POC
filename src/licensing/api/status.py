@@ -11,5 +11,6 @@ def get_status():
     return {
         "project": settings.project_name,
         "version": settings.version,
-        "debug": settings.debug
+        "debug": settings.debug,
+        "description": settings.description
     }
