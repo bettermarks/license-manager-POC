@@ -3,6 +3,14 @@ from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    # Generic settings
+    api_version_prefix: str = "/api/v1"
+    debug: bool = False
+    project_name: str = "License Manager POC"
+    version: str = "0.0.1"
+    description: str = "A generic Licenses manager application"
+
+    # DB settings
     database_user: str
     database_password: str
     database_host: str

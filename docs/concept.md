@@ -104,11 +104,11 @@ POST /users/{user EID}/purchase-license
 with some request body like
 ```json
 {
-  "product": "full_access"
-  "level": "class"
-  "entities": ["34535356324", "2346445645646"]
-  "seats": 50
-  "start": "2023-01-01"
+  "product": "full_access",
+  "hierarchy_level": "class",
+  "entities": ["34535356324", "2346445645646"],
+  "seats": 50,
+  "start": "2023-01-01",
   "end": "2023-12-31"
 }
 ```
