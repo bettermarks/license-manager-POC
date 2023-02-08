@@ -8,5 +8,5 @@ class StatusBase(BaseModel):
     description: str
 
 
-class Status(StatusBase):
+class StatusGet(StatusBase):
     pass

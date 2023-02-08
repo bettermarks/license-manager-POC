@@ -1,3 +1,4 @@
+"""
 from pydantic import BaseModel, Field
 
 
@@ -7,8 +8,13 @@ class ProductBase(BaseModel):
     description: str = Field(..., min_length=3, max_length=256)
 
 
-class ProductGet(ProductBase):
+class ProductCreate(ProductBase):
+    pass
+
+
+class Product(ProductBase):
     id: int
 
     class Config:
         orm_mode = True
+"""

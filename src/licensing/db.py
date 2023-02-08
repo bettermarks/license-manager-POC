@@ -26,17 +26,20 @@ DATABASE_URL = postgres_dsn(
 
 
 # SQLAlchemy session
-engine = create_async_engine(DATABASE_URL, future=True, echo=True)
-async_session_factory = sessionmaker(bind=engine, expire_on_commit=False, class_=AsyncSession)
+async_engine = create_async_engine(DATABASE_URL, future=True, echo=True)
+async_session_factory = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
 
 
-@asynccontextmanager
-async def get_session() -> AsyncSession:
+async def get_async_session() -> AsyncSession:
+    """This is the session generator usually injected using FastAPI 'Depends' function"""
     try:
         async with async_session_factory() as session:
             yield session
-    except:
+    except Exception as ex:
         await session.rollback()
-        raise
+        raise ex
     finally:
         await session.close()
+
+# We sometimes want a context manager to use the DB session with 'with'
+get_async_session_context = asynccontextmanager(get_async_session)
