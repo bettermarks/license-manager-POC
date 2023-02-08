@@ -1,5 +1,4 @@
-from sqlalchemy import Column, String, UniqueConstraint
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, String
 
 from licensing.model.base import Model
 
