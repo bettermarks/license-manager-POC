@@ -8,11 +8,24 @@ from licensing.load_initial_data import load_initial_products, load_initial_hier
 # init logging
 logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
 
+# some metadata for our API
+tags_metadata = [
+    {
+        "name": "Products",
+        "description": "Operations with products. A product is basically something, a user can purchase.",
+    },
+    {
+        "name": "Debug",
+        "description": "The API status and other useful (debug) information",
+    },
+]
+
 app = FastAPI(
     title=settings.project_name,
     version=settings.version,
     openapi_url=f"{settings.api_version_prefix}/openapi.json",
-    debug=settings.debug
+    debug=settings.debug,
+    openapi_tags=tags_metadata
 )
 
 
@@ -28,5 +41,5 @@ async def shutdown():
     pass
 
 
-app.include_router(product.router, prefix="/products", tags=["products"])
-app.include_router(status.router, prefix="/status", tags=["debug"])
+app.include_router(product.router, prefix="/products", tags=["Products"])
+app.include_router(status.router, prefix="/status", tags=["Debug"])

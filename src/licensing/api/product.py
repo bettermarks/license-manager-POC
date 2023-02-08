@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.get("/", response_model=List[schema.ProductGet], status_code=http_status.HTTP_200_OK)
 async def get_products(session: AsyncSession = Depends(get_async_session)):
+    """this is a comment"""
     return await crud.get_products(session)
 
 
