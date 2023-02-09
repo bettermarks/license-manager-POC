@@ -10,15 +10,15 @@ from licensing.crud import product as crud
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schema.ProductGet], status_code=http_status.HTTP_200_OK)
+@router.get("/", response_model=List[schema.Product], status_code=http_status.HTTP_200_OK)
 async def get_products(session: AsyncSession = Depends(get_async_session)):
     """this is a comment"""
     return await crud.get_products(session)
 
 
-@router.get("/{product_id}", response_model=schema.ProductGet, status_code=http_status.HTTP_200_OK)
-async def get_product(product_id, session: AsyncSession = Depends(get_async_session)):
-    product = await crud.get_product(session, product_id)
+@router.get("/{product_eid}", response_model=schema.Product, status_code=http_status.HTTP_200_OK)
+async def get_product(product_eid, session: AsyncSession = Depends(get_async_session)):
+    product = await crud.get_product(session, product_eid)
     if product is None:
         raise HTTPException(
             status_code=http_status.HTTP_404_NOT_FOUND,

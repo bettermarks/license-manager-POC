@@ -18,8 +18,8 @@ class Model:
         return re.sub(r'(?<!^)(?=[A-Z])', '_', cls.__name__).lower()   # snake case ...
 
     id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    created = Column(DateTime, default=datetime.datetime.now, index=True)
-    updated = Column(DateTime, onupdate=datetime.datetime.now, index=True)
+    created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, index=True)
+    updated = Column(DateTime(timezone=True), onupdate=datetime.datetime.utcnow, index=True)
 
 
 Model = declarative_base(cls=Model)

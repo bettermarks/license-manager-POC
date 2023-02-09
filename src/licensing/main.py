@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 
-from licensing.api import product, status
+from licensing.api import license, product, status
 from licensing.config import settings
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
@@ -10,6 +10,14 @@ logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
 
 # some metadata for our API (will be nicely printed out via /docs)
 tags_metadata = [
+    {
+        "name": "Licenses",
+        "description": (
+            "Purchasing and redeeming operations for licenses. A license is basically a "
+            "'relation' between a product and one or more 'license owners' with some constraints "
+            "like a start date, an end date and a number of open 'seats'."
+        ),
+    },
     {
         "name": "Products",
         "description": (
@@ -46,5 +54,6 @@ async def shutdown():
     pass
 
 
+app.include_router(license.router, prefix="/licenses", tags=["Licenses"])
 app.include_router(product.router, prefix="/products", tags=["Products"])
 app.include_router(status.router, prefix="/status", tags=["Debug"])

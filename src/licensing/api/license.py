@@ -1,31 +1,23 @@
-"""
-from fastapi import APIRouter
-from typing import List
+from fastapi import APIRouter, Depends
+from fastapi import status as http_status
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.db import get_session
-from licensing.schema import product as schema
-from licensing.crud import product as crud
+from licensing.db import get_async_session
+from licensing.schema import license as schema
+from licensing.crud import license as crud
 
 router = APIRouter()
 
 
-@router.post("/", response_model=schema.Product, status_code=201)
-async def create_product(product: schema.ProductCreate):
-    async with get_session() as session:
-        return await crud.create_product(session, product=product)
-        # raise HTTPException(status_code=400, detail="Product already registered")
+@router.post(
+    "/{purchaser_eid}/purchase",
+    response_model=schema.License,
+    status_code=http_status.HTTP_201_CREATED
+)
+async def purchase_license(
+        purchaser_eid: str,
+        license_data: schema.LicenseCreate,
+        session: AsyncSession = Depends(get_async_session)
+):
+    return await crud.purchase_license(session, purchaser_eid, license_data)
 
-
-@router.get("/{product_id}", response_model=schema.Product)
-async def get_product(product_id):
-    async with get_session() as session:
-        return await crud.get_product(session, product_id)
-
-
-@router.get("/", response_model=List[schema.Product])
-async def get_products():
-    async with get_session() as session:
-        return await crud.get_products(session)
-
-
-"""

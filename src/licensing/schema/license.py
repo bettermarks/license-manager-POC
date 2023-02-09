@@ -1,20 +1,24 @@
-"""
-from pydantic import BaseModel, Field
+import datetime
+from typing import List
+
+from pydantic import BaseModel, validator
 
 
-class ProductBase(BaseModel):
-    eid: str = Field(..., min_length=3, max_length=64)
-    name: str = Field(..., min_length=3, max_length=64)
-    description: str = Field(..., min_length=3, max_length=256)
+class LicenseBase(BaseModel):
+    product_eid: str
+    owner_hierarchy_level: str
+    owner_eids: List[str]
+    start: datetime.date
+    end: datetime.date
+    seats: int | None
 
 
-class ProductCreate(ProductBase):
+class LicenseCreate(LicenseBase):
     pass
 
 
-class Product(ProductBase):
+class License(LicenseBase):
     id: int
 
     class Config:
         orm_mode = True
-"""
