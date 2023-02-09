@@ -99,7 +99,7 @@ The process of purchasing a license will be a multistep process (getting pricing
 with number of seats and duration to a 'shopping cart', purchase ...). We will not implement such a multistep process
 in the POC, we will just add one route as follows:
 ```
-POST /users/{user EID}/purchase-license
+POST /users/{user EID}/purchases
 ```
 with some request body like
 ```json
@@ -123,7 +123,7 @@ EID='2346445645646".
 #### What happens when this route is being called:
 Let us assume, the purchase function is called via
 ```
-POST /users/1111111/purchase-license
+POST /users/1111111/purchases
 ```
 using the request body given above.
 The request handling function will perform the following steps:

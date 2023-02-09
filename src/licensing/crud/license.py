@@ -61,7 +61,7 @@ async def check_owners(url: str, purchaser_eid: str, owner_hierarchy_level: str,
         if f"{owner_hierarchy_level}({owner_eid})" not in hierarchy_list_as_string:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
-                detail=f"Provided license owner ('{owner_eid}')cannot be found in users hierarchy."
+                detail=f"Provided license owner ('{owner_eid}') cannot be found in users hierarchy."
             )
     return True
 

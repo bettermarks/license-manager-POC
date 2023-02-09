@@ -12,7 +12,7 @@ router = APIRouter()
 
 
 @router.post(
-    "/{purchaser_eid}/purchase",
+    "/{purchaser_eid}/purchases",
     response_model=license_schema.License,
     status_code=http_status.HTTP_201_CREATED
 )
