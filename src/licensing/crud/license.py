@@ -1,7 +1,6 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import status as http_status, HTTPException
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.hierarchy_provider_client import get_hierarchy
@@ -41,7 +40,7 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> hierarchy_
 
 async def check_owners(url: str, purchaser_eid: str, owner_hierarchy_level: str, owner_eids: List[str]) -> bool:
     """
-    checks, if the requested license owners are in the 'hierarchy path' of the pruchaser.
+    checks, if the requested license owners are in the 'hierarchy path' of the purchaser.
     That means: is the purchaser 'allowed' to purchase a license for the given owners?
     This is true, if and only if the purchaser is 'member' of the license owner, f.e.
     some class or some school.
@@ -67,9 +66,13 @@ async def check_owners(url: str, purchaser_eid: str, owner_hierarchy_level: str,
 
 
 async def purchase_license(
-        session: AsyncSession, purchaser_eid: str, license_data: license_schema.LicenseCreate
+        session: AsyncSession,
+        purchaser_eid: str,
+        license_data: license_schema.LicenseCreate
 ) -> license_model.License:
-
+    """
+    The license purchase process performed by a user for one or more entities, they are member of.
+    """
     # 0. check, if requesting user is purchaser
     # TODO
 
@@ -96,3 +99,8 @@ async def purchase_license(
     session.add(lic)
     await session.commit()
     return lic
+
+
+async def get_permissions(session: AsyncSession, user_eid: str) -> Any:
+    pass
+

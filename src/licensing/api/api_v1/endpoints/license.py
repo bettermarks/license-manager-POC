@@ -23,3 +23,11 @@ async def purchase_license(
 ) -> Any:
     return await license_crud.purchase_license(session, purchaser_eid, license_data)
 
+
+@router.get(
+    "/{user_eid}/permissions",
+    response_model=license_schema.License,
+    status_code=http_status.HTTP_200_OK
+)
+async def get_permissions(user_eid: str, session: AsyncSession = Depends(get_async_session)) -> Any:
+    return await license_crud.get_permissions(session, user_eid)

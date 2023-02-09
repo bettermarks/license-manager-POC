@@ -1,7 +1,8 @@
+from typing import List, Any
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List, Any
 
 from licensing.db import get_async_session
 from licensing.schema import product as product_schema
