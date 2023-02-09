@@ -1,7 +1,7 @@
 import datetime
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from licensing.model import product
 
 
@@ -12,8 +12,8 @@ class LicenseBase(BaseModel):
 
 
 class LicenseCreate(LicenseBase):
-    product_eid: str
-    owner_hierarchy_level: str
+    product_eid: str = Field(..., min_length=1, max_length=256)
+    owner_hierarchy_level: str = Field(..., min_length=1, max_length=256)
     owner_eids: List[str]
 
 

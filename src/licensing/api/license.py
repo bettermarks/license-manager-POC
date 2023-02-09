@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import APIRouter, Depends
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -18,6 +20,6 @@ async def purchase_license(
         purchaser_eid: str,
         license_data: schema.LicenseCreate,
         session: AsyncSession = Depends(get_async_session)
-):
+) -> Any:
     return await crud.purchase_license(session, purchaser_eid, license_data)
 

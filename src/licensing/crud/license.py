@@ -7,7 +7,9 @@ from licensing.model import license as model
 from licensing.schema import license as schema
 
 
-async def purchase_license(session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate):
+async def purchase_license(
+        session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate
+) -> model.License:
 
     # 1. find product
     product = await get_product(session, license_data.product_eid)
