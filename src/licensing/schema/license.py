@@ -1,11 +1,12 @@
 import datetime
 from typing import List
 
-from pydantic import BaseModel, Field
-from licensing.model import product
+from pydantic import BaseModel, Field, constr
 
 
 class LicenseBase(BaseModel):
+    owner_hierarchy_level: str = Field(..., min_length=1, max_length=256)
+    owner_eids: List[constr(min_length=1, max_length=256)]
     start: datetime.date
     end: datetime.date
     seats: int | None
@@ -13,12 +14,10 @@ class LicenseBase(BaseModel):
 
 class LicenseCreate(LicenseBase):
     product_eid: str = Field(..., min_length=1, max_length=256)
-    owner_hierarchy_level: str = Field(..., min_length=1, max_length=256)
-    owner_eids: List[str]
 
 
 class License(LicenseBase):
-    # product: product.Product
+    ref_product: int
 
     class Config:
         orm_mode = True
