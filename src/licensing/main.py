@@ -1,7 +1,7 @@
 import logging
 from fastapi import FastAPI
 
-from licensing.api import license, product, status
+from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
@@ -34,10 +34,10 @@ tags_metadata = [
 ]
 
 app = FastAPI(
-    title=settings.project_name,
-    version=settings.version,
-    openapi_url=f"{settings.api_version_prefix}/openapi.json",
-    debug=settings.debug,
+    title=settings.PROJECT_NAME,
+    version=settings.VERSION,
+    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    debug=settings.DEBUG,
     openapi_tags=tags_metadata
 )
 
@@ -53,7 +53,4 @@ async def startup():
 async def shutdown():
     pass
 
-
-app.include_router(license.router, prefix="/licenses", tags=["Licenses"])
-app.include_router(product.router, prefix="/products", tags=["Products"])
-app.include_router(status.router, prefix="/status", tags=["Debug"])
+app.include_router(api_router, prefix=settings.API_V1_STR)

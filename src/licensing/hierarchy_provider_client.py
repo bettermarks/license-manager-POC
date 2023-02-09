@@ -7,9 +7,7 @@ from urllib.parse import urljoin, quote_plus
 
 
 def multi_urljoin(*parts):
-    """helper"""
-    print("parts[0]", parts[0])
-    print("parts rest", "/".join(quote_plus(part.strip("/"), safe="/") for part in parts[1:]))
+    """helper: joins multiple URL parts"""
     return urljoin(parts[0], "/".join(quote_plus(part.strip("/"), safe="/") for part in parts[1:]))
 
 
@@ -44,7 +42,7 @@ async def http_get(url: str, payload: dict | None = None) -> requests.Response:
         raise
 
 
+# TODO use some security mechanism to call the HP API (maybe an API key)
 async def get_hierarchy(url: str, user_eid: str) -> Any:
     """Calls the hierarchy provider URL and returns the hierarchy for the given user EID"""
-    # TODO use some security mechanism to call the HP API (maybe an API key)
     return (await http_get(multi_urljoin(url + "/", "users", user_eid))).json()

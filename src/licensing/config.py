@@ -4,18 +4,18 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     # Generic settings
-    api_version_prefix: str = "/api/v1"
-    debug: bool = False
-    project_name: str = "License Manager POC"
-    version: str = "0.0.1"
-    description: str = "A generic license managing application"
+    API_V1_STR: str = "/v1"
+    DEBUG: bool = False
+    PROJECT_NAME: str = "License Manager POC"
+    VERSION: str = "0.0.1"
+    DESCRIPTION: str = "A generic license managing application"
 
     # DB settings
-    database_user: str
-    database_password: str
-    database_host: str
-    database_port: str
-    database_name: str
+    DATABASE_USER: str
+    DATABASE_PASSWORD: str
+    DATABASE_HOST: str
+    DATABASE_PORT: str
+    DATABASE_NAME: str
 
     class Config:
         env_file = ".env"

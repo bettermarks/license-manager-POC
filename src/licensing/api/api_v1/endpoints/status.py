@@ -16,8 +16,9 @@ router = APIRouter()
 )
 def get_status() -> Any:
     return {
-        "project": settings.project_name,
-        "version": settings.version,
-        "debug": settings.debug,
-        "description": settings.description
+        "project": settings.PROJECT_NAME,
+        "version": settings.VERSION,
+        "api-version": settings.API_V1_STR,
+        "debug": settings.DEBUG,
+        "description": settings.DESCRIPTION
     }

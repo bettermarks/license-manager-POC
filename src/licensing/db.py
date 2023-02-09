@@ -17,11 +17,11 @@ def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, s
 
 
 DATABASE_URL = postgres_dsn(
-    settings.database_host,
-    settings.database_port,
-    settings.database_user,
-    settings.database_password,
-    settings.database_name
+    settings.DATABASE_HOST,
+    settings.DATABASE_PORT,
+    settings.DATABASE_USER,
+    settings.DATABASE_PASSWORD,
+    settings.DATABASE_NAME
 )
 
 
