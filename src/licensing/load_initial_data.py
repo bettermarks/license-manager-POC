@@ -15,22 +15,22 @@ INITIAL_PRODUCTS = [
 
 INITIAL_HIERARCHY_PROVIDERS = [
     HierarchyProvider(
-        eid="glu",
+        url="http://0.0.0.0:5001/hierarchy",
+        short_name="glu",
         name="GLU user class management system",
-        description="This is our GLU user class management system used to get valid hierarchies",
-        hierarchy_url="http://localhost:8000/hierarchy"
+        description="This is our GLU user class management system used to get valid hierarchies"
     ),
     HierarchyProvider(
-        eid="univention_hb",
+        url="https://unviention-hb.de/hierarchy",
+        short_name="univention_hb",
         name="Univention HB user class management system",
         description="This is the Univention HB user class management system used to get valid hierarchies",
-        hierarchy_url="https://unviention-hb.de/hierarchy"
     ),
     HierarchyProvider(
-        eid="schulcloud_ni",
+        url="https://schulcloud-ni.de/hierarchy",
+        short_name="schulcloud_ni",
         name="Schulcloud NI user class management system",
         description="This is the Schulcloud NI user class management system used to get valid hierarchies",
-        hierarchy_url="https://schulcloud-ni.de/hierarchy"
     )
 ]
 
