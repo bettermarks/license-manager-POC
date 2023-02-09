@@ -1,4 +1,3 @@
-from datetime import date, timedelta
 from sqlalchemy import Column, String, BigInteger, ForeignKey, Date, Integer, orm
 from sqlalchemy.dialects.postgresql import ARRAY
 
