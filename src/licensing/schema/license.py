@@ -1,24 +1,24 @@
 import datetime
 from typing import List
 
-from pydantic import BaseModel, validator
+from pydantic import BaseModel
+from licensing.model import product
 
 
 class LicenseBase(BaseModel):
-    product_eid: str
-    owner_hierarchy_level: str
-    owner_eids: List[str]
     start: datetime.date
     end: datetime.date
     seats: int | None
 
 
 class LicenseCreate(LicenseBase):
-    pass
+    product_eid: str
+    owner_hierarchy_level: str
+    owner_eids: List[str]
 
 
 class License(LicenseBase):
-    id: int
+    # product: product.Product
 
     class Config:
         orm_mode = True
