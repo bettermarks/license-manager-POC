@@ -21,7 +21,7 @@ async def purchase_license(session: AsyncSession, purchaser_eid: str, license_da
     lic = model.License(
         ref_product=product.id,
         purchaser_eid=purchaser_eid,
-        **{k: v for k, v in license_data if k !='product_eid'}
+        **{k: v for k, v in license_data if k != "product_eid"}
     )
     session.add(lic)
     await session.commit()
