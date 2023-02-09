@@ -4,14 +4,14 @@ from fastapi import APIRouter
 from fastapi import status as http_status
 
 from licensing.config import settings
-from licensing.schema import status as schema
+from licensing.schema import status as status_schema
 
 router = APIRouter()
 
 
 @router.get(
     "/",
-    response_model=schema.Status,
+    response_model=status_schema.Status,
     status_code=http_status.HTTP_200_OK
 )
 def get_status() -> Any:

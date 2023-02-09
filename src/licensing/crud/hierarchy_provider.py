@@ -15,13 +15,13 @@ async def get_hierarchy_providers(session: AsyncSession) -> List[hierarchy_provi
     ).scalars().all()
 
 
-async def get_hierarchy_provider(session: AsyncSession, eid: str) -> hierarchy_provider_model.HierarchyProvider:
+async def get_hierarchy_provider(session: AsyncSession, url: str) -> hierarchy_provider_model.HierarchyProvider:
     return (
         await session.execute(
             statement=select(
                 hierarchy_provider_model.HierarchyProvider
             ).where(
-                hierarchy_provider_model.HierarchyProvider.eid == eid
+                hierarchy_provider_model.HierarchyProvider.url == url
             )
         )
     ).scalar_one_or_none()
