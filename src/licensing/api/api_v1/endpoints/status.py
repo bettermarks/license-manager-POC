@@ -18,7 +18,6 @@ def get_status() -> Any:
     return {
         "project": settings.PROJECT_NAME,
         "version": settings.VERSION,
-        "api-version": settings.API_V1_STR,
         "debug": settings.DEBUG,
         "description": settings.DESCRIPTION
     }
