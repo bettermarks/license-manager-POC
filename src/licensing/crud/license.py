@@ -1,7 +1,7 @@
 from fastapi import status as http_status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.crud.hierarchy_provider import find_hierarchy_provider, get_user_hierarchy
+from licensing.crud.hierarchy_provider import get_user_hierarchy
 from licensing.crud.product import find_product
 from licensing.model import license as license_model
 from licensing.schema import license as license_schema
@@ -16,9 +16,6 @@ async def purchase_license(
     # 0. check, if requesting user is purchaser
     # TODO
 
-    # 1. find hierarchy provider url provided (exception is raised, if hierarchy provider is not registered)
-    hierarchy_provider = await find_hierarchy_provider(session, license_data.hierarchy_provider_url)
-
     # 2. find product (exception is raised, if product cannot be found)
     product = await find_product(session, license_data.product_eid)
 
@@ -29,7 +26,7 @@ async def purchase_license(
     # some class or some school.
 
     # 3.1 get the hierarchy list (for the purchaser) from the hierarchy provider (or raise an exception)
-    hierarchy_list = await get_user_hierarchy(license_data.hierarchy_provider_url, purchaser_eid)
+    hp, hierarchy_list = await get_user_hierarchy(session, license_data.hierarchy_provider_url, purchaser_eid)
 
     # 3.2 Now do the actual check. TODO Can we do that in a more elegant way?
     hierarchy_list_as_string = '::'.join(hierarchy_list)
@@ -43,7 +40,7 @@ async def purchase_license(
     # 4. create license
     lic = license_model.License(
         ref_product=product.id,
-        ref_hierarchy_provider=hierarchy_provider.id,
+        ref_hierarchy_provider=hp.id,
         purchaser_eid=purchaser_eid,
         **{k: v for k, v in license_data if k not in ["product_eid", "hierarchy_provider_url"]}
     )

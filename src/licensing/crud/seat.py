@@ -36,8 +36,13 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     # 0. check, if requesting user is purchaser
     # TODO
 
+    # 1. get the users hierarchy in any case
+    get_user_hierarchy
+
     # 1. Is there already an active! seat 'taken' by the requesting user?
+
     active_seats = await get_active_seats(session, user_eid)
+
 
     if active_seats:
         pass  # TODO check, if they should be freed or not

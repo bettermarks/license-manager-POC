@@ -9,6 +9,9 @@ from licensing.schema import product as product_schema
 
 
 async def get_products(session: AsyncSession) -> List[product_schema.Product]:
+    """
+    gets all available products
+    """
     return (
         await session.execute(
             statement=select(
@@ -19,6 +22,9 @@ async def get_products(session: AsyncSession) -> List[product_schema.Product]:
 
 
 async def get_product(session: AsyncSession, eid: str) -> product_schema.Product:
+    """
+    gets a product with a given EID or nothing
+    """
     return (
         await session.execute(
             statement=select(
@@ -32,7 +38,7 @@ async def get_product(session: AsyncSession, eid: str) -> product_schema.Product
 
 async def find_product(session: AsyncSession, eid: str) -> product_model.Product:
     """
-    finds a product by a given product EID or raises an HTTPException
+    finds a product by a given product EID or raises an HTTPException, if not found.
     """
     product = await get_product(session, eid)
     if not product:
