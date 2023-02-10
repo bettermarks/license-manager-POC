@@ -30,5 +30,9 @@ async def purchase_license(
     response_model=license_schema.License,
     status_code=http_status.HTTP_200_OK
 )
-async def get_permissions(user_eid: str, session: AsyncSession = Depends(get_async_session)) -> Any:
-    return await seat_crud.get_permissions(session, user_eid)
+async def get_permissions(
+        hierarchy_provider_url: str,
+        user_eid: str,
+        session: AsyncSession = Depends(get_async_session)
+) -> Any:
+    return await seat_crud.get_permissions(session, hierarchy_provider_url, user_eid)

@@ -104,12 +104,13 @@ POST /users/{user EID}/purchases
 with some request body like
 ```json
 {
-  "product": "full_access",
-  "hierarchy_level": "class",
-  "entities": ["34535356324", "2346445645646"],
+  "product_eid": "full_access",
+  "owner_hierarchy_level": "class",
+  "owner_eids": ["34535356324", "2346445645646"],
   "seats": 50,
   "start": "2023-01-01",
-  "end": "2023-12-31"
+  "end": "2023-12-31",
+  "hierarchy_provider_url": "http://0.0.0.0:5001/hierarchy"
 }
 ```
 The request body will be interpreted like so: The requesting user wants to add (purchase) a
@@ -129,7 +130,8 @@ using the request body given above.
 The request handling function will perform the following steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
 * Check, if the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
-  * In order to check this, the HP is called via ```GET /hierarchy/users/1111111```.
+  * In order to check this, the HP (via the URL given in the request body) is called 
+    via ```GET /hierarchy/users/1111111```.
     The result would be something like this:
     ```json
     [
@@ -144,9 +146,9 @@ The request handling function will perform the following steps:
 * The license will be stored in the database like so:
   Create a new row in the 'license' table:
 
-  |license ID|product EID|purchaser EID|owner level| owner EIDs|seats|start|end|
-  |-----------|-------|-----|------------|--------|-----|-----|-----| 
-  |1|full_access|1111111|class|['34535356324','2346445645646']|50|2023-01-01|2023-12-31| 
+  |license ID|product EID|purchaser EID| owner hierarchy level | owner EIDs|seats|start|end|
+  |-----------|-------|-----------------------|------------|--------|-----|-----|-----| 
+  |1|full_access|1111111| class                 |['34535356324','2346445645646']|50|2023-01-01|2023-12-31| 
 
 * Some information about successful purchase of the license will be returned to the requesting user.
 

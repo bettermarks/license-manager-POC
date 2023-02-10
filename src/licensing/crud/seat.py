@@ -22,7 +22,7 @@ async def get_active_seats(session: AsyncSession, user_eid: str) -> List[seat_sc
     ).scalars().all()
 
 
-async def get_permissions(session: AsyncSession, user_eid: str) -> Any:
+async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, user_eid: str) -> Any:
     """
     A just logged in user wants to get his permissions.
     """
@@ -34,6 +34,7 @@ async def get_permissions(session: AsyncSession, user_eid: str) -> Any:
 
     if active_seats:
         pass  # TODO
+        print("active seats =", active_seats)
     else:
-        pass  # TODO
+        print("active seats =", active_seats)
 
