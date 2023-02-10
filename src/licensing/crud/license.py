@@ -1,41 +1,13 @@
-from typing import List, Any
+from typing import List
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.hierarchy_provider_client import get_hierarchy
-from licensing.crud.hierarchy_provider import get_hierarchy_provider
-from licensing.crud.product import get_product
-from licensing.model import hierarchy_provider as hierarchy_provider_model
-from licensing.model import product as product_model
+from licensing.crud.hierarchy_provider import find_hierarchy_provider
+from licensing.crud.product import find_product
 from licensing.model import license as license_model
 from licensing.schema import license as license_schema
-
-
-async def find_product(session: AsyncSession, product_eid: str) -> product_model.Product:
-    """
-    finds a product by a given product EID or raises an HTTPException
-    """
-    product = await get_product(session, product_eid)
-    if not product:
-        raise HTTPException(
-            status_code=http_status.HTTP_400_BAD_REQUEST,
-            detail=f"Product with EID='{product_eid}' not found."
-        )
-    return product
-
-
-async def find_hierarchy_provider(session: AsyncSession, url: str) -> hierarchy_provider_model.HierarchyProvider:
-    """
-    checks, if the provided hierarchy provider exists or raises an HTTPException
-    """
-    provider = await get_hierarchy_provider(session, url)
-    if not provider:
-        raise HTTPException(
-            status_code=http_status.HTTP_400_BAD_REQUEST,
-            detail=f"Hierarchy provider with base URL='{url}' is not registered."
-        )
-    return provider
 
 
 async def check_owners(url: str, purchaser_eid: str, owner_hierarchy_level: str, owner_eids: List[str]) -> bool:
@@ -100,7 +72,4 @@ async def purchase_license(
     await session.commit()
     return lic
 
-
-async def get_permissions(session: AsyncSession, user_eid: str) -> Any:
-    pass
 

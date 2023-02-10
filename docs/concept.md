@@ -179,7 +179,7 @@ GET /users/123456789/permissions
 The request handling function will perform these steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
 * Now, the evaluating function would query the license seats table, if there is already a seat 'taken' by the
-  requesting student. The table 'license_seat' could currently look like this:
+  requesting student. The table 'seat' could currently look like this:
 
   | license ID | user EID |created|  
   |-----------|------|--------| 

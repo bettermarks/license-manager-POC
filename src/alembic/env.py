@@ -29,6 +29,7 @@ target_metadata.naming_convention = {
 from licensing.model.hierarchy_provider import HierarchyProvider
 from licensing.model.product import Product
 from licensing.model.license import License
+from licensing.model.seat import Seat
 
 
 def run_migrations_offline() -> None:

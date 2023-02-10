@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from licensing.db import get_async_session
 from licensing.schema import license as license_schema
 from licensing.crud import license as license_crud
+from licensing.crud import seat as seat_crud
 
 router = APIRouter()
 
@@ -30,4 +31,4 @@ async def purchase_license(
     status_code=http_status.HTTP_200_OK
 )
 async def get_permissions(user_eid: str, session: AsyncSession = Depends(get_async_session)) -> Any:
-    return await license_crud.get_permissions(session, user_eid)
+    return await seat_crud.get_permissions(session, user_eid)
