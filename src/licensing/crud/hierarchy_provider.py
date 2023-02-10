@@ -4,8 +4,8 @@ from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.model import hierarchy_provider as hp_model
 from licensing.hierarchy_provider_client import get_hierarchy_from_provider
+from licensing.model import hierarchy_provider as hp_model
 
 
 @lru_cache()

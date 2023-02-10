@@ -47,6 +47,3 @@ async def find_product(session: AsyncSession, eid: str) -> product_model.Product
             detail=f"Product with EID='{eid}' not found."
         )
     return product
-
-
-
