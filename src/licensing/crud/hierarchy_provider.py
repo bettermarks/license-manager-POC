@@ -5,27 +5,27 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.hierarchy_provider_client import get_hierarchy_from_provider
-from licensing.model import hierarchy_provider as hp_model
+from licensing.model import hierarchy_provider as model
 
 
 @lru_cache()
-async def get_hierarchy_provider(session: AsyncSession, url: str) -> hp_model.HierarchyProvider:
+async def get_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
     gets a hierarchy provider with a given url or nothing
     """
     return (
         await session.execute(
             statement=select(
-                hp_model.HierarchyProvider
+                model.HierarchyProvider
             ).where(
-                hp_model.HierarchyProvider.url == url
+                model.HierarchyProvider.url == url
             )
         )
     ).scalar_one_or_none()
 
 
 @lru_cache()
-async def find_hierarchy_provider(session: AsyncSession, url: str) -> hp_model.HierarchyProvider:
+async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
     finds a hierarchy provider with a given url or raises an HTTPException, if not found
     """
@@ -38,7 +38,7 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> hp_model.H
     return provider
 
 
-async def get_user_hierarchy(session: AsyncSession, url: str, user_eid) -> (hp_model.HierarchyProvider, list):
+async def get_user_hierarchy(session: AsyncSession, url: str, user_eid) -> (model.HierarchyProvider, list):
     """
     gets the hierarchy list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500

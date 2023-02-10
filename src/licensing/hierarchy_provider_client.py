@@ -1,9 +1,8 @@
+import logging
 from typing import Any
+from urllib.parse import urljoin, quote_plus
 
 import aiohttp
-import logging
-
-from urllib.parse import urljoin, quote_plus
 
 
 def multi_urljoin(*parts):
@@ -25,7 +24,7 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
             # "Content-type": "application/json",
             # }
 
-            async with session.get(url,  params=payload) as response:
+            async with session.get(url, params=payload) as response:
                 if not response.ok:
                     logging.error(
                         f"HTTP GET call raised an error",
@@ -47,4 +46,3 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
 async def get_hierarchy_from_provider(url: str, user_eid: str) -> list:
     """Calls the hierarchy provider URL and returns the hierarchy for the given user EID"""
     return await http_get(multi_urljoin(url + "/", "users", user_eid))
-

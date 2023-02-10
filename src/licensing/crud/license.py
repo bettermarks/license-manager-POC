@@ -3,13 +3,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_hierarchy
 from licensing.crud.product import find_product
-from licensing.model import license as license_model
-from licensing.schema import license as license_schema
+from licensing.model import license as model
+from licensing.schema import license as schema
 
 
-async def purchase_license(
-        session: AsyncSession, purchaser_eid: str, license_data: license_schema.LicenseCreate
-) -> license_model.License:
+async def purchase(session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate) -> model.License:
     """
     The license purchase process performed by a user for one or more entities, they are member of.
     """
@@ -38,7 +36,7 @@ async def purchase_license(
             )
 
     # 4. create license
-    lic = license_model.License(
+    lic = model.License(
         ref_product=product.id,
         ref_hierarchy_provider=hp.id,
         purchaser_eid=purchaser_eid,

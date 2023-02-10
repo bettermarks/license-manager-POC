@@ -1,11 +1,11 @@
 import logging
+
 from fastapi import FastAPI
 
 from licensing import __version__ as version
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
-
 
 # init logging
 logging.basicConfig(
@@ -57,5 +57,6 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     pass
+
 
 app.include_router(api_router, prefix="/licensing/v1")

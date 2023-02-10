@@ -24,7 +24,6 @@ DATABASE_URL = postgres_dsn(
     settings.DATABASE_NAME
 )
 
-
 # SQLAlchemy session
 async_engine = create_async_engine(DATABASE_URL, future=True, echo=True)
 async_session_factory = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
@@ -40,6 +39,7 @@ async def get_async_session() -> AsyncSession:
         raise ex
     finally:
         await session.close()
+
 
 # We sometimes want a context manager to use the DB session with 'with'
 get_async_session_context = asynccontextmanager(get_async_session)

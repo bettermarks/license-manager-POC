@@ -1,5 +1,4 @@
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.db import get_async_session_context
 from licensing.model.hierarchy_provider import HierarchyProvider
