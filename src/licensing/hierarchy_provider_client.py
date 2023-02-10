@@ -1,6 +1,6 @@
 from typing import Any
 
-import requests
+import aiohttp
 import logging
 
 from urllib.parse import urljoin, quote_plus
@@ -11,29 +11,29 @@ def multi_urljoin(*parts):
     return urljoin(parts[0], "/".join(quote_plus(part.strip("/"), safe="/") for part in parts[1:]))
 
 
-async def http_get(url: str, payload: dict | None = None) -> requests.Response:
+async def http_get(url: str, payload: dict | None = None) -> Any:
     """
     Sends a GET request to an external API
     :param url: the url to call
     :param payload: optional parameters as a dict
     """
     try:
-        response = requests.get(
-            url,
-            params=payload,
-            # headers={     # TODO
-                # "x-api-key": settings.EVENT_SERVICE_API_KEY,
-                # "Content-type": "application/json",
+        async with aiohttp.ClientSession() as session:
+            # TODO
+            # headers={
+            # "x-api-key": settings.EVENT_SERVICE_API_KEY,
+            # "Content-type": "application/json",
             # }
-        )
-        if not response.ok:
-            logging.error(
-                f"HTTP GET call raised an error",
-                url=url,
-                params=payload,
-                status_code=response.status_code
-            )
-        return response
+
+            async with session.get(url,  params=payload) as response:
+                if not response.ok:
+                    logging.error(
+                        f"HTTP GET call raised an error",
+                        url=url,
+                        params=payload,
+                        status_code=response.status_code
+                    )
+                return await response.json()
     # Exception handling for the 'bad' cases.
     except Exception as e:
         logging.error(
@@ -45,4 +45,5 @@ async def http_get(url: str, payload: dict | None = None) -> requests.Response:
 # TODO use some security mechanism to call the HP API (maybe an API key)
 async def get_hierarchy(url: str, user_eid: str) -> Any:
     """Calls the hierarchy provider URL and returns the hierarchy for the given user EID"""
-    return (await http_get(multi_urljoin(url + "/", "users", user_eid))).json()
+    return await http_get(multi_urljoin(url + "/", "users", user_eid))
+
