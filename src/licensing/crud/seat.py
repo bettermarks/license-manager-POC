@@ -1,6 +1,5 @@
 from typing import List, Any
 
-from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +19,14 @@ async def get_active_seats(session: AsyncSession, user_eid: str) -> List[seat_sc
             )
         )
     ).scalars().all()
+
+
+async def check_for_licenses(url: str, user_eid: str) -> Any:
+    """
+    checks for any licenses, a user could 'get'.
+    Raises an HTTPException on failure
+    """
+    pass
 
 
 async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, user_eid: str) -> Any:

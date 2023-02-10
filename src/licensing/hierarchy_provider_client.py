@@ -33,6 +33,7 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
                         params=payload,
                         status_code=response.status_code
                     )
+                    raise Exception(f"HTTP request gave status code {response.status_code}. Cannot continue")
                 return await response.json()
     # Exception handling for the 'bad' cases.
     except Exception as e:
@@ -43,7 +44,7 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
 
 
 # TODO use some security mechanism to call the HP API (maybe an API key)
-async def get_hierarchy(url: str, user_eid: str) -> Any:
+async def get_hierarchy_from_provider(url: str, user_eid: str) -> list:
     """Calls the hierarchy provider URL and returns the hierarchy for the given user EID"""
     return await http_get(multi_urljoin(url + "/", "users", user_eid))
 
