@@ -1,12 +1,16 @@
 import logging
 from fastapi import FastAPI
 
+from licensing import __version__ as version
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
+
 # init logging
-logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)
+logging.basicConfig(
+    format="%(levelname)s:\t%(message)s", level=logging.INFO if settings.DEBUG else logging.WARNING
+)
 
 # some metadata for our API (will be nicely printed out via /docs)
 tags_metadata = [
@@ -34,10 +38,11 @@ tags_metadata = [
 ]
 
 app = FastAPI(
-    title=settings.PROJECT_NAME,
-    version=settings.VERSION,
-    openapi_url=f"{settings.API_V1_STR}/openapi.json",
+    title="License Manager POC",
+    version=version,
+    openapi_url=f"/v1/openapi.json",
     debug=settings.DEBUG,
+    description="A generic license managing application",
     openapi_tags=tags_metadata
 )
 
@@ -53,4 +58,4 @@ async def startup():
 async def shutdown():
     pass
 
-app.include_router(api_router, prefix=settings.API_V1_STR)
+app.include_router(api_router, prefix="/licensing/v1")

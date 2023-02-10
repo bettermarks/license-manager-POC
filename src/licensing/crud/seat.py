@@ -33,7 +33,7 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     active_seats = await get_active_seats(session, user_eid)
 
     if active_seats:
-        pass  # TODO
+        pass  # TODO check, if they should be freed or not
         print("active seats =", active_seats)
     else:
         print("active seats =", active_seats)
