@@ -49,7 +49,7 @@ async def purchase_license(
     # TODO
 
     # 1. find hierarchy provider url provided (exception is raised, if hierarchy provider is not registered)
-    await find_hierarchy_provider(session, license_data.hierarchy_provider_url)
+    hierarchy_provider = await find_hierarchy_provider(session, license_data.hierarchy_provider_url)
 
     # 2. find product (exception is raised, if product cannot be found)
     product = await find_product(session, license_data.product_eid)
@@ -65,6 +65,7 @@ async def purchase_license(
     # 4. create license
     lic = license_model.License(
         ref_product=product.id,
+        ref_hierarchy_provider=hierarchy_provider.id,
         purchaser_eid=purchaser_eid,
         **{k: v for k, v in license_data if k not in ["product_eid", "hierarchy_provider_url"]}
     )
