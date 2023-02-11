@@ -30,7 +30,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
 
     # 3.2 Now do the actual check.
     for owner_eid in license_data.owner_eids:
-        if f"{license_data.owner_hierarchy_level}:_:{owner_eid}" not in memberships:
+        if f"({license_data.owner_hierarchy_level})({owner_eid})" not in memberships:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
                 detail=f"Provided license owner ('{owner_eid}') cannot be found in users hierarchy."
