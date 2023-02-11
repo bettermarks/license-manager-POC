@@ -3,7 +3,7 @@ from typing import List, Any
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.crud.hierarchy_provider import get_user_hierarchy
+from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.schema import seat as seat_schema
 from licensing.model import seat as seat_model
 
@@ -38,9 +38,9 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     # TODO
 
     # 1. get the hierarchy list (for the purchaser) from the hierarchy provider (or raise an exception)
-    hp, hierarchy_list = await get_user_hierarchy(session, hierarchy_provider_url, user_eid)
+    hp, memberships = await get_user_memberships(session, hierarchy_provider_url, user_eid)
 
-    print("hierarchy_list = ", hierarchy_list)
+    print("memberships = ", memberships)
     1/0
 
     # 1. Is there already an active! seat 'taken' by the requesting user?

@@ -1,7 +1,7 @@
 from fastapi import status as http_status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.crud.hierarchy_provider import get_user_hierarchy
+from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
 from licensing.model import license as model
 from licensing.schema import license as schema
@@ -24,7 +24,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
     # some class or some school.
 
     # 3.1 get the hierarchy list (for the purchaser) from the hierarchy provider (or raise an exception)
-    hp, hierarchy_list = await get_user_hierarchy(session, license_data.hierarchy_provider_url, purchaser_eid)
+    hp, hierarchy_list = await get_user_memberships(session, license_data.hierarchy_provider_url, purchaser_eid)
 
     # 3.2 Now do the actual check. TODO Can we do that in a more elegant way?
     hierarchy_list_as_string = '::'.join(hierarchy_list)

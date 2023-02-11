@@ -4,7 +4,7 @@ from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.hierarchy_provider_client import get_hierarchy_from_provider
+from licensing.hierarchy_provider_client import get_user_memberships_from_provider
 from licensing.model import hierarchy_provider as model
 
 
@@ -38,18 +38,18 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.Hier
     return provider
 
 
-async def get_user_hierarchy(session: AsyncSession, url: str, user_eid) -> (model.HierarchyProvider, list):
+async def get_user_memberships(session: AsyncSession, url: str, user_eid) -> (model.HierarchyProvider, set):
     """
-    gets the hierarchy list for a user by requesting the hierarchy provider.
+    gets the membership list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500
     http error.
-    returns a tuple (the registered hierarchy provider object, the hierarchy itself as a list)
+    returns a tuple (the registered hierarchy provider object, the hierarchy itself as a set!!)
     """
     hp = await find_hierarchy_provider(session, url)  # raises exception, if not found
     try:
-        return hp, await get_hierarchy_from_provider(url, user_eid)
+        return hp, set(await get_user_memberships_from_provider(url, user_eid))
     except Exception as e:
         raise HTTPException(
             status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Hierarchy provider server at base URL='{url}' did not respond properly."
+            detail=f"Hierarchy provider server at base URL='{url}' did not respond properly ({e})."
         )
