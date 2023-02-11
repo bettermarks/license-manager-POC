@@ -55,23 +55,25 @@ identify entities, which are associated with some given hierarchy level
 There are two 'leaf levels' defined, 'teacher' and 'student' entity, a 'level 1'
 entity named 'class' and a 'level 2' entity named 'school'.
 
-### Getting Hierarchies for a Specific User
+### Getting all 'Memberships' for a Specific User
 ```
-GET /hierarchy/users/{user EID}
+GET /hierarchy/users/{user EID}/membership
 ```
-This route gets the hierarchy path(s) for a given user and returns something like
+This route gets all the memberships of a given user including the user themselves and returns something like
 ```json
 [
-    "school(999)/class(566)/teacher(glu::123)",
-    "school(999)/class(344)/teacher(glu::123)",
-    "school(888)/teacher(glu::123)"
+    "(school)(999)",
+    "(school(888)",
+    "(class)(344)",
+    "(class)(566)",
+    "(teacher)(glu::123)"
 ]
 ```
-This means that a user 'glu::123' (who is associated with a 'leaf'
+This means that a user 'glu::123' (who is associated with a 
 hierarchy level 'teacher') is currently member of a hierarchy level
 named 'class' and has EID='344' and of some 'class' with EID='566',
 which both are 'located' in some hierarchy level 'school' with EID='999'.
-Additionally, 'teacher' 'glu:123' is 'directly connected' to 'school' '888'.
+Additionally, 'teacher' 'glu:123' is also member of school '888'.
 
 ## The License Manager
 The LM is also some web service, that implements a couple of routes
@@ -129,15 +131,17 @@ POST /users/1111111/purchases
 using the request body given above.
 The request handling function will perform the following steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
-* Check, if the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
+* Check, if the 'entities' in the request are ALL part of the users 'memberships'. -> If not, return an error
   * In order to check this, the HP (via the URL given in the request body) is called 
-    via ```GET /hierarchy/users/1111111```.
+    via ```GET /hierarchy/users/1111111/membership```.
     The result would be something like this:
     ```json
     [
-      "school(999)/class(34535356324)/teacher(1111111)",
-      "school(999)/class(2346445645646)/teacher(1111111)",
-      "school(888)/teacher(1111111)"
+      "(school)(999)",
+      "(class)(34535356324)",
+      "(class)(2346445645646)",
+      "(school)(888)",
+      "(teacher)(1111111)"
     ]
     ```
     We now apply a simple string search to the result list checking, if ALL entities in the request body have a
@@ -199,24 +203,22 @@ The request handling function will perform these steps:
   ```
   The query returns no product, therefore we have to go to the next step. If the query would have got a result,
   we also would go to the next step, as we maybe have to 'free a seat'. (The latter 'free a seat' use case will 
-  not be described here, also the case 'seat is still valid' and #license seat is expired')
+  not be described here, also the case 'seat is still valid' and license seat is expired')
 
-* Send a new request to the HP: ```GET /hierarchy/users/123456789```.
+* Send a new request to the HP: ```GET /hierarchy/users/123456789/membership```.
   The result would be something like this:
   ```json
-  ["school(999)/class(2346445645646)/student(123456789)"]
+  [
+    "(school)(999)",
+    "(class)(2346445645646)",
+    "(student)(123456789)"
+  ]
   ```
-  Ok, we will use some simple parser, that gets out some data of that result:
-  ```
-  {
-    "school": "999",
-    "class": "2346445645646"
-  }
-  ```
-  We will look up in the license table using some simple query (not written down here) and we will
-  have a match for a license with 'level' 'class' and owner-EID='2346445645646'. The license with
-  license ID=1 matches the criteria. So we can reserve a seat (as long as there are seats open, which
-  we can easily confirm using a simple count query). The seats table after the insert would look like this:
+  We will now look up all those 'memberships' in the license table using some simple query 
+  (not written down here) and we will have a match for a license with 'level' 'class' 
+  and owner-EID='2346445645646'. The license with license ID=1 matches the criteria. So we can 
+  reserve a seat (as long as there are seats open, which we can easily confirm using a simple 
+  count query). The seats table after the insert would look like this:
 
   | license ID | user EID  | created    |  
   |-----------|------------|--------| 
