@@ -38,6 +38,17 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
         raise
 
 
+def encode_entity(level, eid):
+    """
+    encodes an entity by its 'level' and its 'eid' to be correctly encoded like the HP returns
+    entities (in order to detect membership matches). Currently, the encoding is like
+    (<<level>>)(<<eid>>)
+    for example
+    (class)(2354353545) or (teacher)(glu:32433234324)
+    """
+    return f"({level})({eid})"
+
+
 # TODO use some security mechanism to call the HP API (maybe an API key)
 @async_measure_time
 async def get_user_memberships_from_provider(url: str, user_eid: str) -> list:

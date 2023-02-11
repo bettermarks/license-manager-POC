@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
+from licensing.hierarchy_provider_client import encode_entity
 from licensing.model import license as model
 from licensing.schema import license as schema
 from licensing.utils import async_measure_time
@@ -30,10 +31,10 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
 
     # 3.2 Now do the actual check.
     for owner_eid in license_data.owner_eids:
-        if f"({license_data.owner_hierarchy_level})({owner_eid})" not in memberships:
+        if encode_entity(license_data.owner_hierarchy_level, owner_eid) not in memberships:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
-                detail=f"Provided license owner ('{owner_eid}') cannot be found in users hierarchy."
+                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."
             )
 
     # 4. create license
