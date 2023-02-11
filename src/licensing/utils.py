@@ -1,7 +1,6 @@
 import logging
-
-from functools import wraps
 import time
+from functools import wraps
 
 
 def async_measure_time(func):
@@ -11,4 +10,5 @@ def async_measure_time(func):
         result = await func(*args, **kwargs)
         logging.info(f"Function {func.__name__}{args} {kwargs} took {round((time.time() - start) * 1000)} msecs")
         return result
+
     return measure_time_wrapper

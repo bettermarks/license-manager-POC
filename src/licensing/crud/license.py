@@ -5,8 +5,10 @@ from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
 from licensing.model import license as model
 from licensing.schema import license as schema
+from licensing.utils import async_measure_time
 
 
+@async_measure_time
 async def purchase(session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate) -> model.License:
     """
     The license purchase process performed by a user for one or more entities, they are member of.
@@ -24,12 +26,11 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
     # some class or some school.
 
     # 3.1 get the hierarchy list (for the purchaser) from the hierarchy provider (or raise an exception)
-    hp, hierarchy_list = await get_user_memberships(session, license_data.hierarchy_provider_url, purchaser_eid)
+    hp, memberships = await get_user_memberships(session, license_data.hierarchy_provider_url, purchaser_eid)
 
-    # 3.2 Now do the actual check. TODO Can we do that in a more elegant way?
-    hierarchy_list_as_string = '::'.join(hierarchy_list)
+    # 3.2 Now do the actual check.
     for owner_eid in license_data.owner_eids:
-        if f"{license_data.owner_hierarchy_level}({owner_eid})" not in hierarchy_list_as_string:
+        if f"{license_data.owner_hierarchy_level}:_:{owner_eid}" not in memberships:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
                 detail=f"Provided license owner ('{owner_eid}') cannot be found in users hierarchy."
