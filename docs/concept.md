@@ -24,7 +24,7 @@ Components of the 'license featured' application
 
 We call users, school classes, schools, other organisational structures, even
 countries 'Entities' (E). Those entities can be arranged in some 'natural' hierarchy,
-f.e. some school has several classes, each of those classes has several students and
+e.g. some school has several classes, each of those classes has several students and
 one (or maybe more) teachers. An entity is uniquely identified within the HP by some
 identifier, we call it 'external identifier' (EID).
 
@@ -84,7 +84,7 @@ implementing a POC for such routes. We will implement the following routes:
 ### Getting Products
 This route returns all 'available products'. For the POC, there is just one product, that is associated with
 'full access'. Fine granular permissions within a product are not dealt with in the POC. But we already know, that
-the place, where to define specific permissions (f.e. permissions to have access to specific books), is the
+the place, where to define specific permissions (e.g. permissions to have access to specific books), is the
 'product'.
 ```
 GET /products
