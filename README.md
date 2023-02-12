@@ -5,6 +5,10 @@ A POC for a generic License Manager ...
 The concept for implementing such a License Manager can be found here:
 [License Manager concept](./docs/concept.md)
 
+## Data Model
+This is the currently imple,ented data model:
+[License Manager data model](./docs/license-manager-ERD-2023-02-12.svg)
+
 ## Installation
 Create a 'dotenv' file:
 Create a file named '.env' in the root folder of the app and provide your database paramaters and credentials like so:

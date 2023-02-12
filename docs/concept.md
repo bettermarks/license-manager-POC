@@ -228,7 +228,7 @@ The request handling function will perform these steps:
  
   The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user.
 
-### Open Questions:
+### Open Questions / Unsolved Issues:
 We did not touch yet the question, how we should handle the case of
 different products from different licenses, the user could get. We would need some 'merge' strategy to give the
 user most permissions, that can be got from 'his' licenses. For the POC, as we just do have one product with
@@ -236,10 +236,8 @@ user most permissions, that can be got from 'his' licenses. For the POC, as we j
 
 #### The problem of getting more license matches on redeeming a license
 
-Test Latex:
-$$P \left( A=2 \, \middle| \, \dfrac{A^2}{B}>4 \right)$$
-
-
+We will face the problem, that, if a user loggs in and wants to get
+his permissions ()
 
 
 
