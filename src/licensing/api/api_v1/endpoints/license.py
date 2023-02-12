@@ -21,10 +21,10 @@ async def purchase_license(
     return await license_crud.purchase(session, purchaser_eid, license_data)
 
 
-@router.get("/{user_eid}/permissions", response_model=schema.License, status_code=http_status.HTTP_200_OK)
+@router.get("/{user_eid}/permissions", status_code=http_status.HTTP_200_OK)
 async def get_permissions(
         hierarchy_provider_url: str,
         user_eid: str,
         session: AsyncSession = Depends(get_async_session)
-) -> Any:
+) -> str:
     return await seat_crud.get_permissions(session, hierarchy_provider_url, user_eid)

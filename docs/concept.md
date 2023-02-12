@@ -110,8 +110,8 @@ with some request body like
   "owner_hierarchy_level": "class",
   "owner_eids": ["34535356324", "2346445645646"],
   "seats": 50,
-  "start": "2023-01-01",
-  "end": "2023-12-31",
+  "valid_from": "2023-01-01",
+  "valid_to": "2023-12-31",
   "hierarchy_provider_url": "http://0.0.0.0:5001/hierarchy"
 }
 ```

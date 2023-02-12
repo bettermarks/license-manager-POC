@@ -1,3 +1,4 @@
+import re
 import logging
 from typing import Any
 from urllib.parse import urljoin, quote_plus
@@ -48,6 +49,13 @@ def encode_entity(level, eid):
     """
     return f"({level})({eid})"
 
+
+def decode_entity(encoded_entity):
+    """
+    decodes an encoded entity to get its encoded level and its encoded eid as tuple.
+    An entity "(class)(12345)" would be decoded to ("class", "12345").
+    """
+    return tuple(re.findall(r'\((.*?)\)', encoded_entity))
 
 # TODO use some security mechanism to call the HP API (maybe an API key)
 @async_measure_time

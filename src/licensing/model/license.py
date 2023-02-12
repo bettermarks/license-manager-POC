@@ -10,8 +10,8 @@ class License(Model):
     purchaser_eid = Column(String(256), nullable=False, index=True)
     owner_hierarchy_level = Column(String(256), nullable=False, index=True)
     owner_eids = Column(ARRAY(String(255)), nullable=False, index=True)
-    start = Column(Date, nullable=False)
-    end = Column(Date, nullable=False)
+    valid_from = Column(Date, nullable=False)
+    valid_to = Column(Date, nullable=False)
     seats = Column(Integer, nullable=True)
 
     # Relationships

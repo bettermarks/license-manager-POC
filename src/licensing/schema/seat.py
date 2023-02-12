@@ -13,8 +13,8 @@ class SeatCreate(SeatBase):
 
 class Seat(SeatBase):
     ref_license: int
-    occupied: datetime.datetime
-    released: datetime.datetime
+    occupied_at: datetime.datetime
+    released_at: datetime.datetime
     last_login: datetime.datetime
     is_occupied: bool
 

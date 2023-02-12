@@ -7,8 +7,8 @@ from pydantic import BaseModel, Field, constr, HttpUrl
 class LicenseBase(BaseModel):
     owner_hierarchy_level: str = Field(min_length=1, max_length=256, default="class")  # TODO remove default
     owner_eids: List[constr(min_length=1, max_length=256)] = ["50000154044", "50000158191"]  # TODO remove this default
-    start: datetime.date = "2023-02-10"  # TODO remove this default
-    end: datetime.date = "2024-02-10"  # TODO remove this default
+    valid_from: datetime.date = datetime.date(2023, 2, 10)  # TODO remove this default
+    valid_to: datetime.date = datetime.date(2024, 2, 10)  # TODO remove this default
     seats: int | None = 100  # TODO remove this default
 
 
