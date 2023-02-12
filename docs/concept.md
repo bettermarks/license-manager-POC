@@ -1,3 +1,4 @@
+
 # License Manager Concept
 
 The License Manager (LM) is basically some Rest API. The LM API accepts and handles
@@ -16,8 +17,19 @@ The LM works in some 'integrated' environment, which is made of
   HP is usually bundled with an Identity Provider (IDP)
 * the License Manager (LM) itself.
 
+```puml
+@startuml
+component  [Hierarchy Provider (HP)] as HP
+component  [License Manager (LM)] as LM
+component  [Application (APP)] as APP
 
-![](diagrams/components.png)
+APP --> HP : uses
+APP --> LM : uses
+LM --> HP : uses
+
+@enduml
+```
+
 Components of the 'license featured' application
 
 ## Entities and Hierarchies
@@ -233,7 +245,9 @@ different products from different licenses, the user could get. We would need so
 user most permissions, that can be got from 'his' licenses. For the POC, as we just do have one product with
 'full access' or 'nothing', this question does not need to be answered. Nevertheless, we should keep it in mind!
 
+#### The problem of getting more license matches on redeeming a license
 
+$$P \left( A=2 \, \middle| \, \dfrac{A^2}{B}>4 \right)$$
 
 
 
