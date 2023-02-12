@@ -18,7 +18,7 @@ The LM works in some 'integrated' environment, which is made of
 * the License Manager (LM) itself.
 
 
-![](diagrams/components.puml)
+![](diagrams/components.png)
 Components of the 'license featured' application
 
 ## Entities and Hierarchies
