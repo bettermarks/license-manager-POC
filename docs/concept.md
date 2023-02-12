@@ -17,19 +17,8 @@ The LM works in some 'integrated' environment, which is made of
   HP is usually bundled with an Identity Provider (IDP)
 * the License Manager (LM) itself.
 
-```puml
-@startuml
-component  [Hierarchy Provider (HP)] as HP
-component  [License Manager (LM)] as LM
-component  [Application (APP)] as APP
 
-APP --> HP : uses
-APP --> LM : uses
-LM --> HP : uses
-
-@enduml
-```
-
+![](diagrams/components.puml)
 Components of the 'license featured' application
 
 ## Entities and Hierarchies
@@ -247,6 +236,7 @@ user most permissions, that can be got from 'his' licenses. For the POC, as we j
 
 #### The problem of getting more license matches on redeeming a license
 
+Test Latex:
 $$P \left( A=2 \, \middle| \, \dfrac{A^2}{B}>4 \right)$$
 
 
