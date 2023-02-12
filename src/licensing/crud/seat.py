@@ -35,7 +35,7 @@ async def check_for_licenses(url: str, user_eid: str) -> Any:
     pass
 
 
-async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, user_eid: str) -> Any:
+async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, user_eid: str) -> List[Any]:
     """
     A just logged in user wants to get his permissions.
     """
@@ -44,6 +44,9 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
 
     # 1. get the hierarchy list (for the user) from the hierarchy provider (or raise an exception)
     hierarchy_provider, memberships = await get_user_memberships(session, hierarchy_provider_url, user_eid)
+
+    if not memberships:   # no membership, no permission
+        return []
 
     # 1. Is there already an active! seat 'taken' by the requesting user?
     active_seats = await get_active_seats(session, user_eid, datetime.date.today())
@@ -55,5 +58,6 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
         licenses = await get_licenses_for_entities(
             session, hierarchy_provider.id, memberships, datetime.date.today()
         )
+        print(".........................................................................")
         print("licenses = ", licenses)
-    return "OK"
+    return []

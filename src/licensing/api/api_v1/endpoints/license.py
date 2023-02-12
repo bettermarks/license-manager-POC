@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 
 from fastapi import APIRouter, Depends
 from fastapi import status as http_status
@@ -26,5 +26,5 @@ async def get_permissions(
         hierarchy_provider_url: str,
         user_eid: str,
         session: AsyncSession = Depends(get_async_session)
-) -> str:
+) -> List[Any]:
     return await seat_crud.get_permissions(session, hierarchy_provider_url, user_eid)

@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List
+from typing import Set, List
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import text, select
@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
-from licensing.hierarchy_provider_client import encode_entity
+from licensing.hierarchy_provider_client import encode_entity, decode_entity
 from licensing.model import license as license_model
 from licensing.model import license_owner as license_owner_model
 from licensing.schema import license as schema
@@ -16,36 +16,26 @@ from licensing.utils import async_measure_time
 
 @async_measure_time
 async def get_licenses_for_entities(
-        session: AsyncSession, hierarchy_provider_id: int, entities: List[str], when: date
+        session: AsyncSession, hierarchy_provider_id: int, entities: Set[str], when: date
 ) -> List[license_model.License]:
     """
     gets all licenses, that are valid at a given date (when), that are owned by the given entities under
     a given hierarchy provider
     """
+    # this ugly guy just transforms a set of strings into a string, that is usable in the SQL query below.
+    # Something like {'(class)(111), (school)(222)'} -> "('class', '111'), ('school', '222')"
+    entity_list = ', '.join([f"""({', '.join(f"'{p}'" for p in decode_entity(e))})""" for e in entities])
+
     stmt = text(f"""
         SELECT
-            DISTINCT id
+            DISTINCT l.id 
         FROM
-            (
-            SELECT
-                id,
-                '(' || owner_hierarchy_level || ')(' || owner_eid || ')' as encoded_owner
-            FROM
-                (	
-                SELECT
-                    id,
-                    owner_hierarchy_level,
-                    unnest(owner_eids) as owner_eid
-                from 
-                    license
-                where
-                    valid_from <= '{when}'
-                    AND valid_to >= '{when}'
-                    AND ref_hierarchy_provider = {hierarchy_provider_id}
-                ) li
-            ) lo
+            license_owner lo
+            INNER JOIN license l ON l.id = lo.ref_license
         WHERE
-            lo.encoded_owner IN ({', '.join([f"'{e}'" for e in entities])});            
+            l.valid_from <= '{when}'
+            AND l.valid_to >= '{when}'
+            AND (lo.hierarchy_level, lo.eid) IN ({entity_list});
     """)
 
     # TODO Can this be achieved in only one query instead of two?
@@ -53,11 +43,14 @@ async def get_licenses_for_entities(
     stmt = stmt.columns(license_model.License.id)
     license_ids = (await session.execute(stmt)).scalars().all()
 
+    print('license_ids = ', license_ids)
+    print('...........................................................')
+
     # Now we need to get the license objects for those IDs and return the objects.
     return (
         await session.execute(
-            select(model.License).where(
-                model.License.id.in_(license_ids)
+            select(license_model.License).where(
+                license_model.License.id.in_(license_ids)
             )
         )
     ).scalars().all()
