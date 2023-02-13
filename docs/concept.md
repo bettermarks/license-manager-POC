@@ -226,7 +226,9 @@ The request handling function will perform these steps:
   |1| 777777    | 2023-01-05 | 
   |1| 123456789 | 2023-01-26 | 
  
-  The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user.
+  The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user. The more
+  complicated cases of redeeming when more than one valid licenses are found, is currently being discussed.
+  (see below)
 
 ### Open Questions / Unsolved Issues:
 We did not touch yet the question, how we should handle the case of
