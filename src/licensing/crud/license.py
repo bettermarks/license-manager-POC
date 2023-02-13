@@ -2,7 +2,7 @@ from datetime import date
 from typing import Set, List
 
 from fastapi import status as http_status, HTTPException
-from sqlalchemy import text, select
+from sqlalchemy import text, select, bindparam, Date, BigInteger
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_memberships
@@ -19,39 +19,47 @@ async def get_licenses_for_entities(
         session: AsyncSession, hierarchy_provider_id: int, entities: Set[str], when: date
 ) -> List[license_model.License]:
     """
-    gets all licenses, that are valid at a given date (when), that are owned by the given entities under
-    a given hierarchy provider
+    Gets all (distinct) licenses, that are valid at a given date (when),
+    that are owned by the given entities under a given hierarchy provider.
+
+    :param session: the SQLAlchemy session
+    :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
+    :param entities: the license owners, the licenses to get should apply to
+    :param when: actually 'today'
+    :return: a list of License objects, that are owned by the given entities, but only with an 'id' attribute.
     """
-    # this ugly guy just transforms a set of strings into a string, that is usable in the SQL query below.
-    # Something like {'(class)(111), (school)(222)'} -> "('class', '111'), ('school', '222')"
-    entity_list = ', '.join([f"""({', '.join(f"'{p}'" for p in decode_entity(e))})""" for e in entities])
-
-    stmt = text(f"""
-        SELECT
-            DISTINCT l.id 
-        FROM
-            license_owner lo
-            INNER JOIN license l ON l.id = lo.ref_license
-        WHERE
-            l.valid_from <= '{when}'
-            AND l.valid_to >= '{when}'
-            AND (lo.hierarchy_level, lo.eid) IN ({entity_list});
-    """)
-
-    # TODO Can this be achieved in only one query instead of two?
-    # Get all license ids ...
-    stmt = stmt.columns(license_model.License.id)
-    license_ids = (await session.execute(stmt)).scalars().all()
-
-    print('license_ids = ', license_ids)
-    print('...........................................................')
-
-    # Now we need to get the license objects for those IDs and return the objects.
     return (
         await session.execute(
-            select(license_model.License).where(
-                license_model.License.id.in_(license_ids)
-            )
+            select(
+                license_model.License
+            ).from_statement(
+                text(
+                    f"""
+                        SELECT
+                            DISTINCT 
+                                l.id, 
+                                l.valid_from
+                        FROM
+                            license_owner lo
+                            INNER JOIN license l ON l.id = lo.ref_license
+                        WHERE
+                            l.ref_hierarchy_provider = :hierarchy_provider_id
+                            AND l.valid_from <= :when
+                            AND l.valid_to >= :when
+                            AND (lo.hierarchy_level, lo.eid) IN :entity_list
+                    """
+                ).bindparams(
+                    bindparam("when", type_=Date),
+                    bindparam("hierarchy_provider_id", type_=BigInteger),
+                    bindparam("entity_list", expanding=True)
+                ).columns(
+                    license_model.License.id,
+                )
+            ),
+            params={
+                "when": when,
+                "hierarchy_provider_id": hierarchy_provider_id,
+                "entity_list": [decode_entity(e) for e in entities]}
         )
     ).scalars().all()
 
@@ -62,6 +70,11 @@ async def purchase(
 ) -> license_model.License:
     """
     The license purchase process performed by a user for one or more entities, they are member of.
+
+    :param session: the SQLAlchemy session
+    :param purchaser_eid: the EID of the license purchaser
+    :param license_data: license data (pydantic schema) containing license info like 'valid_from', etc.
+    :return: the created license model OR raises an HTTP exception
     """
     # 0. check, if requesting user is purchaser
     # TODO
