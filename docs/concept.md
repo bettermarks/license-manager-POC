@@ -236,8 +236,42 @@ user most permissions, that can be got from 'his' licenses. For the POC, as we j
 
 #### The problem of getting more license matches on redeeming a license
 
-We will face the problem, that, if a user loggs in and wants to get
-his permissions ()
+We will face the problem, that, if a user logs in and wants to get
+his permissions, sometimes more than one license will 'match'. We try
+to solve the problem, how to 'distibute' seat occupation.
 
+Let us assume, that a student 'student:1' is in a class 'class:1', 
+which is in the school 'school:1'. Let us further assume, that some
+teacher or administrator purchased licenses like
 
+1. teacher 'teacher:2' purchased a license for the school 'school:1' (1000 seats) AND
+2. teacher 'teacher:1' purchased a license for the class 'class:1' (30 seats)
 
+Now student 'student:1' logs in for the first time. 'student:1' is member
+of 'class:1', but also member (via 'class:1') of 'school:1. The 'redeeming' process
+starts and will find two possible licenses to occupy a seat from:
+```
+License {
+  "purchaser": 'teacher:2', 
+  "owner_level": 'school', 
+  owner_eids: ['school:2'], 
+  seats: 1000
+}
+```
+and
+```
+License {
+  "purchaser": 'teacher:1', 
+  "owner_level": 'class', 
+  owner_eids: ['class:1'], 
+  seats: 1000
+}
+```
+Now we have three possibilities of handling the 'seat occupation' process:
+
+1. Choose one license (randomly or by some criteria) and occupy a seat for this license.
+2. Choose both licenses and occupy a seat for both licenses.
+3. Choose both licenses and occupy a 'half seat' for each license.
+
+Got the problem? Let us discuss pros and cons. Maybe the whole 'seat occupation logic' leads to
+contradictions or hard to solve problems in any case. Let us also discuss this.
