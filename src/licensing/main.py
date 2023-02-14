@@ -64,11 +64,13 @@ async def log_requests(request, call_next):
     """some request logging ..."""
     request_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
     logging.debug(f"request_id={request_id} started request at path={request.url.path}")
-    start_time = time.time()
+    start = time.time()
     response = await call_next(request)
-    process_time = (time.time() - start_time) * 1000
-    formatted_process_time = '{0:.2f}'.format(process_time)
-    logging.debug(f"request_id={request_id} time_cosumed={formatted_process_time}ms status_code={response.status_code}")
+    logging.debug((
+        f"request_id={request_id} "
+        f"time_consumed={'{0:.2f}'.format((time.time() - start) * 1000)}ms"
+        f"status_code={response.status_code}"
+    ))
     return response
 
 
