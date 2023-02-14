@@ -80,6 +80,7 @@ async def startup():
     await load_initial_products()
     await load_initial_hierarchy_providers()
 
+
 @app.on_event("shutdown")
 async def shutdown():
     pass
