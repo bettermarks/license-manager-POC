@@ -6,3 +6,4 @@ alembic
 requests
 pydantic[dotenv]
 aiohttp
+pyyaml

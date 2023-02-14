@@ -14,4 +14,3 @@ class License(Model):
     # Relationships
     product = orm.relationship("Product")
     hierarchy_provider = orm.relationship("HierarchyProvider")
-    owners = orm.relationship("LicenseOwner")

@@ -4,6 +4,7 @@ from typing import Set, List
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import text, select, bindparam, Date, BigInteger
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
@@ -26,7 +27,7 @@ async def get_licenses_for_entities(
     :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
     :param entities: the license owners, the licenses to get should apply to
     :param when: actually 'today'
-    :return: a list of License objects, that are owned by the given entities, but only with an 'id' attribute.
+    :return: a list of License objects, that are owned by the given entities, but only with an selected attributes.
     """
     return (
         await session.execute(
@@ -37,8 +38,7 @@ async def get_licenses_for_entities(
                     f"""
                         SELECT
                             DISTINCT 
-                                l.id, 
-                                l.valid_from
+                                l.id 
                         FROM
                             license_owner lo
                             INNER JOIN license l ON l.id = lo.ref_license
@@ -53,8 +53,10 @@ async def get_licenses_for_entities(
                     bindparam("hierarchy_provider_id", type_=BigInteger),
                     bindparam("entity_list", expanding=True)
                 ).columns(
-                    license_model.License.id,
+                    license_model.License.id
                 )
+            ).options(   # we need that as async does not support lazy loading!
+                selectinload(license_model.License.product)
             ),
             params={
                 "when": when,

@@ -4,7 +4,7 @@ from pydantic import BaseSettings
 
 class Settings(BaseSettings):
     # Generic settings
-    DEBUG: bool = False
+    LOGLEVEL: str = "debug"
 
     # DB settings
     DATABASE_USER: str

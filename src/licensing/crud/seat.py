@@ -48,7 +48,7 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     if not memberships:   # no membership, no permission
         return []
 
-    # 1. Is there already an active! seat 'taken' by the requesting user?
+    # 1. is there already an active! seat 'taken' by the requesting user?
     active_seats = await get_active_seats(session, user_eid, datetime.date.today())
 
     if active_seats:
@@ -58,6 +58,10 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
         licenses = await get_licenses_for_entities(
             session, hierarchy_provider.id, memberships, datetime.date.today()
         )
-        print(".........................................................................")
-        print("licenses = ", licenses)
+
+        # reserve a seat for the first one!  # TODO This is not a valid solution. Will be discussed!
+        if licenses:
+            return [{"allow": "all"}]   # TODO this should be handled in product ACLs later ...
+        else:
+            return []
     return []
