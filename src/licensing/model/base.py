@@ -5,7 +5,7 @@ from sqlalchemy import Column, DateTime, BigInteger
 from sqlalchemy.orm import declarative_base, declared_attr
 
 
-class Base:
+class Model:
     """
     The common base class for all our models.
     Every model has a column
@@ -18,8 +18,8 @@ class Base:
         return re.sub(r'(?<!^)(?=[A-Z])', '_', cls.__name__).lower()   # snake case ...
 
     id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    created = Column(DateTime, default=datetime.datetime.now, index=True)
-    updated = Column(DateTime, onupdate=datetime.datetime.now, index=True)
+    created = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, index=True)
+    updated = Column(DateTime(timezone=True), onupdate=datetime.datetime.utcnow, index=True)
 
 
-Base = declarative_base(cls=Base)
+Model = declarative_base(cls=Model)

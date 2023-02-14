@@ -1,7 +1,9 @@
 asyncpg
-SQLAlchemy[asyncio]
+SQLAlchemy[asyncio]==2.0.2
 fastapi
 uvicorn
 alembic
 requests
 pydantic[dotenv]
+aiohttp
+pyyaml

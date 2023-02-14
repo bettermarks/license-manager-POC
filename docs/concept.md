@@ -1,3 +1,4 @@
+
 # License Manager Concept
 
 The License Manager (LM) is basically some Rest API. The LM API accepts and handles
@@ -24,7 +25,7 @@ Components of the 'license featured' application
 
 We call users, school classes, schools, other organisational structures, even
 countries 'Entities' (E). Those entities can be arranged in some 'natural' hierarchy,
-f.e. some school has several classes, each of those classes has several students and
+e.g. some school has several classes, each of those classes has several students and
 one (or maybe more) teachers. An entity is uniquely identified within the HP by some
 identifier, we call it 'external identifier' (EID).
 
@@ -55,23 +56,25 @@ identify entities, which are associated with some given hierarchy level
 There are two 'leaf levels' defined, 'teacher' and 'student' entity, a 'level 1'
 entity named 'class' and a 'level 2' entity named 'school'.
 
-### Getting Hierarchies for a Specific User
+### Getting all 'Memberships' for a Specific User
 ```
-GET /hierarchy/users/{user EID}
+GET /hierarchy/users/{user EID}/membership
 ```
-This route gets the hierarchy path(s) for a given user and returns something like
+This route gets all the memberships of a given user including the user themselves and returns something like
 ```json
 [
-    "school(999)/class(566)/teacher(glu::123)",
-    "school(999)/class(344)/teacher(glu::123)",
-    "school(888)/teacher(glu::123)"
+    "(school)(999)",
+    "(school(888)",
+    "(class)(344)",
+    "(class)(566)",
+    "(teacher)(glu::123)"
 ]
 ```
-This means that a user 'glu::123' (who is associated with a 'leaf'
+This means that a user 'glu::123' (who is associated with a 
 hierarchy level 'teacher') is currently member of a hierarchy level
 named 'class' and has EID='344' and of some 'class' with EID='566',
 which both are 'located' in some hierarchy level 'school' with EID='999'.
-Additionally, 'teacher' 'glu:123' is 'directly connected' to 'school' '888'.
+Additionally, 'teacher' 'glu:123' is also member of school '888'.
 
 ## The License Manager
 The LM is also some web service, that implements a couple of routes
@@ -82,7 +85,7 @@ implementing a POC for such routes. We will implement the following routes:
 ### Getting Products
 This route returns all 'available products'. For the POC, there is just one product, that is associated with
 'full access'. Fine granular permissions within a product are not dealt with in the POC. But we already know, that
-the place, where to define specific permissions (f.e. permissions to have access to specific books), is the
+the place, where to define specific permissions (e.g. permissions to have access to specific books), is the
 'product'.
 ```
 GET /products
@@ -99,17 +102,18 @@ The process of purchasing a license will be a multistep process (getting pricing
 with number of seats and duration to a 'shopping cart', purchase ...). We will not implement such a multistep process
 in the POC, we will just add one route as follows:
 ```
-POST /users/{user EID}/purchase-license
+POST /users/{user EID}/purchases
 ```
 with some request body like
 ```json
 {
-  "product": "full_access"
-  "level": "class"
-  "entities": ["34535356324", "2346445645646"]
-  "seats": 50
-  "start": "2023-01-01"
-  "end": "2023-12-31"
+  "product_eid": "full_access",
+  "owner_hierarchy_level": "class",
+  "owner_eids": ["34535356324", "2346445645646"],
+  "seats": 50,
+  "valid_from": "2023-01-01",
+  "valid_to": "2023-12-31",
+  "hierarchy_provider_url": "http://0.0.0.0:5001/hierarchy"
 }
 ```
 The request body will be interpreted like so: The requesting user wants to add (purchase) a
@@ -123,19 +127,22 @@ EID='2346445645646".
 #### What happens when this route is being called:
 Let us assume, the purchase function is called via
 ```
-POST /users/1111111/purchase-license
+POST /users/1111111/purchases
 ```
 using the request body given above.
 The request handling function will perform the following steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
-* Check, if the 'entities' in the request are ALL part of the users hierarchy. -> If not, return an error
-  * In order to check this, the HP is called via ```GET /hierarchy/users/1111111```.
+* Check, if the 'entities' in the request are ALL part of the users 'memberships'. -> If not, return an error
+  * In order to check this, the HP (via the URL given in the request body) is called 
+    via ```GET /hierarchy/users/1111111/membership```.
     The result would be something like this:
     ```json
     [
-      "school(999)/class(34535356324)/teacher(1111111)",
-      "school(999)/class(2346445645646)/teacher(1111111)",
-      "school(888)/teacher(1111111)"
+      "(school)(999)",
+      "(class)(34535356324)",
+      "(class)(2346445645646)",
+      "(school)(888)",
+      "(teacher)(1111111)"
     ]
     ```
     We now apply a simple string search to the result list checking, if ALL entities in the request body have a
@@ -144,9 +151,9 @@ The request handling function will perform the following steps:
 * The license will be stored in the database like so:
   Create a new row in the 'license' table:
 
-  |license ID|product EID|purchaser EID|owner level| owner EIDs|seats|start|end|
-  |-----------|-------|-----|------------|--------|-----|-----|-----| 
-  |1|full_access|1111111|class|['34535356324','2346445645646']|50|2023-01-01|2023-12-31| 
+  |license ID|product EID|purchaser EID| owner hierarchy level | owner EIDs|seats|start|end|
+  |-----------|-------|-----------------------|------------|--------|-----|-----|-----| 
+  |1|full_access|1111111| class                 |['34535356324','2346445645646']|50|2023-01-01|2023-12-31| 
 
 * Some information about successful purchase of the license will be returned to the requesting user.
 
@@ -179,7 +186,7 @@ GET /users/123456789/permissions
 The request handling function will perform these steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
 * Now, the evaluating function would query the license seats table, if there is already a seat 'taken' by the
-  requesting student. The table 'license_seat' could currently look like this:
+  requesting student. The table 'seat' could currently look like this:
 
   | license ID | user EID |created|  
   |-----------|------|--------| 
@@ -197,41 +204,76 @@ The request handling function will perform these steps:
   ```
   The query returns no product, therefore we have to go to the next step. If the query would have got a result,
   we also would go to the next step, as we maybe have to 'free a seat'. (The latter 'free a seat' use case will 
-  not be described here, also the case 'seat is still valid' and #license seat is expired')
+  not be described here, also the case 'seat is still valid' and license seat is expired')
 
-* Send a new request to the HP: ```GET /hierarchy/users/123456789```.
+* Send a new request to the HP: ```GET /hierarchy/users/123456789/membership```.
   The result would be something like this:
   ```json
-  ["school(999)/class(2346445645646)/student(123456789)"]
+  [
+    "(school)(999)",
+    "(class)(2346445645646)",
+    "(student)(123456789)"
+  ]
   ```
-  Ok, we will use some simple parser, that gets out some data of that result:
-  ```
-  {
-    "school": "999",
-    "class": "2346445645646"
-  }
-  ```
-  We will look up in the license table using some simple query (not written down here) and we will
-  have a match for a license with 'level' 'class' and owner-EID='2346445645646'. The license with
-  license ID=1 matches the criteria. So we can reserve a seat (as long as there are seats open, which
-  we can easily confirm using a simple count query). The seats table after the insert would look like this:
+  We will now look up all those 'memberships' in the license table using some simple query 
+  (not written down here) and we will have a match for a license with 'level' 'class' 
+  and owner-EID='2346445645646'. The license with license ID=1 matches the criteria. So we can 
+  reserve a seat (as long as there are seats open, which we can easily confirm using a simple 
+  count query). The seats table after the insert would look like this:
 
   | license ID | user EID  | created    |  
   |-----------|------------|--------| 
   |1| 777777    | 2023-01-05 | 
   |1| 123456789 | 2023-01-26 | 
  
-  The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user.
+  The seat has been occupied, the function will return the product (or 'TRUE') to the requesting user. The more
+  complicated cases of redeeming when more than one valid licenses are found, is currently being discussed.
+  (see below)
 
-### Open Questions:
+### Open Questions / Unsolved Issues:
 We did not touch yet the question, how we should handle the case of
 different products from different licenses, the user could get. We would need some 'merge' strategy to give the
 user most permissions, that can be got from 'his' licenses. For the POC, as we just do have one product with
 'full access' or 'nothing', this question does not need to be answered. Nevertheless, we should keep it in mind!
 
+#### The problem of getting more license matches on redeeming a license
 
+We will face the problem, that, if a user logs in and wants to get
+his permissions, sometimes more than one license will 'match'. We try
+to solve the problem, how to 'distibute' seat occupation.
 
+Let us assume, that a student 'student:1' is in a class 'class:1', 
+which is in the school 'school:1'. Let us further assume, that some
+teacher or administrator purchased licenses like
 
+1. teacher 'teacher:2' purchased a license for the school 'school:1' (1000 seats) AND
+2. teacher 'teacher:1' purchased a license for the class 'class:1' (30 seats)
 
+Now student 'student:1' logs in for the first time. 'student:1' is member
+of 'class:1', but also member (via 'class:1') of 'school:1. The 'redeeming' process
+starts and will find two possible licenses to occupy a seat from:
+```
+License {
+  "purchaser": 'teacher:2', 
+  "owner_level": 'school', 
+  owner_eids: ['school:2'], 
+  seats: 1000
+}
+```
+and
+```
+License {
+  "purchaser": 'teacher:1', 
+  "owner_level": 'class', 
+  owner_eids: ['class:1'], 
+  seats: 1000
+}
+```
+Now we have three possibilities of handling the 'seat occupation' process:
 
+1. Choose one license (randomly or by some criteria) and occupy a seat for this license.
+2. Choose both licenses and occupy a seat for both licenses.
+3. Choose both licenses and occupy a 'half seat' for each license.
 
+Got the problem? Let us discuss pros and cons. Maybe the whole 'seat occupation logic' leads to
+contradictions or hard to solve problems in any case. Let us also discuss this.
