@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Set, List
+from typing import Set, List, Dict
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import text, select, bindparam, Date, BigInteger
@@ -8,7 +8,6 @@ from sqlalchemy.orm import selectinload
 
 from licensing.crud.hierarchy_provider import get_user_memberships
 from licensing.crud.product import find_product
-from licensing.hierarchy_provider_client import encode_entity, decode_entity
 from licensing.model import license as license_model
 from licensing.model import license_owner as license_owner_model
 from licensing.schema import license as schema
@@ -17,7 +16,7 @@ from licensing.utils import async_measure_time
 
 @async_measure_time
 async def get_licenses_for_entities(
-        session: AsyncSession, hierarchy_provider_id: int, entities: Set[str], when: date
+        session: AsyncSession, hierarchy_provider_id: int, entities: Dict[(str, int)], when: date
 ) -> List[license_model.License]:
     """
     Gets all (distinct) licenses, that are valid at a given date (when),
@@ -25,7 +24,7 @@ async def get_licenses_for_entities(
 
     :param session: the SQLAlchemy session
     :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
-    :param entities: the license owners, the licenses to get should apply to
+    :param entities: the license owners, the licenses to get should apply to (as a dict of tuples with key=entity EID)
     :param when: actually 'today'
     :return: a list of License objects, that are owned by the given entities, but only with an selected attributes.
     """
@@ -46,7 +45,7 @@ async def get_licenses_for_entities(
                             l.ref_hierarchy_provider = :hierarchy_provider_id
                             AND l.valid_from <= :when
                             AND l.valid_to >= :when
-                            AND (lo.hierarchy_level, lo.eid) IN :entity_list
+                            AND (lo.eid, lo.hierarchy_level) IN :entity_list
                     """
                 ).bindparams(
                     bindparam("when", type_=Date),
@@ -61,7 +60,7 @@ async def get_licenses_for_entities(
             params={
                 "when": when,
                 "hierarchy_provider_id": hierarchy_provider_id,
-                "entity_list": [decode_entity(e) for e in entities]}
+                "entity_list": [(k, v[0]) for k, v in entities.items()]}
         )
     ).scalars().all()
 
@@ -97,7 +96,7 @@ async def purchase(
 
     # 3.2 Now do the actual check.
     for owner_eid in license_data.owner_eids:
-        if encode_entity(license_data.owner_hierarchy_level, owner_eid) not in memberships:
+        if owner_eid not in memberships or memberships[owner_eid][0] != license_data.owner_hierarchy_level:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
                 detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."

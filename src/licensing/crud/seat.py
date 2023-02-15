@@ -44,7 +44,6 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
 
     # 1. get the hierarchy list (for the user) from the hierarchy provider (or raise an exception)
     hierarchy_provider, memberships = await get_user_memberships(session, hierarchy_provider_url, user_eid)
-
     if not memberships:   # no membership, no permission
         return []
 
