@@ -63,11 +63,11 @@ GET /hierarchy/users/{user EID}/membership
 This route gets all the memberships of a given user including the user themselves and returns something like
 ```json
 [
-    {"999":  ["school", 2]},
-    {"888":  ["school", 2]},
-    {"344":  ["class", 1]},
-    {"566":  ["class", 1]},
-    {"glu::123":  ["teacher", 0]}
+  {"type": "school", "level": 2, "eid": "999"}, 
+  {"type": "school", "level": 2, "eid": "888"},
+  {"type": "class", "level": 1, "eid": "344"},
+  {"type": "class", "level": 1, "eid": "566"},
+  {"type": "teacher", "level": 0, "eid": "glu::123"}
 ]
 ```
 This means that a user 'glu::123' (who is associated with a 
@@ -138,11 +138,11 @@ The request handling function will perform the following steps:
       The result would be something like this:
       ```json
       [
-        {"999":  ["school", 2]},
-        {"888":  ["school", 2]},
-        {"344":  ["34535356324", 1]},
-        {"566":  ["2346445645646", 1]},
-        {"1111111":  ["teacher", 0]}
+        {"type": "school", "level": 2, "eid": "999"},
+        {"type": "school", "level": 2, "eid": "888"},
+        {"type": "class", "level": 1, "eid": "34535356324"},
+        {"type": "class", "level": 1, "eid": "2346445645646"},
+        {"type": "teacher", "level": 0, "eid": "1111111"}
       ]
       ```
       We now apply a simple string search to the result list checking, if ALL entities in the request body have a
@@ -210,9 +210,9 @@ The request handling function will perform these steps:
   The result would be something like this:
   ```json
   [
-    {"999":  ["school", 2]},
-    {"566":  ["2346445645646", 1]},
-    {"123456789":  ["student", 0]}
+    {"type": "school", "level": 2, "eid": "999"},
+    {"type": "class", "level": 1, "eid": "2346445645646"},
+    {"type": "student", "level": 0, "eid": "123456789"}
   ]
   ```
   We will now look up all those 'memberships' in the license table using some simple query 
