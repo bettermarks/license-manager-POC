@@ -63,11 +63,11 @@ GET /hierarchy/users/{user EID}/membership
 This route gets all the memberships of a given user including the user themselves and returns something like
 ```json
 [
-    "(school)(999)",
-    "(school(888)",
-    "(class)(344)",
-    "(class)(566)",
-    "(teacher)(glu::123)"
+  {"type": "school", "level": 2, "eid": "999"}, 
+  {"type": "school", "level": 2, "eid": "888"},
+  {"type": "class", "level": 1, "eid": "344"},
+  {"type": "class", "level": 1, "eid": "566"},
+  {"type": "teacher", "level": 0, "eid": "glu::123"}
 ]
 ```
 This means that a user 'glu::123' (who is associated with a 
@@ -132,22 +132,22 @@ POST /users/1111111/purchases
 using the request body given above.
 The request handling function will perform the following steps:
 * Check, if the requesting user (given EID) is loggend in and has issued the request. -> If not, return an error
-* Check, if the 'entities' in the request are ALL part of the users 'memberships'. -> If not, return an error
-  * In order to check this, the HP (via the URL given in the request body) is called 
-    via ```GET /hierarchy/users/1111111/membership```.
-    The result would be something like this:
-    ```json
-    [
-      "(school)(999)",
-      "(class)(34535356324)",
-      "(class)(2346445645646)",
-      "(school)(888)",
-      "(teacher)(1111111)"
-    ]
-    ```
-    We now apply a simple string search to the result list checking, if ALL entities in the request body have a
-    match in the result list AND have correct 'level' (as given in the request body). -> If not, return an error!
-    Yes, they have! So the license purchase request is valid in this case!
+  * Check, if the 'entities' in the request are ALL part of the users 'memberships'. -> If not, return an error
+    * In order to check this, the HP (via the URL given in the request body) is called 
+      via ```GET /hierarchy/users/1111111/membership```.
+      The result would be something like this:
+      ```json
+      [
+        {"type": "school", "level": 2, "eid": "999"},
+        {"type": "school", "level": 2, "eid": "888"},
+        {"type": "class", "level": 1, "eid": "34535356324"},
+        {"type": "class", "level": 1, "eid": "2346445645646"},
+        {"type": "teacher", "level": 0, "eid": "1111111"}
+      ]
+      ```
+      We now apply a simple string search to the result list checking, if ALL entities in the request body have a
+      match in the result list AND have correct 'level' (as given in the request body). -> If not, return an error!
+      Yes, they have! So the license purchase request is valid in this case!
 * The license will be stored in the database like so:
   Create a new row in the 'license' table:
 
@@ -210,9 +210,9 @@ The request handling function will perform these steps:
   The result would be something like this:
   ```json
   [
-    "(school)(999)",
-    "(class)(2346445645646)",
-    "(student)(123456789)"
+    {"type": "school", "level": 2, "eid": "999"},
+    {"type": "class", "level": 1, "eid": "2346445645646"},
+    {"type": "student", "level": 0, "eid": "123456789"}
   ]
   ```
   We will now look up all those 'memberships' in the license table using some simple query 
