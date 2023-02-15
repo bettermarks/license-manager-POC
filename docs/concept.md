@@ -275,5 +275,11 @@ Now we have three possibilities of handling the 'seat occupation' process:
 2. Choose both licenses and occupy a seat for both licenses.
 3. Choose both licenses and occupy a 'half seat' for each license.
 
-Got the problem? Let us discuss pros and cons. Maybe the whole 'seat occupation logic' leads to
-contradictions or hard to solve problems in any case. Let us also discuss this.
+Suggestion: a valid solution could be like so:
+
+* The student will occupy two seats (one for each license), if the products behind the licenses are different (because the
+  student should get maximum permissions from the licenses he can redeem).
+
+* If both licenses are attached to the same product, only one seat will be occupied by the student. As long  as available, take the seat for the license attached to the license owner with the lowest hierarchy level available.
+
+Currently, as we do have only one product ('full access'), this does not matter, but later, it could.
