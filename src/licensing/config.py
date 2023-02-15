@@ -1,10 +1,12 @@
 from functools import lru_cache
 from pydantic import BaseSettings
 
+from licensing.logging import Loglevel
+
 
 class Settings(BaseSettings):
     # Generic settings
-    LOGLEVEL: str = "debug"
+    LOGLEVEL: str = Loglevel.DEBUG
 
     # DB settings
     DATABASE_USER: str

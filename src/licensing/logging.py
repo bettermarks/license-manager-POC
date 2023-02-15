@@ -1,5 +1,16 @@
 import logging
 
+"""
+Thanks to https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
+"""
+
+class Loglevel:
+    DEBUG = "debug"
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+    CRITICAL= "critical"
+
 
 class ColorFormatter(logging.Formatter):
 
@@ -25,3 +36,17 @@ class ColorFormatter(logging.Formatter):
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
 
+
+def get_loglevel(loglevel: str) -> int:
+    """my configurable 'string' loglevel to internal int loglevel"""
+    match loglevel:
+        case Loglevel.DEBUG:
+            return logging.DEBUG
+        case Loglevel.INFO:
+            return logging.INFO
+        case Loglevel.WARNING:
+            return logging.WARNING
+        case Loglevel.ERROR:
+            return logging.ERROR
+        case _:
+            return logging.CRITICAL

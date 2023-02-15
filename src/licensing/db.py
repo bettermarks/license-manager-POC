@@ -1,4 +1,3 @@
-import logging
 import urllib
 from contextlib import asynccontextmanager
 
@@ -29,7 +28,7 @@ DATABASE_URL = postgres_dsn(
 async_engine = create_async_engine(
     DATABASE_URL,
     future=True,
-    echo=False # True if settings.LOGLEVEL == logging.DEBUG else False   # lots of logging ...
+    echo=False  # True if settings.LOGLEVEL == logging.DEBUG else False   # lots of logging ...
 )
 async_session_factory = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
 

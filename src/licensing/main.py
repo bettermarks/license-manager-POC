@@ -7,14 +7,14 @@ from fastapi import FastAPI
 
 
 from licensing import __version__ as version
-from licensing.logging import ColorFormatter
+from licensing.logging import ColorFormatter, get_loglevel
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
 
 
 # setup logging
-loglevel = logging.DEBUG if settings.LOGLEVEL == "debug" else logging.INFO
+loglevel = get_loglevel(settings.LOGLEVEL)
 logger = logging.getLogger()
 logger.setLevel(loglevel)
 ch = logging.StreamHandler()
