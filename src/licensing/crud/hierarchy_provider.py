@@ -11,6 +11,20 @@ from licensing.model import hierarchy_provider as model
 from licensing.utils import async_measure_time
 
 
+# a custom type representing indexed 'hierarchy memberships'. It is basically
+# a dict with
+# key = tuple(
+#   <<the type, sth. like 'school'>>,
+#   <<the eid, sth. like '1234567'>>
+# ) and
+# value = {
+#   "eid": <<the eid, sth. like '1234567'>>,
+#   "type": <<the type, sth. like 'school'>>,
+#   "level": <<the level, something like 1>>
+# }
+memberships_type = Dict[Tuple[str, str], Dict[str, int]]
+
+
 @lru_cache()
 async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
@@ -36,14 +50,12 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.Hier
 @async_measure_time
 async def get_user_memberships(
         session: AsyncSession, url: str, user_eid: str
-) -> (model.HierarchyProvider, Dict[Tuple[str, str], Dict[str, int]]):
+) -> (model.HierarchyProvider, memberships_type):
     """
     gets the membership list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500
     http error.
-    ::returns a tuple (the registered hierarchy provider object, the memberships as
-        a dict with key=tuple(entity_type, entity EID) and
-        value={"eid": <<the eid>>, "type": <<sth. like 'school'>>, "level": <<some int>>}
+    :return a tuple (the registered hierarchy provider object, the memberships of 'memberships' type (see above))
     """
     hierarchy_provider = await find_hierarchy_provider(session, url)
     try:
@@ -62,7 +74,7 @@ async def get_user_memberships(
         )
 
 
-def lookup_membership(memberships: Dict[Tuple[str, str], Dict[str, int]], typ: str, eid: str):
+def lookup_membership(memberships: memberships_type, typ: str, eid: str):
     """
     looks up some membership in a given 'membership dict' (see above), that is got from
     the hierarchy provider
