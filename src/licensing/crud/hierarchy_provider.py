@@ -28,7 +28,7 @@ Memberships = Dict[Tuple[str, str], Dict[str, int]]
 @lru_cache()
 async def get_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
-    finds a hierarchy provider with a given url or raises an HTTPException, if not found
+    gets a hierarchy provider with a given url.
     """
     return (
         await session.execute(
@@ -50,6 +50,7 @@ async def get_user_memberships(
     catches any exception raised from the request and 'translate' it to some 500
     http error.
     :return a tuple (the registered hierarchy provider object, the memberships of 'Memberships' type (see above))
+    :raises HTTPException with possible codes 422 or 500
     """
     hierarchy_provider = await get_hierarchy_provider(session, url)
     if not hierarchy_provider:
