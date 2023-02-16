@@ -50,7 +50,7 @@ async def get_user_memberships(
     catches any exception raised from the request and 'translate' it to some 500
     http error.
     :return a tuple (the registered hierarchy provider object, the memberships of 'Memberships' type (see above))
-    :raises HTTPException with possible codes 422 or 500
+    :raises HTTPException: possible codes 422 or 500
     """
     hierarchy_provider = await get_hierarchy_provider(session, url)
     if not hierarchy_provider:

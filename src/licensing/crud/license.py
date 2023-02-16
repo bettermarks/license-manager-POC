@@ -75,7 +75,7 @@ async def purchase(
     :param session: the SQLAlchemy session
     :param purchaser_eid: the EID of the license purchaser
     :param license_data: license data (pydantic schema) containing license info like 'valid_from', etc.
-    :raises HTTPException with possible codes 409, 422 or 500
+    :raises HTTPException: possible codes 409, 422 or 500
     """
     # 0. check, if requesting user is purchaser
     # TODO
