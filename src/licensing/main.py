@@ -2,6 +2,7 @@ import time
 import random
 import string
 import logging
+import uuid
 
 from fastapi import FastAPI
 
@@ -62,7 +63,7 @@ app = FastAPI(
 @app.middleware("http")
 async def log_requests(request, call_next):
     """some request logging ..."""
-    request_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+    request_id = uuid.uuid4()
     logging.debug(f"request_id={request_id} started request at path={request.url.path}")
     start = time.time()
     response = await call_next(request)
