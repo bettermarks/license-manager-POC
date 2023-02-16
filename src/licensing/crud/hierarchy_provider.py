@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Dict
+from typing import Dict, Tuple
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
@@ -36,21 +36,23 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.Hier
 @async_measure_time
 async def get_user_memberships(
         session: AsyncSession, url: str, user_eid: str
-) -> (model.HierarchyProvider, Dict[str, Dict[str, int]]):
+) -> (model.HierarchyProvider, Dict[Tuple[str, str], Dict[str, int]]):
     """
     gets the membership list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500
     http error.
     ::returns a tuple (the registered hierarchy provider object, the memberships as
-        a dict with key=entity EID) and value={"type": <<sth. like 'school'>>, "level": <<some int>>}
+        a dict with key=tuple(entity_type, entity EID) and
+        value={"eid": <<the eid>>, "type": <<sth. like 'school'>>, "level": <<some int>>}
     """
     hierarchy_provider = await find_hierarchy_provider(session, url)
     try:
         memberships_raw = await http_get(hierarchy_provider_memberships_url(f"{url}/", user_eid))
         return hierarchy_provider, {
-            m["eid"]: {
+            (m["type"], m["eid"]): {
                 "type": m["type"],
-                "level": m['level']
+                "eid": m["eid"],
+                "level": m["level"]
             } for m in memberships_raw
         }
     except Exception as e:
@@ -58,3 +60,15 @@ async def get_user_memberships(
             status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"Hierarchy provider server at base URL='{url}' did not respond properly ({e})."
         )
+
+
+def lookup_membership(memberships: Dict[Tuple[str, str], Dict[str, int]], typ: str, eid: str):
+    """
+    looks up some membership in a given 'membership dict' (see above), that is got from
+    the hierarchy provider
+    :param memberships: the memberships dict to be looked up
+    :param typ: a given type to be looked up (together with an eid)
+    :param eid: a given eid to be looked up (together wit ha type)
+    :return: a dict like {"type": <<some type>>, "eid": <<some eid>>, "level": <<some level>>} OR {}
+    """
+    return memberships.get((typ, eid), {})

@@ -1,12 +1,12 @@
 from datetime import date
-from typing import Set, List, Dict
+from typing import List, Dict
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import text, select, bindparam, Date, BigInteger
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from licensing.crud.hierarchy_provider import get_user_memberships
+from licensing.crud.hierarchy_provider import get_user_memberships, lookup_membership
 from licensing.crud.product import find_product
 from licensing.model import license as license_model
 from licensing.model import license_owner as license_owner_model
@@ -87,22 +87,14 @@ async def purchase(
     # checks, if the requested license owners are in the 'hierarchy path' of the purchaser.
     # That means: is the purchaser 'allowed' to purchase a license for the given owners?
     # This is true, if and only if the purchaser is 'member' of the license owner, f.e.
-    # some class or some school.
+    # some class or some school. If everything is fine, create the license!
 
-    # 3.1 get the hierarchy list (for the purchaser) from the hierarchy provider (or raise an exception)
+    # 3.1 get all the 'memberships' (for the purchaser) from the hierarchy provider (or raise an exception)
     hierarchy_provider, memberships = await get_user_memberships(
         session, license_data.hierarchy_provider_url, purchaser_eid
     )
 
-    # 3.2 Now do the actual check.
-    for owner_eid in license_data.owner_eids:
-        if owner_eid not in memberships or memberships[owner_eid]["type"] != license_data.owner_type:
-            raise HTTPException(
-                status_code=http_status.HTTP_400_BAD_REQUEST,
-                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."
-            )
-
-    # 4. create license
+    # 3.2. create license (will be rolled back, if some checks for 'owners' fail ...
     lic = license_model.License(
         purchaser_eid=purchaser_eid,
         valid_from=license_data.valid_from,
@@ -113,15 +105,24 @@ async def purchase(
     lic.hierarchy_provider = hierarchy_provider
     session.add(lic)
 
-    # 4.1 ... and the license owner info for all license owners
+    # 3.3 Now do the actual check and insert license owner references.
     for owner_eid in license_data.owner_eids:
+        membership = lookup_membership(memberships, license_data.owner_type, owner_eid)
+        if not membership:
+            raise HTTPException(
+                status_code=http_status.HTTP_400_BAD_REQUEST,
+                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."
+            )
+        # owner exists in the hierarchy path, so create a reference!
         license_owner = license_owner_model.LicenseOwner(
-            eid=owner_eid,
-            type=memberships[owner_eid]["type"],
-            level=memberships[owner_eid]["level"]
+            eid=membership["eid"],
+            type=membership["type"],
+            level=membership["level"]
         )
         license_owner.license = lic
         license_owner.hierarchy_provider = hierarchy_provider
         session.add(license_owner)
+
+    # ok, everything was fine, commit!
     await session.commit()
     return lic
