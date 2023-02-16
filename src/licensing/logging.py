@@ -4,6 +4,7 @@ import logging
 Thanks to https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 """
 
+
 class Loglevel:
     DEBUG = "debug"
     INFO = "info"

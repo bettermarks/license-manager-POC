@@ -125,7 +125,8 @@ async def purchase(
             owner_level=membership["level"],
             valid_from=license_data.valid_from,
             valid_to=license_data.valid_to,
-            seats=license_data.seats
+            seats=license_data.seats,
+            is_seats_shared=len(license_data.owner_eids) > 1
         )
         lic.product = product
         lic.hierarchy_provider = hierarchy_provider
@@ -144,4 +145,4 @@ async def purchase(
                 f"already has been created."
             )
         )
-
+    return {"license_uuid": license_uuid}

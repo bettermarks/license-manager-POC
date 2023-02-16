@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, BigInteger, ForeignKey, Date, Integer, orm, UniqueConstraint
+from sqlalchemy import Column, String, BigInteger, ForeignKey, Date, Integer, orm, UniqueConstraint, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 
 from licensing.model.base import Model
@@ -15,6 +15,7 @@ class License(Model):
     valid_from = Column(Date, nullable=False)
     valid_to = Column(Date, nullable=False)
     seats = Column(Integer, nullable=True)
+    is_seats_shared = Column(Boolean, nullable=True, default=False)
 
     # Relationships
     product = orm.relationship("Product")
