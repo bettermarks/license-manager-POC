@@ -69,7 +69,7 @@ async def log_requests(request, call_next):
     response = await call_next(request)
     logging.debug((
         f"request_id={request_id} "
-        f"time_consumed={'{0:.2f}'.format((time.time() - start) * 1000)}ms "
+        f"time_used={'{0:.2f}'.format((time.time() - start) * 1000)}ms "
         f"status_code={response.status_code}"
     ))
     return response
