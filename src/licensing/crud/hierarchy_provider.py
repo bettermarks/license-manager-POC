@@ -26,11 +26,11 @@ Memberships = Dict[Tuple[str, str], Dict[str, int]]
 
 
 @lru_cache()
-async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
+async def get_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
     finds a hierarchy provider with a given url or raises an HTTPException, if not found
     """
-    provider = (
+    return (
         await session.execute(
             statement=select(
                 model.HierarchyProvider
@@ -39,12 +39,6 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.Hier
             )
         )
     ).scalar_one_or_none()
-    if not provider:
-        raise HTTPException(
-            status_code=http_status.HTTP_400_BAD_REQUEST,
-            detail=f"Hierarchy provider with base URL='{url}' is not registered."
-        )
-    return provider
 
 
 @async_measure_time
@@ -57,7 +51,13 @@ async def get_user_memberships(
     http error.
     :return a tuple (the registered hierarchy provider object, the memberships of 'Memberships' type (see above))
     """
-    hierarchy_provider = await find_hierarchy_provider(session, url)
+    hierarchy_provider = await get_hierarchy_provider(session, url)
+    if not hierarchy_provider:
+        raise HTTPException(
+            status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Hierarchy provider with base URL='{url}' is not registered."
+        )
+
     try:
         memberships_raw = await http_get(hierarchy_provider_memberships_url(f"{url}/", user_eid))
         return hierarchy_provider, {

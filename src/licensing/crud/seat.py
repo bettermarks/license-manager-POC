@@ -57,6 +57,7 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
         licenses = await get_licenses_for_entities(
             session, hierarchy_provider.id, memberships, datetime.date.today()
         )
+        print("licenses =", licenses)
 
         # reserve a seat for the first one!  # TODO This is not a valid solution. Will be discussed!
         if licenses:
