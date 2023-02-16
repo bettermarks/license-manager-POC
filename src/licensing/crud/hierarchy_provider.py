@@ -36,17 +36,23 @@ async def find_hierarchy_provider(session: AsyncSession, url: str) -> model.Hier
 @async_measure_time
 async def get_user_memberships(
         session: AsyncSession, url: str, user_eid: str
-) -> (model.HierarchyProvider, Dict[(str, int)]):
+) -> (model.HierarchyProvider, Dict[str, Dict[str, int]]):
     """
     gets the membership list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500
     http error.
-    returns a tuple (the registered hierarchy provider object, the memberships as a dict (key=entity EID)!)
+    ::returns a tuple (the registered hierarchy provider object, the memberships as
+        a dict with key=entity EID) and value={"type": <<sth. like 'school'>>, "level": <<some int>>}
     """
     hierarchy_provider = await find_hierarchy_provider(session, url)
     try:
         memberships_raw = await http_get(hierarchy_provider_memberships_url(f"{url}/", user_eid))
-        return hierarchy_provider, {m["eid"]: (m["type"], m['level']) for m in memberships_raw}
+        return hierarchy_provider, {
+            m["eid"]: {
+                "type": m["type"],
+                "level": m['level']
+            } for m in memberships_raw
+        }
     except Exception as e:
         raise HTTPException(
             status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,

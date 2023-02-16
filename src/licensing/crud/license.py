@@ -96,7 +96,7 @@ async def purchase(
 
     # 3.2 Now do the actual check.
     for owner_eid in license_data.owner_eids:
-        if owner_eid not in memberships or memberships[owner_eid][0] != license_data.owner_hierarchy_level:
+        if owner_eid not in memberships or memberships[owner_eid]["type"] != license_data.owner_type:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
                 detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."
@@ -117,7 +117,8 @@ async def purchase(
     for owner_eid in license_data.owner_eids:
         license_owner = license_owner_model.LicenseOwner(
             eid=owner_eid,
-            hierarchy_level=license_data.owner_hierarchy_level
+            type=memberships[owner_eid]["type"],
+            level=memberships[owner_eid]["level"]
         )
         license_owner.license = lic
         license_owner.hierarchy_provider = hierarchy_provider

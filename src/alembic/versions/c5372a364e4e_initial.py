@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: f650fabe3349
+Revision ID: c5372a364e4e
 Revises: 
-Create Date: 2023-02-12 15:54:14.221088
+Create Date: 2023-02-16 09:25:17.878040
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'f650fabe3349'
+revision = 'c5372a364e4e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -71,21 +71,23 @@ def upgrade() -> None:
     sa.Column('ref_hierarchy_provider', sa.BigInteger(), nullable=False),
     sa.Column('ref_license', sa.BigInteger(), nullable=False),
     sa.Column('eid', sa.String(length=256), nullable=False),
-    sa.Column('hierarchy_level', sa.String(length=256), nullable=False),
+    sa.Column('type', sa.String(length=256), nullable=False),
+    sa.Column('level', sa.Integer(), nullable=False),
     sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), nullable=True),
     sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['ref_hierarchy_provider'], ['hierarchy_provider.id'], name=op.f('fk_license_owner_ref_hierarchy_provider_hierarchy_provider')),
     sa.ForeignKeyConstraint(['ref_license'], ['license.id'], name=op.f('fk_license_owner_ref_license_license')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_license_owner')),
-    sa.UniqueConstraint('ref_license', 'ref_hierarchy_provider', 'eid', 'hierarchy_level', name=op.f('uq_license_owner_ref_license'))
+    sa.UniqueConstraint('ref_license', 'ref_hierarchy_provider', 'eid', 'type', name=op.f('uq_license_owner_ref_license'))
     )
     op.create_index(op.f('ix_license_owner_created'), 'license_owner', ['created'], unique=False)
     op.create_index(op.f('ix_license_owner_eid'), 'license_owner', ['eid'], unique=False)
-    op.create_index(op.f('ix_license_owner_hierarchy_level'), 'license_owner', ['hierarchy_level'], unique=False)
     op.create_index(op.f('ix_license_owner_id'), 'license_owner', ['id'], unique=False)
+    op.create_index(op.f('ix_license_owner_level'), 'license_owner', ['level'], unique=False)
     op.create_index(op.f('ix_license_owner_ref_hierarchy_provider'), 'license_owner', ['ref_hierarchy_provider'], unique=False)
     op.create_index(op.f('ix_license_owner_ref_license'), 'license_owner', ['ref_license'], unique=False)
+    op.create_index(op.f('ix_license_owner_type'), 'license_owner', ['type'], unique=False)
     op.create_index(op.f('ix_license_owner_updated'), 'license_owner', ['updated'], unique=False)
     op.create_table('seat',
     sa.Column('ref_license', sa.BigInteger(), nullable=False),
@@ -125,10 +127,11 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_seat_created'), table_name='seat')
     op.drop_table('seat')
     op.drop_index(op.f('ix_license_owner_updated'), table_name='license_owner')
+    op.drop_index(op.f('ix_license_owner_type'), table_name='license_owner')
     op.drop_index(op.f('ix_license_owner_ref_license'), table_name='license_owner')
     op.drop_index(op.f('ix_license_owner_ref_hierarchy_provider'), table_name='license_owner')
+    op.drop_index(op.f('ix_license_owner_level'), table_name='license_owner')
     op.drop_index(op.f('ix_license_owner_id'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_hierarchy_level'), table_name='license_owner')
     op.drop_index(op.f('ix_license_owner_eid'), table_name='license_owner')
     op.drop_index(op.f('ix_license_owner_created'), table_name='license_owner')
     op.drop_table('license_owner')
