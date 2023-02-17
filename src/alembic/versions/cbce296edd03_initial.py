@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: b837edaff894
+Revision ID: cbce296edd03
 Revises: 
-Create Date: 2023-02-17 12:20:26.099147
+Create Date: 2023-02-17 12:56:50.986333
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'b837edaff894'
+revision = 'cbce296edd03'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -54,12 +54,12 @@ def upgrade() -> None:
     sa.Column('ref_hierarchy_provider', sa.BIGINT(), nullable=False),
     sa.Column('purchaser_eid', sa.String(length=256), nullable=False),
     sa.Column('owner_type', sa.String(length=256), nullable=False),
-    sa.Column('owner_level', sa.BIGINT(), nullable=False),
+    sa.Column('owner_level', sa.Integer(), nullable=False),
     sa.Column('owner_eid', sa.String(length=256), nullable=False),
     sa.Column('license_uuid', sa.UUID(), nullable=False),
     sa.Column('valid_from', sa.Date(), nullable=False),
     sa.Column('valid_to', sa.Date(), nullable=False),
-    sa.Column('seats', sa.BIGINT(), nullable=True),
+    sa.Column('seats', sa.Integer(), nullable=True),
     sa.Column('is_seats_shared', sa.Boolean(), nullable=False),
     sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
     sa.Column('created', sa.TIMESTAMP(timezone=True), nullable=False),

@@ -6,12 +6,12 @@ from sqlalchemy import String, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from licensing.model.base import Model
+from licensing.model.base import Model, int8
 
 
 class License(Model):
-    ref_product: Mapped[int] = mapped_column(ForeignKey('product.id'), index=True)
-    ref_hierarchy_provider: Mapped[int] = mapped_column(ForeignKey('hierarchy_provider.id'), index=True)
+    ref_product: Mapped[int8] = mapped_column(ForeignKey('product.id'), index=True)
+    ref_hierarchy_provider: Mapped[int8] = mapped_column(ForeignKey('hierarchy_provider.id'), index=True)
 
     purchaser_eid: Mapped[str] = mapped_column(String(256), index=True)
     owner_type: Mapped[str] = mapped_column(String(256), index=True)

@@ -4,11 +4,11 @@ from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from licensing.model.base import Model
+from licensing.model.base import Model, int8
 
 
 class Seat(Model):
-    ref_license: Mapped[int] = mapped_column(ForeignKey('license.id'), index=True)
+    ref_license: Mapped[int8] = mapped_column(ForeignKey('license.id'), index=True)
     user_eid: Mapped[str] = mapped_column(String(256), index=True)
     occupied_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow, index=True)
     released_at: Mapped[Optional[datetime.datetime]] = mapped_column(index=True)

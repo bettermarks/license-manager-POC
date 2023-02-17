@@ -1,10 +1,14 @@
 import datetime
 import re
 from typing import Optional
+from typing_extensions import Annotated
 
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import BIGINT, TIMESTAMP
 from sqlalchemy.orm import declared_attr, Mapped, mapped_column
+
+# my custom types ...
+int8 = Annotated[int, mapped_column()]  # we want 64 bit unsigned ints for primary keys and foreign keys.
 
 
 class Model(DeclarativeBase):
@@ -22,10 +26,11 @@ class Model(DeclarativeBase):
 
     # override the SQLAlchemy type annotation map
     type_annotation_map = {
-        int: BIGINT,  # we want 64 bit ints for primary keys etc.
+        int8: BIGINT,
         datetime.datetime: TIMESTAMP(timezone=True)
     }
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True, autoincrement=True)
+    id: Mapped[int8] = mapped_column(primary_key=True, index=True, autoincrement=True)
     created: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow, index=True)
     updated: Mapped[Optional[datetime.datetime]] = mapped_column(onupdate=datetime.datetime.utcnow, index=True)
+
