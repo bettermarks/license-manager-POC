@@ -7,6 +7,8 @@ from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from licensing.model.base import Model, int8
+from licensing.model import product as product_model
+from licensing.model import hierarchy_provider as hierarchy_provider_model
 
 
 class License(Model):
@@ -24,8 +26,8 @@ class License(Model):
     is_seats_shared: Mapped[bool]
 
     # Relationships
-    product = relationship("Product")
-    hierarchy_provider = relationship("HierarchyProvider")
+    product: Mapped[product_model.Product] = relationship("Product")
+    hierarchy_provider: Mapped[hierarchy_provider_model.HierarchyProvider] = relationship("HierarchyProvider")
 
     __table_args__ = (
         UniqueConstraint(

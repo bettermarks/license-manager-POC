@@ -5,6 +5,7 @@ from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from licensing.model.base import Model, int8
+from licensing.model import license as license_model
 
 
 class Seat(Model):
@@ -16,4 +17,4 @@ class Seat(Model):
     is_occupied: Mapped[bool]
 
     # Relationships
-    license = relationship("License")
+    license: Mapped[license_model.License] = relationship("License")
