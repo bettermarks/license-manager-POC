@@ -1,7 +1,9 @@
 import datetime
-from typing import List, Any
+import uuid
+from functools import reduce
+from typing import List, Any, Tuple
 
-from sqlalchemy import select
+from sqlalchemy import select, text, bindparam
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_memberships
@@ -23,6 +25,35 @@ async def get_active_seats(session: AsyncSession, user_eid: str, when: datetime.
             ).where(
                 seat_model.Seat.is_occupied
             )
+        )
+    ).scalars().all()
+
+
+async def get_free_seats_for_licenses(
+        session: AsyncSession, license_uuids: List[uuid.UUID]
+) -> Any:  # List[Tuple[uuid.UUID, int]]:
+    """
+    for every license uuid given, get the number of free seats
+    """
+    return (
+        await session.execute(
+            text(
+                f"""
+                    SELECT
+                        l.license_uuid,
+                        MAX(l.seats) - SUM(CASE WHEN s.id IS NOT NULL THEN 1 ELSE 0 END) as free_seats
+                    FROM
+                        license l
+                        LEFT JOIN seat s ON s.ref_license = l.id AND s.is_occupied
+                    WHERE
+                        l.license_uuid IN :license_uuids
+                    GROUP BY
+                        l.license_uuid
+                """
+            ).bindparams(
+                bindparam("license_uuids", expanding=True)
+            ),
+            params={"license_uuids": license_uuids}
         )
     ).scalars().all()
 
@@ -55,9 +86,34 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     else:
         # get ALL currently valid licenses
         licenses = await get_licenses_for_entities(
-            session, hierarchy_provider.id, memberships, datetime.date.today()
+            session,
+            hierarchy_provider.id,
+            {(m["eid"], m["level"]) for m in memberships.values()},
+            datetime.date.today()
         )
-        print("licenses =", licenses)
+
+        for x in await get_free_seats_for_licenses(session, [l.license_uuid for l in licenses]):
+            print(f"license {x}")
+
+
+
+        # ok, sort the licenses list by product.eid and by owner_level ascending and then
+        # create a new list, in which only the first elements for every distinct product eid
+        # are inserted. This gives a list of all licenses, where all possible products are
+        # available
+        unique = reduce(
+            lambda acc, l: acc + [l] if (acc and acc[-1].product.eid != l.product.eid) or (not acc) else acc,
+            sorted(licenses, key=lambda l: (l.product.eid, l.owner_level)),
+            []
+        )
+
+
+        for l in licenses:
+            print("license =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+
+        for l in unique:
+            print("unique =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+
 
         # reserve a seat for the first one!  # TODO This is not a valid solution. Will be discussed!
         if licenses:

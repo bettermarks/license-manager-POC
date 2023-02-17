@@ -1,6 +1,6 @@
 import uuid
 from datetime import date
-from typing import List, Dict
+from typing import List, Tuple, Set
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy import text, select, bindparam, Date, BigInteger, exc
@@ -16,7 +16,7 @@ from licensing.utils import async_measure_time
 
 @async_measure_time
 async def get_licenses_for_entities(
-        session: AsyncSession, hierarchy_provider_id: int, entities: Dict[(str, int)], when: date
+        session: AsyncSession, hierarchy_provider_id: int, entities: Set[Tuple[str, int]], when: date
 ) -> List[license_model.License]:
     """
     Gets all (distinct) licenses, that are valid at a given date (when),
@@ -24,7 +24,7 @@ async def get_licenses_for_entities(
 
     :param session: the SQLAlchemy session
     :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
-    :param entities: the license owners, the licenses to get should apply to (as a dict of tuples with key=entity EID)
+    :param entities: all the entities, a user 'is member of', that are possible license owners.
     :param when: actually 'today'
     :return: a list of License objects, that are owned by the given entities, but only with an selected attributes.
     """
@@ -36,23 +36,24 @@ async def get_licenses_for_entities(
                 text(
                     f"""
                         SELECT
-                            DISTINCT 
-                                l.id 
+                            DISTINCT l.id, l.license_uuid, l.owner_eid, l.owner_level
                         FROM
-                            license_owner lo
-                            INNER JOIN license l ON l.id = lo.ref_license
+                            license l
                         WHERE
                             l.ref_hierarchy_provider = :hierarchy_provider_id
                             AND l.valid_from <= :when
                             AND l.valid_to >= :when
-                            AND (lo.eid, lo.hierarchy_level) IN :entity_list
+                            AND (l.owner_eid, l.owner_level) IN :entity_list
                     """
                 ).bindparams(
                     bindparam("when", type_=Date),
                     bindparam("hierarchy_provider_id", type_=BigInteger),
                     bindparam("entity_list", expanding=True)
                 ).columns(
-                    license_model.License.id
+                    license_model.License.id,
+                    license_model.License.license_uuid,
+                    license_model.License.owner_eid,
+                    license_model.License.owner_level,
                 )
             ).options(   # we need that as async does not support lazy loading!
                 selectinload(license_model.License.product)
@@ -60,7 +61,7 @@ async def get_licenses_for_entities(
             params={
                 "when": when,
                 "hierarchy_provider_id": hierarchy_provider_id,
-                "entity_list": [(k, v[0]) for k, v in entities.items()]}
+                "entity_list": list(entities)}
         )
     ).scalars().all()
 

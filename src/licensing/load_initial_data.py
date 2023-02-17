@@ -7,8 +7,27 @@ from licensing.model.product import Product
 INITIAL_PRODUCTS = [
     Product(
         eid="full_access",
-        name="bettermarks full access product",
-        description="This product gives full access to all bettermarks features"
+        name="full access for all bettermarks content",
+        description="This product gives full access to all bettermarks books",
+        permissions=[{"*": "rx"}]
+    ),
+    Product(
+        eid="book_bruchrechnen_full_access",
+        name="full access for book bettermarks 'Bruchrechnen'",
+        description="This product gives full access to book 'Bruchrechnen'",
+        permissions=[{"book_bruchrechnen": "rx"}]
+    ),
+    Product(
+        eid="book_bruchrechnen_read",
+        name="read access for book bettermarks 'Bruchrechnen'",
+        description="This product gives read access to book 'Bruchrechnen'",
+        permissions=[{"book_bruchrechnen": "r"}]
+    ),
+    Product(
+        eid="book_primzahlen_read",
+        name="read access for book bettermarks 'Primzahlen'",
+        description="This product gives read access to book 'Primzahlen'",
+        permissions=[{"book_primzahlen": "r"}]
     )
 ]
 
