@@ -1,6 +1,4 @@
 import time
-import random
-import string
 import logging
 import uuid
 
