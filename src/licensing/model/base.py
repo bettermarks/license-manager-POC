@@ -8,7 +8,7 @@ from sqlalchemy import BIGINT, TIMESTAMP
 from sqlalchemy.orm import declared_attr, Mapped, mapped_column
 
 # my custom types ...
-int8 = Annotated[int, mapped_column()]  # we want 64 bit unsigned ints for primary keys and foreign keys.
+int8 = Annotated[int, mapped_column(type_=BIGINT)]  # we want 64 bit unsigned ints for primary keys and foreign keys.
 
 
 class Model(DeclarativeBase):
@@ -26,7 +26,6 @@ class Model(DeclarativeBase):
 
     # override the SQLAlchemy type annotation map
     type_annotation_map = {
-        int8: BIGINT,
         datetime.datetime: TIMESTAMP(timezone=True)
     }
 
