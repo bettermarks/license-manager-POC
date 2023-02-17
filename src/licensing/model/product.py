@@ -1,13 +1,16 @@
-from sqlalchemy import Column, String
+from typing import Optional
+
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
 
 from licensing.model.base import Model
 
 
 class Product(Model):
-    eid = Column(String(256), nullable=False, index=True, unique=True)
-    name = Column(String(256))
-    description = Column(String(512))
-    permissions = Column(JSONB)
+    eid: Mapped[str] = mapped_column(String(256), index=True, unique=True)
+    name: Mapped[str] = mapped_column(String(256), index=True)
+    description: Mapped[Optional[str]] = mapped_column(String(512))
+    permissions: Mapped[str] = mapped_column(JSONB)
 
 
