@@ -10,10 +10,10 @@ from sqlalchemy.orm import declared_attr, Mapped, mapped_column
 class Model(DeclarativeBase):
     """
     The common base class for all our models.
-    Every model has a column
-    id: the primary key
-    created: some timestamp holding the creation date and time of the object
-    updated: some timestamp holding the 'last updated' date and time for the object
+    Every model has these columns:
+        id: the primary key
+        created: some timestamp holding the creation date and time of the object
+        updated: some timestamp holding the 'last updated' date and time for the object
     """
 
     @declared_attr
