@@ -1,69 +1,14 @@
 import uuid
-from datetime import date
-from typing import List, Tuple, Set
 
 from fastapi import status as http_status, HTTPException
-from sqlalchemy import text, select, bindparam, Date, BigInteger, exc
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
 
 from licensing.crud.hierarchy_provider import get_user_memberships, lookup_membership
 from licensing.crud.product import get_product
 from licensing.model import license as license_model
 from licensing.schema import license as schema
 from licensing.utils import async_measure_time
-
-
-@async_measure_time
-async def get_licenses_for_entities(
-        session: AsyncSession, hierarchy_provider_id: int, entities: Set[Tuple[str, int]], when: date
-) -> List[license_model.License]:
-    """
-    Gets all (distinct) licenses, that are valid at a given date (when),
-    that are owned by the given entities under a given hierarchy provider.
-
-    :param session: the SQLAlchemy session
-    :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
-    :param entities: all the entities, a user 'is member of', that are possible license owners.
-    :param when: actually 'today'
-    :return: a list of License objects, that are owned by the given entities, but only with an selected attributes.
-    """
-    return (
-        await session.execute(
-            select(
-                license_model.License
-            ).from_statement(
-                text(
-                    f"""
-                        SELECT
-                            DISTINCT l.id, l.license_uuid, l.owner_eid, l.owner_level
-                        FROM
-                            license l
-                        WHERE
-                            l.ref_hierarchy_provider = :hierarchy_provider_id
-                            AND l.valid_from <= :when
-                            AND l.valid_to >= :when
-                            AND (l.owner_eid, l.owner_level) IN :entity_list
-                    """
-                ).bindparams(
-                    bindparam("when", type_=Date),
-                    bindparam("hierarchy_provider_id", type_=BigInteger),
-                    bindparam("entity_list", expanding=True)
-                ).columns(
-                    license_model.License.id,
-                    license_model.License.license_uuid,
-                    license_model.License.owner_eid,
-                    license_model.License.owner_level,
-                )
-            ).options(   # we need that as async does not support lazy loading!
-                selectinload(license_model.License.product)
-            ),
-            params={
-                "when": when,
-                "hierarchy_provider_id": hierarchy_provider_id,
-                "entity_list": list(entities)}
-        )
-    ).scalars().all()
 
 
 @async_measure_time
@@ -136,7 +81,7 @@ async def purchase(
     # ok, everything seems to be fine, commit!
     try:
         await session.commit()
-    except exc.IntegrityError as _ex:
+    except IntegrityError as _ex:
         raise HTTPException(
             status_code=http_status.HTTP_409_CONFLICT,
             detail=(
