@@ -1,17 +1,20 @@
 import datetime
+from typing import Optional
 
-from sqlalchemy import Column, String, BigInteger, ForeignKey, DateTime, orm, Boolean
+from sqlalchemy import String, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from licensing.model.base import Model
+from licensing.model.base import Model, int8
+from licensing.model import license as license_model
 
 
 class Seat(Model):
-    ref_license = Column(BigInteger, ForeignKey('license.id'), nullable=False, index=True)
-    user_eid = Column(String(256), nullable=False, index=True)
-    occupied_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, index=True)
-    released_at = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, index=True)
-    last_login = Column(DateTime(timezone=True), default=datetime.datetime.utcnow, index=True)
-    is_occupied = Column(Boolean, default=False, index=True)
+    ref_license: Mapped[int8] = mapped_column(ForeignKey('license.id'), index=True)
+    user_eid: Mapped[str] = mapped_column(String(256), index=True)
+    occupied_at: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow, index=True)
+    released_at: Mapped[Optional[datetime.datetime]] = mapped_column(index=True)
+    last_login: Mapped[Optional[datetime.datetime]] = mapped_column(index=True)
+    is_occupied: Mapped[bool]
 
     # Relationships
-    license = orm.relationship("License")
+    license: Mapped[license_model.License] = relationship("License")

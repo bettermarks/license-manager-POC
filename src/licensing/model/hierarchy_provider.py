@@ -1,10 +1,13 @@
-from sqlalchemy import Column, String
+from typing import Optional
+
+from sqlalchemy import String
+from sqlalchemy.orm import mapped_column, Mapped
 
 from licensing.model.base import Model
 
 
 class HierarchyProvider(Model):
-    url = Column(String(1024), nullable=False, index=True, unique=True)
-    short_name = Column(String(64), nullable=False, index=True)
-    name = Column(String(256), nullable=False, index=True)
-    description = Column(String(512))
+    url: Mapped[str] = mapped_column(String(1024), index=True, unique=True)
+    short_name: Mapped[str] = mapped_column(String(64), index=True)
+    name: Mapped[str] = mapped_column(String(256), index=True)
+    description: Mapped[Optional[str]] = mapped_column(String(512))

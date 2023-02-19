@@ -1,16 +1,16 @@
 """initial
 
-Revision ID: f650fabe3349
+Revision ID: e57d5c78dc6e
 Revises: 
-Create Date: 2023-02-12 15:54:14.221088
+Create Date: 2023-02-17 13:18:34.946773
 
 """
 from alembic import op
 import sqlalchemy as sa
-
+from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'f650fabe3349'
+revision = 'e57d5c78dc6e'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -23,9 +23,9 @@ def upgrade() -> None:
     sa.Column('short_name', sa.String(length=64), nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('description', sa.String(length=512), nullable=True),
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('created', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
+    sa.Column('created', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated', sa.TIMESTAMP(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_hierarchy_provider'))
     )
     op.create_index(op.f('ix_hierarchy_provider_created'), 'hierarchy_provider', ['created'], unique=False)
@@ -36,73 +36,66 @@ def upgrade() -> None:
     op.create_index(op.f('ix_hierarchy_provider_url'), 'hierarchy_provider', ['url'], unique=True)
     op.create_table('product',
     sa.Column('eid', sa.String(length=256), nullable=False),
-    sa.Column('name', sa.String(length=256), nullable=True),
+    sa.Column('name', sa.String(length=256), nullable=False),
     sa.Column('description', sa.String(length=512), nullable=True),
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('created', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('permissions', postgresql.JSONB(astext_type=sa.Text()), nullable=False),
+    sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
+    sa.Column('created', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated', sa.TIMESTAMP(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_product'))
     )
     op.create_index(op.f('ix_product_created'), 'product', ['created'], unique=False)
     op.create_index(op.f('ix_product_eid'), 'product', ['eid'], unique=True)
     op.create_index(op.f('ix_product_id'), 'product', ['id'], unique=False)
+    op.create_index(op.f('ix_product_name'), 'product', ['name'], unique=False)
     op.create_index(op.f('ix_product_updated'), 'product', ['updated'], unique=False)
     op.create_table('license',
-    sa.Column('ref_product', sa.BigInteger(), nullable=False),
-    sa.Column('ref_hierarchy_provider', sa.BigInteger(), nullable=False),
+    sa.Column('ref_product', sa.BIGINT(), nullable=False),
+    sa.Column('ref_hierarchy_provider', sa.BIGINT(), nullable=False),
     sa.Column('purchaser_eid', sa.String(length=256), nullable=False),
+    sa.Column('owner_type', sa.String(length=256), nullable=False),
+    sa.Column('owner_level', sa.Integer(), nullable=False),
+    sa.Column('owner_eid', sa.String(length=256), nullable=False),
+    sa.Column('license_uuid', sa.UUID(), nullable=False),
     sa.Column('valid_from', sa.Date(), nullable=False),
     sa.Column('valid_to', sa.Date(), nullable=False),
     sa.Column('seats', sa.Integer(), nullable=True),
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('created', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('is_seats_shared', sa.Boolean(), nullable=False),
+    sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
+    sa.Column('created', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated', sa.TIMESTAMP(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['ref_hierarchy_provider'], ['hierarchy_provider.id'], name=op.f('fk_license_ref_hierarchy_provider_hierarchy_provider')),
     sa.ForeignKeyConstraint(['ref_product'], ['product.id'], name=op.f('fk_license_ref_product_product')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_license'))
+    sa.PrimaryKeyConstraint('id', name=op.f('pk_license')),
+    sa.UniqueConstraint('ref_product', 'ref_hierarchy_provider', 'purchaser_eid', 'owner_type', 'owner_eid', 'valid_from', 'valid_to', name=op.f('uq_license_ref_product'))
     )
     op.create_index(op.f('ix_license_created'), 'license', ['created'], unique=False)
     op.create_index(op.f('ix_license_id'), 'license', ['id'], unique=False)
+    op.create_index(op.f('ix_license_license_uuid'), 'license', ['license_uuid'], unique=False)
+    op.create_index(op.f('ix_license_owner_eid'), 'license', ['owner_eid'], unique=False)
+    op.create_index(op.f('ix_license_owner_level'), 'license', ['owner_level'], unique=False)
+    op.create_index(op.f('ix_license_owner_type'), 'license', ['owner_type'], unique=False)
     op.create_index(op.f('ix_license_purchaser_eid'), 'license', ['purchaser_eid'], unique=False)
     op.create_index(op.f('ix_license_ref_hierarchy_provider'), 'license', ['ref_hierarchy_provider'], unique=False)
     op.create_index(op.f('ix_license_ref_product'), 'license', ['ref_product'], unique=False)
     op.create_index(op.f('ix_license_updated'), 'license', ['updated'], unique=False)
-    op.create_table('license_owner',
-    sa.Column('ref_hierarchy_provider', sa.BigInteger(), nullable=False),
-    sa.Column('ref_license', sa.BigInteger(), nullable=False),
-    sa.Column('eid', sa.String(length=256), nullable=False),
-    sa.Column('hierarchy_level', sa.String(length=256), nullable=False),
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('created', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
-    sa.ForeignKeyConstraint(['ref_hierarchy_provider'], ['hierarchy_provider.id'], name=op.f('fk_license_owner_ref_hierarchy_provider_hierarchy_provider')),
-    sa.ForeignKeyConstraint(['ref_license'], ['license.id'], name=op.f('fk_license_owner_ref_license_license')),
-    sa.PrimaryKeyConstraint('id', name=op.f('pk_license_owner')),
-    sa.UniqueConstraint('ref_license', 'ref_hierarchy_provider', 'eid', 'hierarchy_level', name=op.f('uq_license_owner_ref_license'))
-    )
-    op.create_index(op.f('ix_license_owner_created'), 'license_owner', ['created'], unique=False)
-    op.create_index(op.f('ix_license_owner_eid'), 'license_owner', ['eid'], unique=False)
-    op.create_index(op.f('ix_license_owner_hierarchy_level'), 'license_owner', ['hierarchy_level'], unique=False)
-    op.create_index(op.f('ix_license_owner_id'), 'license_owner', ['id'], unique=False)
-    op.create_index(op.f('ix_license_owner_ref_hierarchy_provider'), 'license_owner', ['ref_hierarchy_provider'], unique=False)
-    op.create_index(op.f('ix_license_owner_ref_license'), 'license_owner', ['ref_license'], unique=False)
-    op.create_index(op.f('ix_license_owner_updated'), 'license_owner', ['updated'], unique=False)
+    op.create_index(op.f('ix_license_valid_from'), 'license', ['valid_from'], unique=False)
+    op.create_index(op.f('ix_license_valid_to'), 'license', ['valid_to'], unique=False)
     op.create_table('seat',
-    sa.Column('ref_license', sa.BigInteger(), nullable=False),
+    sa.Column('ref_license', sa.BIGINT(), nullable=False),
     sa.Column('user_eid', sa.String(length=256), nullable=False),
-    sa.Column('occupied_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('released_at', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('is_occupied', sa.Boolean(), nullable=True),
-    sa.Column('id', sa.BigInteger(), autoincrement=True, nullable=False),
-    sa.Column('created', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('updated', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('occupied_at', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('released_at', sa.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('last_login', sa.TIMESTAMP(timezone=True), nullable=True),
+    sa.Column('is_occupied', sa.Boolean(), nullable=False),
+    sa.Column('id', sa.BIGINT(), autoincrement=True, nullable=False),
+    sa.Column('created', sa.TIMESTAMP(timezone=True), nullable=False),
+    sa.Column('updated', sa.TIMESTAMP(timezone=True), nullable=True),
     sa.ForeignKeyConstraint(['ref_license'], ['license.id'], name=op.f('fk_seat_ref_license_license')),
     sa.PrimaryKeyConstraint('id', name=op.f('pk_seat'))
     )
     op.create_index(op.f('ix_seat_created'), 'seat', ['created'], unique=False)
     op.create_index(op.f('ix_seat_id'), 'seat', ['id'], unique=False)
-    op.create_index(op.f('ix_seat_is_occupied'), 'seat', ['is_occupied'], unique=False)
     op.create_index(op.f('ix_seat_last_login'), 'seat', ['last_login'], unique=False)
     op.create_index(op.f('ix_seat_occupied_at'), 'seat', ['occupied_at'], unique=False)
     op.create_index(op.f('ix_seat_ref_license'), 'seat', ['ref_license'], unique=False)
@@ -120,26 +113,24 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_seat_ref_license'), table_name='seat')
     op.drop_index(op.f('ix_seat_occupied_at'), table_name='seat')
     op.drop_index(op.f('ix_seat_last_login'), table_name='seat')
-    op.drop_index(op.f('ix_seat_is_occupied'), table_name='seat')
     op.drop_index(op.f('ix_seat_id'), table_name='seat')
     op.drop_index(op.f('ix_seat_created'), table_name='seat')
     op.drop_table('seat')
-    op.drop_index(op.f('ix_license_owner_updated'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_ref_license'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_ref_hierarchy_provider'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_id'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_hierarchy_level'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_eid'), table_name='license_owner')
-    op.drop_index(op.f('ix_license_owner_created'), table_name='license_owner')
-    op.drop_table('license_owner')
+    op.drop_index(op.f('ix_license_valid_to'), table_name='license')
+    op.drop_index(op.f('ix_license_valid_from'), table_name='license')
     op.drop_index(op.f('ix_license_updated'), table_name='license')
     op.drop_index(op.f('ix_license_ref_product'), table_name='license')
     op.drop_index(op.f('ix_license_ref_hierarchy_provider'), table_name='license')
     op.drop_index(op.f('ix_license_purchaser_eid'), table_name='license')
+    op.drop_index(op.f('ix_license_owner_type'), table_name='license')
+    op.drop_index(op.f('ix_license_owner_level'), table_name='license')
+    op.drop_index(op.f('ix_license_owner_eid'), table_name='license')
+    op.drop_index(op.f('ix_license_license_uuid'), table_name='license')
     op.drop_index(op.f('ix_license_id'), table_name='license')
     op.drop_index(op.f('ix_license_created'), table_name='license')
     op.drop_table('license')
     op.drop_index(op.f('ix_product_updated'), table_name='product')
+    op.drop_index(op.f('ix_product_name'), table_name='product')
     op.drop_index(op.f('ix_product_id'), table_name='product')
     op.drop_index(op.f('ix_product_eid'), table_name='product')
     op.drop_index(op.f('ix_product_created'), table_name='product')

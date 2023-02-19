@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, List, Dict
 
 from fastapi import APIRouter, Depends
 from fastapi import status as http_status
@@ -12,12 +12,12 @@ from licensing.schema import license as schema
 router = APIRouter()
 
 
-@router.post("/{purchaser_eid}/purchases", response_model=schema.License, status_code=http_status.HTTP_201_CREATED)
+@router.post("/{purchaser_eid}/purchases", status_code=http_status.HTTP_201_CREATED)
 async def purchase_license(
         purchaser_eid: str,
         license_data: schema.LicenseCreate,
         session: AsyncSession = Depends(get_async_session)
-) -> Any:
+) -> Dict:
     return await license_crud.purchase(session, purchaser_eid, license_data)
 
 
