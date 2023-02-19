@@ -29,7 +29,6 @@ class License(Model):
     product: Mapped[product_model.Product] = relationship("Product")
     hierarchy_provider: Mapped[hierarchy_provider_model.HierarchyProvider] = relationship("HierarchyProvider")
 
-
     __table_args__ = (
         UniqueConstraint(
             "ref_product",

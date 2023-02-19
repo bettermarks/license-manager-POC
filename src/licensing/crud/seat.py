@@ -13,7 +13,7 @@ from licensing.model import seat as seat_model
 from licensing.model import license as license_model
 
 
-async def get_occupied_seats(session: AsyncSession, user_eid: str, when: datetime.date) -> List[seat_schema.Seat]:
+async def get_occupied_seats(session: AsyncSession, user_eid: str) -> List[seat_schema.Seat]:
     """
     gets all seats, that are active at a given date (when)
     """
@@ -143,7 +143,7 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
         return []
 
     # 1. is there already an occupied! seat 'taken' by the requesting user?
-    occupied_seats = await get_occupied_seats(session, user_eid, datetime.date.today())
+    occupied_seats = await get_occupied_seats(session, user_eid)
 
     if occupied_seats:
         pass  # TODO check, if they should be freed or not. currently

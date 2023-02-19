@@ -1,6 +1,5 @@
 from typing import List
 
-from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
