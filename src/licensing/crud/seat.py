@@ -3,7 +3,7 @@ import uuid
 from functools import reduce
 from typing import List, Any, Tuple, Set
 
-from sqlalchemy import select, text, bindparam, tuple_
+from sqlalchemy import select, text, bindparam, tuple_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -32,22 +32,50 @@ async def get_occupied_seats(session: AsyncSession, user_eid: str, when: datetim
 
 async def get_licenses_for_entities(
         session: AsyncSession, hierarchy_provider_id: int, entities: Set[Tuple[str, int]], when: datetime.date
-) -> List[license_model.License]:
+) -> Any:  #  List[license_model.License]:
     """
     Gets all (distinct) licenses, that are valid at a given date (when),
     that are owned by the given entities under a given hierarchy provider.
-
-    :param session: the SQLAlchemy session
-    :param hierarchy_provider_id: the id of the hierarchy provider the licenses to get should apply to
-    :param entities: all the entities, a user 'is member of', that are possible license owners.
-    :param when: actually 'today'
-    :return: a list of License objects, that are owned by the given entities, but only with an selected attributes.
     """
+    print("sql=",
+          select(
+              license_model.License,
+              func.sum(
+                  case(
+                      (seat_model.Seat.is_occupied, 1),
+                      else_=0
+                  )
+              ).label("occupied_seats")
+          ).join(
+              seat_model.Seat, seat_model.Seat.ref_license == license_model.License.id, isouter=True
+          ).where(
+              license_model.License.ref_hierarchy_provider == hierarchy_provider_id
+          ).where(
+              license_model.License.valid_from <= when
+          ).where(
+              license_model.License.valid_to >= when
+          ).where(
+              tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
+          ).group_by(
+              license_model.License.id, license_model.License.ref_product
+          ).options(   # we need that as async does not support lazy loading!
+              selectinload(license_model.License.product)
+          )
+
+    )
+
     return (
         await session.execute(
             select(
-                license_model.License
-            ).distinct(
+                license_model.License,
+                func.sum(
+                    case(
+                        (seat_model.Seat.is_occupied, 1),
+                        else_=0
+                    )
+                ).label("occupied_seats")
+            ).join(
+                seat_model.Seat, seat_model.Seat.ref_license == license_model.License.id, isouter=True
             ).where(
                 license_model.License.ref_hierarchy_provider == hierarchy_provider_id
             ).where(
@@ -56,11 +84,13 @@ async def get_licenses_for_entities(
                 license_model.License.valid_to >= when
             ).where(
                 tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
+            ).group_by(
+                license_model.License.id, license_model.License.ref_product
             ).options(   # we need that as async does not support lazy loading!
                 selectinload(license_model.License.product)
             )
         )
-    ).scalars().all()
+    ).all()
 
 
 async def get_free_seats_for_licenses(
@@ -127,8 +157,8 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
         )
 
         for l in licenses:
-            print("license =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
-
+            #print("license =", (l.is_occupied, l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+            print(f"licens id = {l[0].id},  license product = {l[0].product} license free seats = {l[0].seats - l[1]}")
     #for x in await get_free_seats_for_licenses(session, [l.license_uuid for l in licenses]):
         #    print(f"license {x}")
 
