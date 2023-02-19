@@ -1,4 +1,5 @@
 import uuid
+from typing import Dict
 
 from fastapi import status as http_status, HTTPException
 from sqlalchemy.exc import IntegrityError
@@ -6,15 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.crud.hierarchy_provider import get_user_memberships, lookup_membership
 from licensing.crud.product import get_product
-from licensing.model import license as license_model
+from licensing.model import license as model
 from licensing.schema import license as schema
 from licensing.utils import async_measure_time
 
 
 @async_measure_time
-async def purchase(
-        session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate
-) -> license_model.License:
+async def purchase(session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate) -> Dict[str, str]:
     """
     The license purchase process performed by a user for one or more entities, they are member of.
 
@@ -63,7 +62,7 @@ async def purchase(
             )
 
         # 3.2. create license (will be rolled back, if some checks for 'owners' fail ...
-        lic = license_model.License(
+        lic = model.License(
             license_uuid=license_uuid,
             purchaser_eid=purchaser_eid,
             owner_eid=owner_eid,
