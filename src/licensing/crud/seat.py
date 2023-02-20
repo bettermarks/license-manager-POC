@@ -1,9 +1,8 @@
 import datetime
-import uuid
 from functools import reduce
 from typing import List, Any, Tuple, Set
 
-from sqlalchemy import select, text, bindparam, tuple_, func, case
+from sqlalchemy import select, tuple_, func, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -15,7 +14,7 @@ from licensing.model import license as license_model
 
 async def get_occupied_seats(session: AsyncSession, user_eid: str) -> List[seat_schema.Seat]:
     """
-    gets all seats, that are active at a given date (when)
+    gets all seats for a given user, that are currently 'occupied'.
     """
     return (
         await session.execute(
@@ -30,104 +29,48 @@ async def get_occupied_seats(session: AsyncSession, user_eid: str) -> List[seat_
     ).scalars().all()
 
 
-async def get_licenses_for_entities(
+async def get_valid_licenses_and_occupied_seats(
         session: AsyncSession, hierarchy_provider_id: int, entities: Set[Tuple[str, int]], when: datetime.date
-) -> Any:  #  List[license_model.License]:
+) -> List[Tuple[license_model.License, int]]:
     """
     Gets all (distinct) licenses, that are valid at a given date (when),
     that are owned by the given entities under a given hierarchy provider.
+    :returns a list of tuples containing the valid license object plus the number of occupied seats.
     """
-    print("sql=",
-          select(
-              license_model.License,
-              func.sum(
-                  case(
-                      (seat_model.Seat.is_occupied, 1),
-                      else_=0
-                  )
-              ).label("occupied_seats")
-          ).join(
-              seat_model.Seat, seat_model.Seat.ref_license == license_model.License.id, isouter=True
-          ).where(
-              license_model.License.ref_hierarchy_provider == hierarchy_provider_id
-          ).where(
-              license_model.License.valid_from <= when
-          ).where(
-              license_model.License.valid_to >= when
-          ).where(
-              tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
-          ).group_by(
-              license_model.License.id, license_model.License.ref_product
-          ).options(   # we need that as async does not support lazy loading!
-              selectinload(license_model.License.product)
-          )
+    # get the '# of occupied seats' per license UUID (that is the combined licenses that share seats)
+    occupied_seats = select(
+        license_model.License.license_uuid, func.count().label("occupied_seats")
+    ).join(
+        seat_model.Seat,
+        and_(
+            seat_model.Seat.ref_license == license_model.License.id,
+            seat_model.Seat.is_occupied
+        )
+    ).group_by(
+        license_model.License.license_uuid
+    ).subquery()
 
-    )
-
+    # join the two queries
     return (
         await session.execute(
             select(
-                license_model.License,
-                func.sum(
-                    case(
-                        (seat_model.Seat.is_occupied, 1),
-                        else_=0
-                    )
-                ).label("occupied_seats")
-            ).join(
-                seat_model.Seat, seat_model.Seat.ref_license == license_model.License.id, isouter=True
+                license_model.License, func.coalesce(occupied_seats.c.occupied_seats, 0)
+            ).join_from(
+                license_model.License, occupied_seats,
+                license_model.License.license_uuid == occupied_seats.c.license_uuid,
+                isouter=True
             ).where(
-                license_model.License.ref_hierarchy_provider == hierarchy_provider_id
-            ).where(
-                license_model.License.valid_from <= when
-            ).where(
-                license_model.License.valid_to >= when
-            ).where(
-                tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
-            ).group_by(
-                license_model.License.id, license_model.License.ref_product
+                and_(
+                    license_model.License.ref_hierarchy_provider == hierarchy_provider_id,
+                    license_model.License.valid_from <= when,
+                    license_model.License.valid_to >= when,
+                    tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
+                )
             ).options(   # we need that as async does not support lazy loading!
                 selectinload(license_model.License.product)
             )
         )
     ).all()
-
-
-async def get_free_seats_for_licenses(
-        session: AsyncSession, license_uuids: List[uuid.UUID]
-) -> Any:  # List[Tuple[uuid.UUID, int]]:
-    """
-    for every license uuid given, get the number of free seats
-    """
-    return (
-        await session.execute(
-            text(
-                f"""
-                    SELECT
-                        l.license_uuid,
-                        MAX(l.seats) - SUM(CASE WHEN s.id IS NOT NULL THEN 1 ELSE 0 END) as free_seats
-                    FROM
-                        license l
-                        LEFT JOIN seat s ON s.ref_license = l.id AND s.is_occupied
-                    WHERE
-                        l.license_uuid IN :license_uuids
-                    GROUP BY
-                        l.license_uuid
-                """
-            ).bindparams(
-                bindparam("license_uuids", expanding=True)
-            ),
-            params={"license_uuids": license_uuids}
-        )
-    ).all()
-
-
-async def check_for_licenses(url: str, user_eid: str) -> Any:
-    """
-    checks for any licenses, a user could 'get'.
-    Raises an HTTPException on failure
-    """
-    pass
 
 
 async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, user_eid: str) -> List[Any]:
@@ -145,41 +88,48 @@ async def get_permissions(session: AsyncSession, hierarchy_provider_url: str, us
     # 1. is there already an occupied! seat 'taken' by the requesting user?
     occupied_seats = await get_occupied_seats(session, user_eid)
 
-    if occupied_seats:
-        pass  # TODO check, if they should be freed or not. currently
+    if False: # occupied_seats:
+        for seat in occupied_seats:
+            print("seat = ", seat.__dict__)
     else:
         # get ALL currently valid licenses
-        licenses = await get_licenses_for_entities(
+        licenses_and_ocuupied_seats = await get_valid_licenses_and_occupied_seats(
             session,
             hierarchy_provider.id,
             {(m["eid"], m["level"]) for m in memberships.values()},
             datetime.date.today()
         )
 
-        for l in licenses:
-            #print("license =", (l.is_occupied, l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
-            print(f"licens id = {l[0].id},  license product = {l[0].product} license free seats = {l[0].seats - l[1]}")
-    #for x in await get_free_seats_for_licenses(session, [l.license_uuid for l in licenses]):
-        #    print(f"license {x}")
+        for l in licenses_and_ocuupied_seats:
+            print(f"license id = {l[0].id},  license product = {l[0].product.eid} license free seats = {l[0].seats - l[1]}")
 
-        # ok, sort the licenses list by product.eid and by owner_level ascending and then
+        for l in sorted(licenses_and_ocuupied_seats, key=lambda l: (l[0].product.eid, l[1])):
+            print(f"license id = {l[0].id},  license product = {l[0].product.eid} license free seats = {l[0].seats - l[1]}")
+
+        # ok, sort the licenses list by product.eid and by the number of occupied seats ascending and then
         # create a new list, in which only the first elements for every distinct product eid
         # are inserted. This gives a list of all licenses, where all possible products are
         # available
-        #unique = reduce(
-        #    lambda acc, l: acc + [l] if (acc and acc[-1].product.eid != l.product.eid) or (not acc) else acc,
-        #    sorted(licenses, key=lambda l: (l.product.eid, l.owner_level)),
-        #    []
-        #)
+        licenses_to_occupy = reduce(
+            lambda acc, l: acc + [l] if (acc and acc[-1].product.eid != l.product.eid) or (not acc) else acc,
+            [l[0] for l in sorted(licenses_and_ocuupied_seats, key=lambda l: (l[0].product.eid, l[1]))],
+            []
+        )
 
+        for l in licenses_to_occupy:
+            print("unique =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+            seat = seat_model.Seat(
+                ref_license=l.id,
+                user_eid=user_eid,
+                occupied_at=datetime.datetime.utcnow(),
+                last_login=datetime.datetime.utcnow(),
+                is_occupied=True
+            )
+            print("seat = ", seat)
+            session.add(seat)
+        await session.commit()
 
-
-        #for l in unique:
-        #    print("unique =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
-
-
-        # reserve a seat for the first one!  # TODO This is not a valid solution. Will be discussed!
-        if licenses:
+        if licenses_and_ocuupied_seats:
             return [{"allow": "all"}]   # TODO this should be handled in product ACLs later ...
         else:
             return []
