@@ -1,3 +1,4 @@
 pytest
+pytest_asyncio
 httpx
 black

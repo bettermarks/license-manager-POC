@@ -1,3 +1,4 @@
+import sys
 import urllib
 from contextlib import asynccontextmanager
 
@@ -21,7 +22,7 @@ DATABASE_URL = postgres_dsn(
     settings.DATABASE_PORT,
     settings.DATABASE_USER,
     settings.DATABASE_PASSWORD,
-    settings.DATABASE_NAME
+    settings.DATABASE_NAME if "pytest" not in sys.modules else "test_licensing"
 )
 
 # SQLAlchemy session

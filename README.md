@@ -5,9 +5,14 @@ A POC for a generic License Manager ...
 The concept for implementing such a License Manager can be found here:
 [License Manager concept](./docs/concept.md)
 
+A sequence diagram describing some kind of 'purchasing a license' process and 'redeeming a license' 
+process can be found here:
+[Purchasing and redeeming process](./docs/purchase_redeem_process.md)
+
+
 ## Data Model
 This is the currently imple,ented data model:
-[License Manager data model](./docs/license-manager-ERD-2023-02-12.svg)
+[License Manager data model](./docs/license-manager-ERD-2023-02-6.svg)
 
 ## Installation
 Create a 'dotenv' file:
