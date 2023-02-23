@@ -22,7 +22,7 @@ DATABASE_URL = postgres_dsn(
     settings.DATABASE_PORT,
     settings.DATABASE_USER,
     settings.DATABASE_PASSWORD,
-    settings.DATABASE_NAME if "pytest" not in sys.modules else "test_licensing"
+    settings.DATABASE_NAME
 )
 
 # SQLAlchemy session
