@@ -23,6 +23,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   [Segment.LOC00]: {
     LOG_HANDLER: "console",
     LOG_LEVEL: LogLevel.DEBUG,
+    FORWARDED_ALLOW_IPS: "*",
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
@@ -31,6 +32,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   [Segment.DEV00]: {
     LOG_HANDLER: "console",
     LOG_LEVEL: LogLevel.DEBUG,
+    FORWARDED_ALLOW_IPS: "*",
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
@@ -39,6 +41,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   [Segment.CI00]: {
     LOG_HANDLER: "console",
     LOG_LEVEL: LogLevel.DEBUG,
+    FORWARDED_ALLOW_IPS: "*",
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
@@ -47,6 +50,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   [Segment.PRO00]: {
     LOG_HANDLER: "console",
     LOG_LEVEL: LogLevel.DEBUG,
+    FORWARDED_ALLOW_IPS: "*",
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",

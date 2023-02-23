@@ -1,0 +1,10 @@
+[run]
+omit = 
+    tests/*
+
+[report]
+show_missing = True
+skip_covered = True
+partial_branches = True
+precision = 2
+#fail_under = 60

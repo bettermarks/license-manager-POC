@@ -80,7 +80,7 @@ export class IngressNginxChart extends Chart {
         "--version",
         version,
         "--namespace",
-        namespace ? namespace : Namespace.DEFAULT,
+        namespace || Namespace.DEFAULT,
       ],
       values: {
         controller: {

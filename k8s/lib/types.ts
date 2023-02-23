@@ -36,6 +36,7 @@ export type ApplicationConfig = {
   DATABASE_HOST: string;
   DATABASE_PORT: string;
   DATABASE_NAME: string;
+  FORWARDED_ALLOW_IPS: string;
 };
 
 /**

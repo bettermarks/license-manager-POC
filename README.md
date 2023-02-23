@@ -63,3 +63,30 @@ You can now use the API:
     ```sh
     alembic upgrade head
     ```
+
+## Authentication
+
+### Student/Teacher get license
+```mermaid TB
+graph
+    ALS(Adaptive Learning System)
+    LM(License Management)
+    subgraph partner
+        IDP(Identity Provider)
+        HP(Hierarchy Provider)
+    end
+
+    ALS-- 1. auth -->LM
+    LM-- 2. authenticate -->IDP
+    IDP-- 3. callback -->LM
+    ALS-- 4. GET license -->LM
+    LM-- 5. GET user-hierarchy -->HP
+    IDP-.-HP
+```
+
+1. A user needs to authenticate against `License Management` to get access to the API
+2. Establish authentication against `Identity Provider`
+   - When there is no active session yet a login form of the `Identity Provider` is shown
+   - When there is an active session the user accepts access from bettermarks to userinfo/hierachies
+3. In the callback the `License Manger` receives an Access Token for the `Hierarchy Provider` API
+4. User has access to protected APIs of `License Manager` and `Hierarchy Provider`

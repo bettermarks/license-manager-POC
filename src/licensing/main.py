@@ -4,9 +4,10 @@ import string
 import logging
 
 from fastapi import FastAPI
-
+from starlette.middleware.sessions import SessionMiddleware
 
 from licensing import __version__ as version
+from licensing.api.api_v1.endpoints import oidc
 from licensing.logging import ColorFormatter, get_loglevel
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
@@ -46,6 +47,12 @@ tags_metadata = [
             "The API status and other useful (debug) information"
         ),
     },
+    {
+        "name": "Auth",
+        "description": (
+            "Authentication endpoints"
+        ),
+    },
 ]
 
 app = FastAPI(
@@ -74,11 +81,15 @@ async def log_requests(request, call_next):
     return response
 
 
+app.add_middleware(SessionMiddleware, secret_key="some-random-string")
+
+
 @app.on_event("startup")
 async def startup():
     # TODO how could initial data be loaded? This seems not to be the right place ...
     await load_initial_products()
     await load_initial_hierarchy_providers()
+    oidc.register_providers()
 
 
 @app.on_event("shutdown")
@@ -87,3 +98,7 @@ async def shutdown():
 
 
 app.include_router(api_router, prefix="/licensing/v1")
+
+
+# init logging
+logging.basicConfig(format="%(levelname)s:\t%(message)s", level=logging.INFO)

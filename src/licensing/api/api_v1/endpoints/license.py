@@ -1,6 +1,6 @@
 from typing import Any, List
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,3 +28,12 @@ async def get_permissions(
         session: AsyncSession = Depends(get_async_session)
 ) -> List[Any]:
     return await seat_crud.get_permissions(session, hierarchy_provider_url, user_eid)
+
+
+@router.get("/")
+async def test_auth(request: Request):
+    user = request.session.get('user')
+    # TODO: check user role?
+    if not user:
+        raise http_status.HTTP_401_UNAUTHORIZED()
+    return {}
