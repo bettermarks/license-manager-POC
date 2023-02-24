@@ -1,4 +1,3 @@
-import sys
 import urllib
 from contextlib import asynccontextmanager
 
@@ -17,24 +16,22 @@ def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, s
     )
 
 
-DATABASE_URL = postgres_dsn(
-    settings.DATABASE_HOST,
-    settings.DATABASE_PORT,
-    settings.DATABASE_USER,
-    settings.DATABASE_PASSWORD,
-    settings.DATABASE_NAME
+DATABASE_DSN = postgres_dsn(
+    settings.database_host,
+    settings.database_port,
+    settings.database_user,
+    settings.database_password,
+    settings.database_name
 )
 
 # SQLAlchemy session
-async_engine = create_async_engine(
-    DATABASE_URL,
-    echo=False  # TODO True if settings.LOGLEVEL == logging.DEBUG else False   # lots of logging ...
-)
+# TODO True if settings.LOGLEVEL == logging.DEBUG else False   # lots of logging ...
+async_engine = create_async_engine(DATABASE_DSN, echo=False)  #
 async_session_factory = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
 
 
-async def get_async_session() -> AsyncSession:
-    """This is the session generator usually injected using FastAPI 'Depends' function"""
+async def async_session() -> AsyncSession:
+    """This is the session generator usually injected using FastAPI 'Depends' function ..."""
     try:
         async with async_session_factory() as session:
             yield session
@@ -45,5 +42,5 @@ async def get_async_session() -> AsyncSession:
         await session.close()
 
 
-# We sometimes want a context manager to use the DB session with 'with'
-get_async_session_context = asynccontextmanager(get_async_session)
+# ... but we sometimes want a context manager to use the DB session with 'with'
+async_session_context = asynccontextmanager(async_session)

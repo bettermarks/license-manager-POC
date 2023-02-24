@@ -6,18 +6,17 @@ from fastapi import FastAPI
 
 
 from licensing import __version__ as version
-from licensing.logging import ColorFormatter, get_loglevel
+from licensing.logging import ColorFormatter, to_internal_log_level, LogLevel
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
-from licensing.load_initial_data import load_initial_products, load_initial_hierarchy_providers
-
+from licensing.load_initial_data import load_data, INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
 
 # setup logging
-loglevel = get_loglevel(settings.LOGLEVEL)
+log_level = to_internal_log_level(settings.log_level)
 logger = logging.getLogger()
-logger.setLevel(loglevel)
+logger.setLevel(log_level)
 ch = logging.StreamHandler()
-ch.setLevel(loglevel)
+ch.setLevel(log_level)
 ch.setFormatter(ColorFormatter())
 logger.addHandler(ch)
 
@@ -47,20 +46,21 @@ tags_metadata = [
     },
 ]
 
+# tha main FastAPI 'app' setup ...
 app = FastAPI(
     title="License Manager POC",
     version=version,
     openapi_url=f"/v1/openapi.json",
-    debug=True if settings.LOGLEVEL == logging.DEBUG else False,
+    debug=True if settings.log_level == LogLevel.DEBUG else False,
     description="A generic license managing application",
     openapi_tags=tags_metadata,
-    log_level=loglevel
+    log_level=log_level
 )
 
 
 @app.middleware("http")
 async def log_requests(request, call_next):
-    """some request logging ..."""
+    """We are intercepting requests to do some logging."""
     request_id = uuid.uuid4()
     logging.debug(f"request_id={request_id} started request at path={request.url.path}")
     start = time.time()
@@ -76,8 +76,8 @@ async def log_requests(request, call_next):
 @app.on_event("startup")
 async def startup():
     # TODO how could initial data be loaded? This seems not to be the right place ...
-    await load_initial_products()
-    await load_initial_hierarchy_providers()
+    await load_data(INITIAL_PRODUCTS)
+    await load_data(INITIAL_HIERARCHY_PROVIDERS)
 
 
 @app.on_event("shutdown")

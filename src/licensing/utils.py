@@ -4,6 +4,7 @@ from functools import wraps
 
 
 def async_measure_time(func):
+    """A simple 'measure execution time decorator to be used with any 'async' function"""
     @wraps(func)
     async def measure_time_wrapper(*args, **kwargs):
         start = time.time()

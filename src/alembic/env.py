@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.engine import Connection
 
-from licensing.db import DATABASE_URL
+from licensing.db import DATABASE_DSN
 from licensing.model.base import Model
 
 config = context.config
@@ -33,7 +33,7 @@ from licensing.model.seat import Seat
 
 
 def run_migrations_offline() -> None:
-    url = DATABASE_URL
+    url = DATABASE_DSN
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -48,7 +48,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online():
     config_section = config.get_section(config.config_ini_section)
-    url = DATABASE_URL
+    url = DATABASE_DSN
     config_section["sqlalchemy.url"] = url
     connectable = context.config.attributes.get("connection", None)
 

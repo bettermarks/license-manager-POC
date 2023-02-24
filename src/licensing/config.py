@@ -1,19 +1,19 @@
 from functools import lru_cache
 from pydantic import BaseSettings
 
-from licensing.logging import Loglevel
+from licensing.logging import LogLevel
 
 
 class Settings(BaseSettings):
     # Generic settings
-    LOGLEVEL: str = Loglevel.DEBUG
+    log_level: str = LogLevel.DEBUG
 
     # DB settings
-    DATABASE_USER: str
-    DATABASE_PASSWORD: str
-    DATABASE_HOST: str
-    DATABASE_PORT: str
-    DATABASE_NAME: str
+    database_user: str
+    database_password: str
+    database_host: str
+    database_port: str
+    database_name: str
 
     class Config:
         env_file = ".env"
