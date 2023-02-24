@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from contextlib import asynccontextmanager
 from typing import Generator
 
 import pytest
@@ -14,7 +13,7 @@ from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
 from licensing.config import settings
-from licensing.db import postgres_dsn, DATABASE_URL, get_async_session
+from licensing.db import postgres_dsn, DATABASE_URL
 from licensing.load_initial_data import INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
 from licensing.main import app, ROUTE_PREFIX
 
