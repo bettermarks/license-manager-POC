@@ -30,7 +30,7 @@ TEST_DATABASE_DSN = postgres_dsn(
 )
 
 # redefinition of async_engine for our tests ...
-async_test_engine = create_async_engine(TEST_DATABASE_DSN, echo=True)
+async_test_engine = create_async_engine(TEST_DATABASE_DSN, echo=False)
 async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_commit=False)
 
 
@@ -47,7 +47,7 @@ async def async_test_session() -> AsyncSession:
 
 
 # Overrides the attached DB session with our nice 'test DEB session'.
-# Now for all thests, the test database is used instead of the 'app database'
+# Now for all tests, the test database is used instead of the 'app database'
 app.dependency_overrides[app_db_session] = async_test_session
 
 
