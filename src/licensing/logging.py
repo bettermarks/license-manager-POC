@@ -5,12 +5,12 @@ Thanks to https://stackoverflow.com/questions/384076/how-can-i-color-python-logg
 """
 
 
-class Loglevel:
+class LogLevel:
     DEBUG = "debug"
     INFO = "info"
     WARNING = "warning"
     ERROR = "error"
-    CRITICAL= "critical"
+    CRITICAL = "critical"
 
 
 class ColorFormatter(logging.Formatter):
@@ -38,16 +38,16 @@ class ColorFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-def get_loglevel(loglevel: str) -> int:
+def to_internal_log_level(log_level: str) -> int:
     """my configurable 'string' loglevel to internal int loglevel"""
-    match loglevel:
-        case Loglevel.DEBUG:
+    match log_level:
+        case LogLevel.DEBUG:
             return logging.DEBUG
-        case Loglevel.INFO:
+        case LogLevel.INFO:
             return logging.INFO
-        case Loglevel.WARNING:
+        case LogLevel.WARNING:
             return logging.WARNING
-        case Loglevel.ERROR:
+        case LogLevel.ERROR:
             return logging.ERROR
         case _:
             return logging.CRITICAL

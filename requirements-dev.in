@@ -1,4 +1,7 @@
-pytest
-pytest_asyncio
-httpx
 black
+httpx
+mock
+pytest
+pytest-cov
+pytest-mock
+pytest_asyncio

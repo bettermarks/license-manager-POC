@@ -1,6 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 
-from licensing.db import get_async_session_context
+from licensing.db import async_session_context
 from licensing.model.hierarchy_provider import HierarchyProvider
 from licensing.model.product import Product
 
@@ -54,7 +54,7 @@ INITIAL_HIERARCHY_PROVIDERS = [
 
 
 async def load_data(data):
-    async with get_async_session_context() as session:
+    async with async_session_context() as session:
         for p in data:
             try:
                 session.add(p)
@@ -62,11 +62,4 @@ async def load_data(data):
             except IntegrityError:
                 await session.rollback()
 
-
-async def load_initial_products():
-    await load_data(INITIAL_PRODUCTS)
-
-
-async def load_initial_hierarchy_providers():
-    await load_data(INITIAL_HIERARCHY_PROVIDERS)
 

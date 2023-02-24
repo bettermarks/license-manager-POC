@@ -6,7 +6,7 @@ from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 from sqlalchemy.engine import Connection
 
-from licensing.db import DATABASE_URL
+from licensing.db import DATABASE_DSN
 from licensing.model.base import Model
 
 config = context.config
@@ -33,7 +33,7 @@ from licensing.model.seat import Seat
 
 
 def run_migrations_offline() -> None:
-    url = DATABASE_URL
+    url = DATABASE_DSN
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -44,38 +44,45 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
-def do_run_migrations(connection: Connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+# modified following https://pytest-alembic.readthedocs.io/en/latest/asyncio.html
 
-    with context.begin_transaction():
-        context.configure(
-            connection=connection,
-            target_metadata=target_metadata,
-        )
-        context.run_migrations()
-
-
-async def run_migrations_online():
+def run_migrations_online():
     config_section = config.get_section(config.config_ini_section)
-    url = DATABASE_URL
+    url = DATABASE_DSN
     config_section["sqlalchemy.url"] = url
+    connectable = context.config.attributes.get("connection", None)
 
-    connectable = AsyncEngine(
-        engine_from_config(
-            config_section,
-            prefix="sqlalchemy.",
-            poolclass=pool.NullPool,
-            future=True,
+    if connectable is None:
+        connectable = AsyncEngine(
+            engine_from_config(
+                config_section,
+                prefix="sqlalchemy.",
+                poolclass=pool.NullPool,
+                future=True,
+            )
         )
-    )
 
+    # Note, we decide whether to run asynchronously based on the kind of engine we're dealing with.
+    if isinstance(connectable, AsyncEngine):
+        asyncio.run(run_async_migrations(connectable))
+    else:
+        do_run_migrations(connectable)
+
+
+# Then use their setup for async connection/running of the migration
+async def run_async_migrations(connectable):
     async with connectable.connect() as connection:
         await connection.run_sync(do_run_migrations)
 
     await connectable.dispose()
 
 
-if context.is_offline_mode():
-    run_migrations_offline()
-else:
-    asyncio.run(run_migrations_online())
+def do_run_migrations(connection):
+    context.configure(connection=connection, target_metadata=target_metadata)
+
+    with context.begin_transaction():
+        context.run_migrations()
+
+
+# But the outer layer still allows sychronous execution also.
+run_migrations_online()
