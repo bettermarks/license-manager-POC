@@ -14,8 +14,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 
 from licensing.config import settings
 from licensing.db import postgres_dsn, DATABASE_DSN
-from licensing.load_initial_data import INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
 from licensing.main import app, ROUTE_PREFIX
+from licensing.db import async_session as app_db_session
+from tests.integration.initial_data import INITIAL_TEST_PRODUCTS, INITIAL_TEST_HIERARCHY_PROVIDERS
 
 INIT_DATABASE_DSN = DATABASE_DSN  # we will use our standard connection to create and drop the test DB
 
@@ -29,15 +30,14 @@ TEST_DATABASE_DSN = postgres_dsn(
 )
 
 # redefinition of async_engine for our tests ...
-async_engine = create_async_engine(TEST_DATABASE_DSN, echo=True)
-async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
+async_test_engine = create_async_engine(TEST_DATABASE_DSN, echo=True)
+async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_commit=False)
 
 
-@pytest_asyncio.fixture(scope="function")
-async def async_session() -> AsyncSession:
+async def async_test_session() -> AsyncSession:
     """Redefinition of async_session for our tests ..."""
     try:
-        async with async_session_factory() as session:
+        async with async_test_session_factory() as session:
             yield session
     except Exception as ex:
         await session.rollback()
@@ -45,13 +45,16 @@ async def async_session() -> AsyncSession:
     finally:
         await session.close()
 
-    await async_engine.dispose()
+
+# Overrides the attached DB session with our nice 'test DEB session'.
+# Now for all thests, the test database is used instead of the 'app database'
+app.dependency_overrides[app_db_session] = async_test_session
 
 
 @pytest_asyncio.fixture
-async def async_client():
+async def async_test_client():
     """This is our 'test http client'"""
-    async with AsyncClient(app=app, base_url=f"http://{ROUTE_PREFIX}") as client:
+    async with AsyncClient(app=app, base_url=f"http://test-server/{ROUTE_PREFIX}") as client:
         yield client
 
 
@@ -78,14 +81,14 @@ async def alembic_migrate():
 
     cfg = Config("alembic.ini")
     cfg.set_main_option("script_location", "src/alembic")
-    async with async_engine.begin() as c:
+    async with async_test_engine.begin() as c:
         await c.run_sync(execute_upgrade)
 
 
 async def load_initial_data():
     """Loads initial data into our test database ..."""
-    for d in INITIAL_PRODUCTS + INITIAL_HIERARCHY_PROVIDERS:
-        async with async_session_factory() as session:
+    for d in INITIAL_TEST_PRODUCTS + INITIAL_TEST_HIERARCHY_PROVIDERS:
+        async with async_test_session_factory() as session:
             session.add(d)
             await session.commit()
 
@@ -107,8 +110,8 @@ async def setup_and_teardown():
 
     # Teardown:
     logging.debug("Teardown ...")
-    async with init_engine.connect() as conn:
-        await conn.run_sync(drop_db)
+    # async with init_engine.connect() as conn:
+    #    await conn.run_sync(drop_db)
 
 
 @pytest.fixture(scope="session")
@@ -116,3 +119,4 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
