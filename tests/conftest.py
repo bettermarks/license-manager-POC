@@ -3,7 +3,6 @@ import logging
 from typing import Generator
 
 import pytest
-import pytest_asyncio
 
 from fastapi import FastAPI
 from httpx import AsyncClient
@@ -91,10 +90,7 @@ async def async_test_session(app: FastAPI) -> AsyncSession:
 @pytest.fixture(scope="module")
 async def async_test_client(app: FastAPI, async_test_session: AsyncSession) -> AsyncClient:
     def session():
-        try:
-            yield async_test_session
-        finally:
-            pass
+        yield async_test_session
 
     # Overrides the attached DB session with our nice 'test DEB session'.
     # Now for all tests, the test database is used instead of the 'app database'
