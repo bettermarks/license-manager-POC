@@ -5,19 +5,24 @@ from typing import Generator
 import pytest
 import pytest_asyncio
 
-from alembic import command
-from alembic.config import Config
+from fastapi import FastAPI
 from httpx import AsyncClient
-from sqlalchemy import text
-from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
+from licensing.api.api_v1.api import api_router
 from licensing.config import settings
-from licensing.db import postgres_dsn, DATABASE_DSN
-from licensing.load_initial_data import INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
+from licensing.db import postgres_dsn
 from licensing.main import app, ROUTE_PREFIX
+from licensing.db import async_session as app_db_session
+from tests.integration.initial_data import INITIAL_TEST_PRODUCTS, INITIAL_TEST_HIERARCHY_PROVIDERS
 
-INIT_DATABASE_DSN = DATABASE_DSN  # we will use our standard connection to create and drop the test DB
+# we need to import all models here to set up the database ...
+from licensing.model.hierarchy_provider import HierarchyProvider
+from licensing.model.product import Product
+from licensing.model.license import License
+from licensing.model.seat import Seat
+from licensing.model.base import Model
+
 
 TEST_DATABASE_NAME = "test_licensing"
 TEST_DATABASE_DSN = postgres_dsn(
@@ -28,87 +33,12 @@ TEST_DATABASE_DSN = postgres_dsn(
     TEST_DATABASE_NAME
 )
 
+# we need that for setting up the DB tables ...
+target_metadata = Model.metadata
+
 # redefinition of async_engine for our tests ...
-async_engine = create_async_engine(TEST_DATABASE_DSN, echo=True)
-async_session_factory = async_sessionmaker(async_engine, expire_on_commit=False)
-
-
-@pytest_asyncio.fixture(scope="function")
-async def async_session() -> AsyncSession:
-    """Redefinition of async_session for our tests ..."""
-    try:
-        async with async_session_factory() as session:
-            yield session
-    except Exception as ex:
-        await session.rollback()
-        raise ex
-    finally:
-        await session.close()
-
-    await async_engine.dispose()
-
-
-@pytest_asyncio.fixture
-async def async_client():
-    """This is our 'test http client'"""
-    async with AsyncClient(app=app, base_url=f"http://{ROUTE_PREFIX}") as client:
-        yield client
-
-
-def drop_db(connection):
-    """Drops the test database on setup (if it exists) and on teardown"""
-    connection.execute(text(f"DROP DATABASE {TEST_DATABASE_NAME}"))
-
-
-def create_db(connection):
-    """Creates the test database on setup"""
-    stmt = text(f"CREATE DATABASE {TEST_DATABASE_NAME}")
-    try:
-        connection.execute(stmt)
-    except ProgrammingError as ex:
-        drop_db(connection)
-        connection.execute(stmt)
-
-
-async def alembic_migrate():
-    """Performs all alembic migrations in our test database"""
-    def execute_upgrade(connection):
-        cfg.attributes["connection"] = connection  # this injects our test db connection to the alembic env script
-        command.upgrade(cfg, "head")
-
-    cfg = Config("alembic.ini")
-    cfg.set_main_option("script_location", "src/alembic")
-    async with async_engine.begin() as c:
-        await c.run_sync(execute_upgrade)
-
-
-async def load_initial_data():
-    """Loads initial data into our test database ..."""
-    for d in INITIAL_PRODUCTS + INITIAL_HIERARCHY_PROVIDERS:
-        async with async_session_factory() as session:
-            session.add(d)
-            await session.commit()
-
-
-@pytest_asyncio.fixture(autouse=True)
-async def setup_and_teardown():
-    """Fixture to establish 'setup' and 'teardown' code"""
-
-    init_engine = create_async_engine(INIT_DATABASE_DSN, isolation_level='AUTOCOMMIT', echo=True)
-
-    # Setup:
-    logging.debug("Setup ...")
-    async with init_engine.connect() as conn:
-        await conn.run_sync(create_db)
-    await alembic_migrate()
-    await load_initial_data()
-
-    yield  # the tests ...
-
-    # Teardown:
-    logging.debug("Teardown ...")
-    async with init_engine.connect() as conn:
-        await conn.run_sync(drop_db)
+async_test_engine = create_async_engine(TEST_DATABASE_DSN, pool_pre_ping=True, echo=False)
+async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_commit=False)
 
 
 @pytest.fixture(scope="session")
@@ -116,3 +46,60 @@ def event_loop(request) -> Generator:  # noqa: indirect usage
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
+
+
+async def start_app():
+    app = FastAPI()
+    app.include_router(api_router, prefix=f"/{ROUTE_PREFIX}")
+    return app
+
+
+@pytest.fixture(scope="session")
+async def app() -> FastAPI:
+    # Setup:
+    logging.debug("Setup ...")
+    try:
+        # (re)create tables
+        async with async_test_engine.begin() as conn:
+            await conn.run_sync(target_metadata.drop_all)
+            await conn.run_sync(target_metadata.create_all)
+
+        # initial data ...
+        async with async_test_session_factory() as s:
+            for d in INITIAL_TEST_PRODUCTS + INITIAL_TEST_HIERARCHY_PROVIDERS:
+                s.add(d)
+                await s.commit()
+
+        yield await start_app()
+
+    finally:
+        # Teardown:
+        logging.debug("Teardown ...")
+        async with async_test_engine.begin() as conn:
+            await conn.run_sync(target_metadata.drop_all)
+
+
+@pytest.fixture(scope="session")
+async def async_test_session(app: FastAPI) -> AsyncSession:
+    try:
+        async with async_test_session_factory() as session:
+            yield session
+    finally:
+        await session.close()
+
+
+@pytest.fixture(scope="module")
+async def async_test_client(app: FastAPI, async_test_session: AsyncSession) -> AsyncClient:
+    def session():
+        try:
+            yield async_test_session
+        finally:
+            pass
+
+    # Overrides the attached DB session with our nice 'test DEB session'.
+    # Now for all tests, the test database is used instead of the 'app database'
+    app.dependency_overrides[app_db_session] = session
+    async with AsyncClient(app=app, base_url=f"http://test-server/{ROUTE_PREFIX}") as client:
+        yield client
+
+    app.dependency_overrides.setdefault

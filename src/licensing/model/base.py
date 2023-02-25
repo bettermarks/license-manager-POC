@@ -3,15 +3,28 @@ import re
 from typing import Optional
 from typing_extensions import Annotated
 
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import BIGINT, TIMESTAMP
-from sqlalchemy.orm import declared_attr, Mapped, mapped_column
+from sqlalchemy import BIGINT, TIMESTAMP, func
+from sqlalchemy.orm import DeclarativeBase, declared_attr, Mapped, mapped_column, MappedAsDataclass
+from sqlalchemy.sql import expression
+from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.types import DateTime
+
 
 # my custom types ...
 int8 = Annotated[int, mapped_column(type_=BIGINT)]  # we want 64 bit unsigned ints for primary keys and foreign keys.
 
 
-class Model(DeclarativeBase):
+class UtcNow(expression.FunctionElement):
+    type = DateTime()
+    inherit_cache = True
+
+
+@compiles(UtcNow, 'postgresql')
+def pg_utcnow(element, compiler, **kw):
+    return "TIMEZONE('utc', CURRENT_TIMESTAMP)"
+
+
+class Model(MappedAsDataclass, DeclarativeBase):
     """
     The common base class for all our models.
     Every model has these columns:
@@ -29,7 +42,8 @@ class Model(DeclarativeBase):
         datetime.datetime: TIMESTAMP(timezone=True)
     }
 
-    id: Mapped[int8] = mapped_column(primary_key=True, index=True, autoincrement=True)
-    created: Mapped[datetime.datetime] = mapped_column(default=datetime.datetime.utcnow, index=True)
-    updated: Mapped[Optional[datetime.datetime]] = mapped_column(onupdate=datetime.datetime.utcnow, index=True)
+    id: Mapped[int8] = mapped_column(init=False, primary_key=True, index=True, autoincrement=True)
+    created: Mapped[Optional[datetime.datetime]] = mapped_column(init=False, server_default=UtcNow(), index=True)
+    updated: Mapped[Optional[datetime.datetime]] = mapped_column(init=False, onupdate=datetime.datetime.utcnow)
+
 
