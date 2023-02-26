@@ -26,6 +26,9 @@ def purchase_payload() -> dict:
 
 @pytest.mark.asyncio
 async def test_purchase_license__422_product(client: AsyncClient, session: AsyncSession, purchase_payload: dict):
+    """
+    Requested product is not registered
+    """
     purchaser_eid = "teacher_1"
     payload = purchase_payload
     payload["product_eid"] = "does_not_exist"
@@ -39,9 +42,12 @@ async def test_purchase_license__422_product(client: AsyncClient, session: Async
 
 
 @pytest.mark.asyncio
-async def test_purchase_license__404_hierarchy_provider(
+async def test_purchase_license__422_hierarchy_provider(
         client: AsyncClient, session: AsyncSession, purchase_payload: dict
 ):
+    """
+    Requested hierarchy provider is not registered
+    """
     purchaser_eid = "teacher_1"
     payload = purchase_payload
     payload["hierarchy_provider_url"] = "http://illegal_hierarchy_provider.com/hierarchy"
@@ -61,6 +67,9 @@ async def test_purchase_license__404_hierarchy_provider(
 async def test_purchase_license__500_hierarchy_provider(
         mocker: MockerFixture, client: AsyncClient, session: AsyncSession, purchase_payload: dict
 ):
+    """
+    Hierarchy provider is down
+    """
     mocker.patch("licensing.http_client.http_get", side_effect=[aiohttp.client_exceptions.ClientConnectorError])
     purchaser_eid = "teacher_1"
     payload = purchase_payload
