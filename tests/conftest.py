@@ -79,7 +79,7 @@ async def app() -> FastAPI:
 
 
 @pytest.fixture(scope="session")
-async def async_test_session(app: FastAPI) -> AsyncSession:
+async def session(app: FastAPI) -> AsyncSession:
     try:
         async with async_test_session_factory() as session:
             yield session
@@ -88,13 +88,13 @@ async def async_test_session(app: FastAPI) -> AsyncSession:
 
 
 @pytest.fixture(scope="module")
-async def async_test_client(app: FastAPI, async_test_session: AsyncSession) -> AsyncClient:
-    def session():
-        yield async_test_session
+async def client(app: FastAPI, session: AsyncSession) -> AsyncClient:
+    def _session():
+        yield session
 
     # Overrides the attached DB session with our nice 'test DEB session'.
     # Now for all tests, the test database is used instead of the 'app database'
-    app.dependency_overrides[app_db_session] = session
+    app.dependency_overrides[app_db_session] = _session
     async with AsyncClient(app=app, base_url=f"http://test-server/{ROUTE_PREFIX}") as client:
         yield client
 

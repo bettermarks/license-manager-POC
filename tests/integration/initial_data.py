@@ -13,9 +13,9 @@ INITIAL_TEST_PRODUCTS = [
 
 INITIAL_TEST_HIERARCHY_PROVIDERS = [
     HierarchyProvider(
-        url="http://0.0.0.0:5001/hierarchy",
-        short_name="glu",
-        name="GLU user class management system",
-        description="This is our GLU user class management system used to get valid hierarchies"
+        url="http://mocked_hierarchy_provider.com/hierarchy",
+        short_name="a mocked hierarchy provider",
+        name="some mocked hierarchy provider",
+        description="This is some mocked hierarchy provider"
     ),
 ]
