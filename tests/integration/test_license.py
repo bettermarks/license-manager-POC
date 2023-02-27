@@ -180,3 +180,4 @@ async def test_purchase_license__ok(
     print("response._content = ", response._content)
     assert response.status_code == 201
 
+    # TODO to be continued ....
