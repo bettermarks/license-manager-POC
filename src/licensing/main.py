@@ -2,8 +2,8 @@ import time
 import logging
 import uuid
 
+from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
 from fastapi import FastAPI
-
 
 from licensing import __version__ as version
 from licensing.logging import ColorFormatter, to_internal_log_level, LogLevel
@@ -76,6 +76,22 @@ async def log_requests(request, call_next):
         )
     )
     return response
+
+
+# add application performance monitoring middleware
+apm = make_apm_client(
+    {
+        "SERVICE_NAME": f"licensing-{settings.segment}",
+        "SECRET_TOKEN": settings.apm_secret_token,
+        "SERVER_URL": settings.apm_url,
+        "ENVIRONMENT": settings.segment,
+        "TRANSACTIONS_IGNORE_PATTERNS": ["^OPTIONS", "/v1/status"],
+        "ENABLED": settings.apm_enabled == "true",
+        "SERVICE_VERSION": version,
+        "TRANSACTION_SAMPLE_RATE": float(settings.apm_transaction_sample_rate or 0.1),
+    }
+)
+app.add_middleware(ElasticAPM, client=apm)
 
 
 @app.on_event("startup")

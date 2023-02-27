@@ -30,12 +30,16 @@ export type NodeSelector = {
 };
 
 export type ApplicationConfig = {
+  SEGMENT: string,
   LOG_HANDLER: string;
   LOG_LEVEL: LogLevel;
   DATABASE_USER: string;
   DATABASE_HOST: string;
   DATABASE_PORT: string;
   DATABASE_NAME: string;
+  APM_URL: string,
+  APM_ENABLED: boolean,
+  APM_TRANSACTION_SAMPLE_RATE: string,
 };
 
 /**

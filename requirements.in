@@ -1,9 +1,10 @@
-asyncpg
-SQLAlchemy[asyncio]==2.0.2
-fastapi
-uvicorn
-alembic
-requests
-pydantic[dotenv]
 aiohttp
+alembic
+asyncpg
+elastic-apm
+fastapi
+pydantic[dotenv]
 pyyaml
+requests
+SQLAlchemy[asyncio]==2.0.2
+uvicorn

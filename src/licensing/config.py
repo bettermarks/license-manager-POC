@@ -15,6 +15,13 @@ class Settings(BaseSettings):
     database_port: str
     database_name: str
 
+    segment: str = ""
+
+    apm_secret_token: str = ""
+    apm_url: str = ""
+    apm_enabled: str = "false"
+    apm_transaction_sample_rate: str = ""
+
     class Config:
         env_file = ".env"
 
