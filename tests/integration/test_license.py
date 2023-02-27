@@ -39,12 +39,7 @@ def class_2_eid() -> str:
 
 
 @pytest.fixture
-def student_2_eid() -> str:
-    return "student_2"
-
-
-@pytest.fixture
-def purchase_payload(class_1_eid, class_2_eid) -> dict:
+def purchase_payload(product_1, hierarchy_provider_1, class_1_eid, class_2_eid) -> dict:
     return {
         "owner_type": "class",
         "owner_eids": [
@@ -54,12 +49,13 @@ def purchase_payload(class_1_eid, class_2_eid) -> dict:
         "valid_from": "2023-02-10",
         "valid_to": "2024-02-10",
         "seats": 100,
-        "hierarchy_provider_url": "http://mocked_hierarchy_provider.com/hierarchy",
-        "product_eid": "full_access"
+        "hierarchy_provider_url": hierarchy_provider_1.url,
+        "product_eid": product_1.eid
     }
 
 
 async def http_get_hierarchy_provider_membership(url: str, payload: dict | None = None):
+    # like www.my-hierarchy-provider.de/users/{some user_eid}/membership
     user_eid = re.findall('\w+/users/(\w+)/membership', url)[0]
 
     match user_eid:
@@ -92,7 +88,7 @@ async def test_purchase_license__422_product(
     Requested product is not registered
     """
     payload = purchase_payload
-    payload["product_eid"] = "does_not_exist"
+    payload["product_eid"] = "product_that_does_not_exist"
     response = await client.post(f"/users/{teacher_1_eid}/purchases", json=payload)
     assert response.status_code == 422
     assert json.loads(response._content) == {
@@ -110,7 +106,7 @@ async def test_purchase_license__422_hierarchy_provider(
     Requested hierarchy provider is not registered
     """
     payload = purchase_payload
-    payload["hierarchy_provider_url"] = "http://illegal_hierarchy_provider.com/hierarchy"
+    payload["hierarchy_provider_url"] = "http://not_existing_hierarchy_provider.com/hierarchy"
     response = await client.post(f"/users/{teacher_1_eid}/purchases", json=payload)
     assert response.status_code == 422
     assert json.loads(response._content) == {

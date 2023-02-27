@@ -1,6 +1,7 @@
 import asyncio
 import logging
-from typing import Generator
+
+from typing import Generator, List
 
 import pytest
 
@@ -13,7 +14,6 @@ from licensing.config import settings
 from licensing.db import postgres_dsn
 from licensing.main import app, ROUTE_PREFIX
 from licensing.db import async_session as app_db_session
-from tests.integration.initial_data import INITIAL_TEST_PRODUCTS, INITIAL_TEST_HIERARCHY_PROVIDERS
 
 # we need to import all models here to set up the database ...
 from licensing.model.hierarchy_provider import HierarchyProvider
@@ -41,6 +41,36 @@ async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_com
 
 
 @pytest.fixture(scope="session")
+def product_1() -> Product:
+    return Product(
+        eid="full_access",
+        name="full access for all bettermarks content",
+        description="This product gives full access to all bettermarks books",
+        permissions=[{"*": "rx"}]
+    )
+
+
+@pytest.fixture(scope="session")
+def hierarchy_provider_1() -> HierarchyProvider:
+    return HierarchyProvider(
+        url="http://mocked_hierarchy_provider.com/hierarchy",
+        short_name="a mocked hierarchy provider",
+        name="some mocked hierarchy provider",
+        description="This is some mocked hierarchy provider"
+    )
+
+
+@pytest.fixture(scope="session")
+def products(product_1) -> List[Product]:
+    return [product_1]
+
+
+@pytest.fixture(scope="session")
+def hierarchy_providers(hierarchy_provider_1) -> List[HierarchyProvider]:
+    return [hierarchy_provider_1]
+
+
+@pytest.fixture(scope="session")
 def event_loop(request) -> Generator:  # noqa: indirect usage
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
@@ -54,7 +84,7 @@ async def start_app():
 
 
 @pytest.fixture(scope="session")
-async def app() -> FastAPI:
+async def app(products, hierarchy_providers) -> FastAPI:
     # Setup:
     logging.debug("Setup ...")
     try:
@@ -65,7 +95,7 @@ async def app() -> FastAPI:
 
         # initial data ...
         async with async_test_session_factory() as s:
-            for d in INITIAL_TEST_PRODUCTS + INITIAL_TEST_HIERARCHY_PROVIDERS:
+            for d in products + hierarchy_providers:
                 s.add(d)
                 await s.commit()
 
@@ -99,3 +129,4 @@ async def client(app: FastAPI, session: AsyncSession) -> AsyncClient:
         yield client
 
     app.dependency_overrides.setdefault
+
