@@ -62,6 +62,41 @@ async_test_engine = create_async_engine(TEST_DATABASE_DSN, pool_pre_ping=True, e
 async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_commit=False)
 
 
+@pytest.fixture
+def teacher_1() -> Teacher:
+    return Teacher(eid="teacher_1")
+
+
+@pytest.fixture
+def teacher_no_class_2() -> Teacher:
+    return Teacher(eid="teacher_no_class_2")
+
+
+@pytest.fixture
+def student_1() -> Student:
+    return Student(eid="student_1")
+
+
+@pytest.fixture
+def student_2() -> Student:
+    return Student(eid="student_2")
+
+
+@pytest.fixture
+def class_1() -> Class_:
+    return Class_(eid="class_1")
+
+
+@pytest.fixture
+def class_2() -> Class_:
+    return Class_(eid="class_2")
+
+
+@pytest.fixture
+def class_3() -> Class_:
+    return Class_(eid="class_3")
+
+
 @pytest.fixture(scope="session")
 def product_1() -> Product:
     return Product(

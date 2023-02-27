@@ -3,57 +3,24 @@ import re
 from typing import Dict, List
 
 from httpx import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import pytest
 from pytest_mock import MockerFixture
 
-from licensing.model.hierarchy_provider import HierarchyProvider
-from licensing.model.product import Product
-from tests.integration.conftest import Teacher, Student, Class_
+from licensing.model import hierarchy_provider as hierarchy_provider_model
+from licensing.model import product as product_model
+from licensing.model import license as license_model
 
-
-@pytest.fixture
-def teacher_1() -> Teacher:
-    return Teacher(eid="teacher_1")
-
-
-@pytest.fixture
-def teacher_no_class_2() -> Teacher:
-    return Teacher(eid="teacher_no_class_2")
-
-
-@pytest.fixture
-def student_1() -> Student:
-    return Student(eid="student_1")
-
-
-@pytest.fixture
-def student_2() -> Student:
-    return Student(eid="student_2")
-
-
-@pytest.fixture
-def class_1() -> Class_:
-    return Class_(eid="class_1")
-
-
-@pytest.fixture
-def class_2() -> Class_:
-    return Class_(eid="class_2")
-
-
-@pytest.fixture
-def class_3() -> Class_:
-    return Class_(eid="class_3")
 
 
 @pytest.fixture
 def teacher_1_purchase_payload(
-        product_1: Product,
-        hierarchy_provider_1: HierarchyProvider,
-        class_1: Class_,
-        class_2: Class_
+        product_1: product_model.Product,
+        hierarchy_provider_1: hierarchy_provider_model.HierarchyProvider,
+        class_1,
+        class_2
 ) -> dict:
     return {
         "owner_type": class_1.type_,
@@ -71,14 +38,7 @@ def teacher_1_purchase_payload(
 
 @pytest.fixture()
 async def mock_get_hierarchy_provider_membership(
-        mocker: MockerFixture,
-        class_1: Class_,
-        class_2: Class_,
-        class_3: Class_,
-        teacher_1: Teacher,
-        teacher_no_class_2: Teacher,
-        student_1: Student,
-        student_2: Student
+        mocker: MockerFixture, class_1, class_2, class_3, teacher_1, teacher_no_class_2, student_1, student_2
 ) -> List[Dict[str, str | int]]:
     """ this is our mocked 'hierarchy-provider-membership service'"""
     async def _http_get(url: str, payload: dict | None = None):
@@ -109,11 +69,7 @@ async def mock_get_hierarchy_provider_membership(
 
 
 @pytest.mark.asyncio
-async def test_purchase_license__422_product(
-        client: AsyncClient,
-        teacher_1: Teacher,
-        teacher_1_purchase_payload: Dict
-):
+async def test_purchase_license__422_product(client: AsyncClient, teacher_1, teacher_1_purchase_payload):
     """
     Requested product is not registered
     """
@@ -127,11 +83,7 @@ async def test_purchase_license__422_product(
 
 
 @pytest.mark.asyncio
-async def test_purchase_license__422_hierarchy_provider(
-        client: AsyncClient,
-        teacher_1: Teacher,
-        teacher_1_purchase_payload: Dict
-):
+async def test_purchase_license__422_hierarchy_provider(client: AsyncClient, teacher_1, teacher_1_purchase_payload):
     """
     Requested hierarchy provider is not registered
     """
@@ -149,10 +101,7 @@ async def test_purchase_license__422_hierarchy_provider(
 
 @pytest.mark.asyncio
 async def test_purchase_license__500_hierarchy_provider(
-        mocker: MockerFixture,
-        client: AsyncClient,
-        teacher_1: Teacher,
-        teacher_1_purchase_payload: Dict
+        mocker: MockerFixture, client: AsyncClient, teacher_1, teacher_1_purchase_payload
 ):
     """
     Hierarchy provider is down
@@ -170,9 +119,9 @@ async def test_purchase_license__500_hierarchy_provider(
 async def test_purchase_license__422_not_matching_owner(
         client: AsyncClient,
         session: AsyncSession,
-        teacher_no_class_2: Teacher,
-        class_2: Class_,
-        teacher_1_purchase_payload: Dict,
+        teacher_no_class_2,
+        class_2,
+        teacher_1_purchase_payload,
         mock_get_hierarchy_provider_membership
 ):
     """
@@ -192,8 +141,8 @@ async def test_purchase_license__422_not_matching_owner(
 async def test_purchase_license__ok(
         client: AsyncClient,
         session: AsyncSession,
-        teacher_1: Teacher,
-        teacher_1_purchase_payload: Dict,
+        teacher_1,
+        teacher_1_purchase_payload,
         mock_get_hierarchy_provider_membership
 ):
     """
@@ -201,7 +150,17 @@ async def test_purchase_license__ok(
     """
     payload = teacher_1_purchase_payload
     response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
-    print("response._content = ", response._content)
+    license_uuid = json.loads(response._content)["license_uuid"]
+
+    # ok. we should have a lciense in the DB!
+    #lic = (
+    #    await session.execute(
+    #        select(license_model.License).where(license_model.License.uuid == license_uuid))
+    #).scalar_one_or_none()
+    #print("license = ", lic)
+
+    #print("license_uuid = ", license_uuid)
     assert response.status_code == 201
 
     # TODO to be continued ....
+

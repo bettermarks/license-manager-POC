@@ -1,5 +1,5 @@
 import datetime
-import uuid
+import uuid as uuid_module
 from typing import Optional
 
 from sqlalchemy import String, ForeignKey, UniqueConstraint
@@ -12,6 +12,8 @@ from licensing.model import hierarchy_provider as hierarchy_provider_model
 
 
 class License(Model):
+    uuid: Mapped[uuid_module.UUID] = mapped_column(UUID(as_uuid=True), index=True)
+
     ref_product: Mapped[int8] = mapped_column(ForeignKey('product.id'), init=False, index=True)
     ref_hierarchy_provider: Mapped[int8] = mapped_column(ForeignKey('hierarchy_provider.id'), init=False, index=True)
 
@@ -19,7 +21,6 @@ class License(Model):
     owner_type: Mapped[str] = mapped_column(String(256), index=True)
     owner_level: Mapped[int] = mapped_column(index=True)
     owner_eid: Mapped[str] = mapped_column(String(256), index=True)
-    license_uuid: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), index=True)
     valid_from: Mapped[datetime.date] = mapped_column(index=True)
     valid_to: Mapped[datetime.date] = mapped_column(index=True)
     seats: Mapped[Optional[int]]

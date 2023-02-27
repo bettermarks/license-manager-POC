@@ -63,7 +63,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
 
         # 3.2. create license (will be rolled back, if some checks for 'owners' fail ...
         lic = model.License(
-            license_uuid=license_uuid,
+            uuid=license_uuid,
             purchaser_eid=purchaser_eid,
             owner_eid=owner_eid,
             owner_type=membership["type"],
