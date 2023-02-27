@@ -35,9 +35,7 @@ class Teacher(User):
 
 
 class Student(User):
-    eid: str
     type_: str = "student"
-    level: int = 0
 
 
 @dataclass
