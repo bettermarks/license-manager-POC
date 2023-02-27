@@ -6,7 +6,7 @@ describe("ingress-nginx-chart", () => {
   test("with tls", () => {
     const app = Testing.app();
     const chart = new IngressNginxChart(app, "test-chart", {
-      replicas: 1,
+      replicaCount: 1,
       tlsSecret: "loc00-tls-secret",
       namespace: "dummy-namespace"
     });
@@ -16,6 +16,7 @@ describe("ingress-nginx-chart", () => {
   test("Without tls", () => {
     const app = Testing.app();
     const chart = new IngressNginxChart(app, "test-chart", {
+      replicaCount: 1,
       nodeSelector: APP_NODE_POOL_LABELS,
       namespace: "dummy-namespace"
     });
