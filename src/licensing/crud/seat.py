@@ -32,38 +32,11 @@ async def get_occupied_seats(session: AsyncSession, user_eid: str) -> List[seat_
 
 async def get_licenses_for_entities(
         session: AsyncSession, hierarchy_provider_id: int, entities: Set[Tuple[str, int]], when: datetime.date
-) -> Any:  #  List[license_model.License]:
+) -> Any:
     """
     Gets all (distinct) licenses, that are valid at a given date (when),
     that are owned by the given entities under a given hierarchy provider.
     """
-    print("sql=",
-          select(
-              license_model.License,
-              func.sum(
-                  case(
-                      (seat_model.Seat.is_occupied, 1),
-                      else_=0
-                  )
-              ).label("occupied_seats")
-          ).join(
-              seat_model.Seat, seat_model.Seat.ref_license == license_model.License.id, isouter=True
-          ).where(
-              license_model.License.ref_hierarchy_provider == hierarchy_provider_id
-          ).where(
-              license_model.License.valid_from <= when
-          ).where(
-              license_model.License.valid_to >= when
-          ).where(
-              tuple_(license_model.License.owner_eid, license_model.License.owner_level).in_(list(entities))
-          ).group_by(
-              license_model.License.id, license_model.License.ref_product
-          ).options(   # we need that as async does not support lazy loading!
-              selectinload(license_model.License.product)
-          )
-
-    )
-
     return (
         await session.execute(
             select(
@@ -89,35 +62,6 @@ async def get_licenses_for_entities(
             ).options(   # we need that as async does not support lazy loading!
                 selectinload(license_model.License.product)
             )
-        )
-    ).all()
-
-
-async def get_free_seats_for_licenses(
-        session: AsyncSession, license_uuids: List[uuid.UUID]
-) -> Any:  # List[Tuple[uuid.UUID, int]]:
-    """
-    for every license uuid given, get the number of free seats
-    """
-    return (
-        await session.execute(
-            text(
-                f"""
-                    SELECT
-                        l.license_uuid,
-                        MAX(l.seats) - SUM(CASE WHEN s.id IS NOT NULL THEN 1 ELSE 0 END) as free_seats
-                    FROM
-                        license l
-                        LEFT JOIN seat s ON s.ref_license = l.id AND s.is_occupied
-                    WHERE
-                        l.license_uuid IN :license_uuids
-                    GROUP BY
-                        l.license_uuid
-                """
-            ).bindparams(
-                bindparam("license_uuids", expanding=True)
-            ),
-            params={"license_uuids": license_uuids}
         )
     ).all()
 
