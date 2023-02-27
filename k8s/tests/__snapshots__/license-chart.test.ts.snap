@@ -115,7 +115,7 @@ Array [
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -128,7 +128,7 @@ Array [
               ],
               "readinessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
