@@ -92,7 +92,7 @@ async def client(app: FastAPI, session: AsyncSession) -> AsyncClient:
     def _session():
         yield session
 
-    # Overrides the attached DB session with our nice 'test DEB session'.
+    # Overrides the attached DB session with our nice 'test DB session'.
     # Now for all tests, the test database is used instead of the 'app database'
     app.dependency_overrides[app_db_session] = _session
     async with AsyncClient(app=app, base_url=f"http://test-server/{ROUTE_PREFIX}") as client:
