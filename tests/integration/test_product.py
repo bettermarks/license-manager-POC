@@ -8,22 +8,28 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from licensing.schema import product as schema
 from licensing.model import product as model
-from tests.integration.initial_data import INITIAL_TEST_PRODUCTS
 
 
 @pytest.mark.asyncio
-async def test_get_products(async_test_client: AsyncClient):
-    response = await async_test_client.get("/products/")
+async def test_get_products__ok(client: AsyncClient, products):
+    response = await client.get("/products/")
     assert response.status_code == 200
-    assert json.loads(response._content) == [asdict(schema.Product.from_orm(p)) for p in INITIAL_TEST_PRODUCTS]
+    assert json.loads(response._content) == [asdict(schema.Product.from_orm(p)) for p in products]
 
 
 @pytest.mark.asyncio
-async def test_get_product(async_test_client: AsyncClient, async_test_session: AsyncSession):
-    eid = "full_access"
-    response = await async_test_client.get(f"/products/{eid}")
+async def test_get_product__ok(client: AsyncClient, session: AsyncSession, product_1):
+    response = await client.get(f"/products/{product_1.eid}")
     assert response.status_code == 200
-    product = (await async_test_session.execute(
-        select(model.Product).where(model.Product.eid == eid))
+    product = (await session.execute(
+        select(model.Product).where(model.Product.eid == product_1.eid))
     ).scalar_one_or_none()
     assert json.loads(response._content) == asdict(schema.Product.from_orm(product))
+
+
+@pytest.mark.asyncio
+async def test_get_product__404(client: AsyncClient):
+    eid = "some_product_that_does_not_exist"
+    response = await client.get(f"/products/{eid}")
+    assert response.status_code == 404
+    assert json.loads(response._content) == {'detail': 'The product could not be found.'}

@@ -1,4 +1,3 @@
-from functools import lru_cache
 from typing import Dict, Tuple
 
 from fastapi import status as http_status, HTTPException
@@ -25,7 +24,6 @@ from licensing.utils import async_measure_time
 Memberships = Dict[Tuple[str, str], Dict[str, int]]
 
 
-@lru_cache()
 async def get_hierarchy_provider(session: AsyncSession, url: str) -> model.HierarchyProvider:
     """
     gets a hierarchy provider with a given url.

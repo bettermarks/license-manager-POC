@@ -27,9 +27,9 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
                     raise Exception(f"Response status {response.status}.")
                 return await response.json()
     # Exception handling for the 'bad' cases.
-    except Exception as e:
+    except aiohttp.client_exceptions.ClientConnectorError as e:
         logging.error(
-            f"HTTP GET call to {url} using params {payload} raised an Exception: '{e}' No result returned."
+            f"HTTP GET call to {url} using params {payload} raised a ClientConnectorError: '{e}' No result returned."
         )
         raise
 

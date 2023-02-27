@@ -12,8 +12,8 @@ from licensing.model import hierarchy_provider as hierarchy_provider_model
 
 
 class License(Model):
-    ref_product: Mapped[int8] = mapped_column(ForeignKey('product.id'), index=True)
-    ref_hierarchy_provider: Mapped[int8] = mapped_column(ForeignKey('hierarchy_provider.id'), index=True)
+    ref_product: Mapped[int8] = mapped_column(ForeignKey('product.id'), init=False, index=True)
+    ref_hierarchy_provider: Mapped[int8] = mapped_column(ForeignKey('hierarchy_provider.id'), init=False, index=True)
 
     purchaser_eid: Mapped[str] = mapped_column(String(256), index=True)
     owner_type: Mapped[str] = mapped_column(String(256), index=True)
@@ -26,8 +26,10 @@ class License(Model):
     is_seats_shared: Mapped[bool]
 
     # Relationships
-    product: Mapped[product_model.Product] = relationship("Product")
-    hierarchy_provider: Mapped[hierarchy_provider_model.HierarchyProvider] = relationship("HierarchyProvider")
+    product: Mapped[product_model.Product] = relationship("Product", init=False)
+    hierarchy_provider: Mapped[hierarchy_provider_model.HierarchyProvider] = relationship(
+        "HierarchyProvider", init=False
+    )
 
     __table_args__ = (
         UniqueConstraint(
