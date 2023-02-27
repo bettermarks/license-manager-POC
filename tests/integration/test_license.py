@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 from pytest_mock import MockerFixture
 
-from licensing.model import hierarchy_provider as hierarchy_provider_model
-from licensing.model import product as product_model
-from licensing.model import license as license_model
+from license.model import hierarchy_provider as hierarchy_provider_model
+from license.model import product as product_model
+from license.model import license as license_model
 
 
 @pytest.mark.asyncio
@@ -51,7 +51,7 @@ async def test_purchase_license__500_hierarchy_provider(
     Hierarchy provider is down
     """
     mocker.patch(
-        "licensing.crud.hierarchy_provider.http_get",
+        "license.crud.hierarchy_provider.http_get",
         side_effect=Exception
     )
     payload = teacher_1_purchase_payload

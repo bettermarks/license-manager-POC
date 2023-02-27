@@ -13,18 +13,18 @@ import {
 import { Construct } from "constructs";
 import { NodeSelector, Segment } from "../types";
 
-import { LicensingService } from "../services/licensing-service";
+import { LicenseService } from "../services/license-service";
 import { APPLICATION_CONFIG } from "../config";
 import { POSTGRES_IMAGE } from "../constants";
-import { LicensingConfigMap } from "../licensing-configmap";
+import { LicenseConfigMap } from "../license-configmap";
 
 
 /**
- * This class is the implementation detail of Licensing deployment.
+ * This class is the implementation detail of License deployment.
  */
-export type LicensingChartProps = ChartProps & {
+export type LicenseChartProps = ChartProps & {
   /**
-   * Docker image for Licensing
+   * Docker image for License
    */
   image: string;
   /**
@@ -63,10 +63,10 @@ export type LicensingChartProps = ChartProps & {
 };
 
 /**
- * Deploys Licensing server.
+ * Deploys License server.
  */
-export class LicensingChart extends Chart {
-  constructor(scope: Construct, id: string, props: LicensingChartProps) {
+export class LicenseChart extends Chart {
+  constructor(scope: Construct, id: string, props: LicenseChartProps) {
     super(scope, id, props);
 
     const {
@@ -122,7 +122,7 @@ export class LicensingChart extends Chart {
     const applicationEnv: EnvFromSource[] = [
       {
         configMapRef: {
-          name: new LicensingConfigMap(this, `${name}-configmap`, {
+          name: new LicenseConfigMap(this, `${name}-configmap`, {
             appConfig: APPLICATION_CONFIG[segment],
             name,
             namespace
@@ -150,7 +150,7 @@ export class LicensingChart extends Chart {
      * DeploymentID is a unique identifier for each deployment
      */
     const deploymentId = Date.now().toString(16);  // TODO: this should be rethought
-    const licensingService = new LicensingService(this, `${apiName}-service`, {
+    const licenseService = new LicenseService(this, `${apiName}-service`, {
       name: apiName,
       namespace,
       replicas: apiReplicas,
@@ -178,7 +178,7 @@ export class LicensingChart extends Chart {
         },
         {
           name: `${apiName}-migration`,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
           args: [
@@ -189,7 +189,7 @@ export class LicensingChart extends Chart {
         },
         {
           name: `${apiName}-load-fixtures`,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
           args: [
@@ -202,7 +202,7 @@ export class LicensingChart extends Chart {
       containers: [
         {
           name: apiName,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           ports: [
             {
@@ -242,7 +242,7 @@ export class LicensingChart extends Chart {
         ingressClassName: "nginx",
         rules: [
           {
-            host: "lm.bettermarks.loc",
+            host: "license.bettermarks.loc",
             http: {
               paths: [
                 {
@@ -250,7 +250,7 @@ export class LicensingChart extends Chart {
                   pathType: HttpIngressPathType.PREFIX,
                   backend: {
                     service: {
-                      name: licensingService.service!.name,
+                      name: licenseService.service!.name,
                       port: {
                         number: 80,
                       },

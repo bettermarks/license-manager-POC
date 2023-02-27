@@ -6,7 +6,7 @@ describe("postgres-chart", () => {
     const app = Testing.app();
     const chart = new PostgresChart(app, "test-chart", { 
       image: "postgres:14", 
-      name: "licensing-db",
+      name: "license-db",
       namespace: "dummy-namespace" 
     });
     const results = Testing.synth(chart);

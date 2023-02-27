@@ -4,10 +4,10 @@ from fastapi import APIRouter, Depends
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from licensing.crud import license as license_crud
-from licensing.crud import seat as seat_crud
-from licensing.db import async_session
-from licensing.schema import license as schema
+from license.crud import license as license_crud
+from license.crud import seat as seat_crud
+from license.db import async_session
+from license.schema import license as schema
 
 router = APIRouter()
 

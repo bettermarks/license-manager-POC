@@ -1,7 +1,7 @@
 import { App } from "cdk8s";
 import { IngressNginxChart } from "./lib/charts/ingress-nginx";
 import { PostgresChart } from "./lib/charts/postgres";
-import { LicensingChart } from "./lib/charts/licensing";
+import { LicenseChart } from "./lib/charts/license";
 import { Segment, Namespace } from "./lib/types";
 import { DEPLOYMENT_CONFIG } from "./lib/config";
 import {
@@ -14,7 +14,7 @@ import {
 
 const SEGMENT = (process.env.SEGMENT as Segment) || Segment.LOC00;
 const IMAGE_TAG = process.env.IMAGE_TAG || "";
-const IMAGE_NAME = "bm-licensing";
+const IMAGE_NAME = "bm-license";
 const IMAGE_REPO = `676249682729.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE_NAME}`;
 
 const app = new App();
@@ -22,26 +22,26 @@ const app = new App();
 if (SEGMENT === Segment.LOC00) {
   const pgChart = new PostgresChart(app, "postgres", { 
     image: POSTGRES_IMAGE, 
-    name: "licensing-db",
-    namespace: Namespace.LICENSING,
+    name: "license-db",
+    namespace: Namespace.LICENSE,
   });
-  new LicensingChart(app, "licensing", {
-    name: "licensing",
-    namespace: Namespace.LICENSING,
+  new LicenseChart(app, "license", {
+    name: "license",
+    namespace: Namespace.LICENSE,
     image: IMAGE_NAME,
     segment: SEGMENT,
     postgresSecret: pgChart.secret.name,
     imagePullSecrets: [],
   });
   new IngressNginxChart(app, "ingress-nginx", {
-    namespace: Namespace.LICENSING,
-    replicas: 1,
+    namespace: Namespace.LICENSE,
+    replicaCount: 1,
     tlsSecret: "loc00-tls-secret",
   });
 } else {
-  new LicensingChart(app, "licensing", {
-    namespace: Namespace.LICENSING,
-    name: "licensing",
+  new LicenseChart(app, "license", {
+    namespace: Namespace.LICENSE,
+    name: "license",
     image: `${IMAGE_REPO}:${IMAGE_TAG}`,
     segment: SEGMENT,
     postgresSecret: POSTGRES_SECRET,
@@ -52,10 +52,6 @@ if (SEGMENT === Segment.LOC00) {
     loadFixturesJobResources: DEPLOYMENT_CONFIG[SEGMENT].loadFixturesJobResources,
     apiResources: DEPLOYMENT_CONFIG[SEGMENT].apiResources,
     apiReplicas: DEPLOYMENT_CONFIG[SEGMENT].apiReplicas,
-  });
-  new IngressNginxChart(app, "ingress-nginx", {
-    namespace: Namespace.LICENSING,
-    nodeSelector: APP_NODE_POOL_LABELS,
   });
 }
 

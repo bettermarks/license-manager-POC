@@ -44,7 +44,7 @@ You can start the application using the following commands:
 ```sh
 cd <license-manager-POC>
 export PYTHONPATH=$PWD/src
-uvicorn licensing.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+uvicorn license.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
 ```
 
 You can now use the API:

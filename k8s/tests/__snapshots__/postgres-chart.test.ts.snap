@@ -7,11 +7,11 @@ Array [
     "immutable": false,
     "kind": "Secret",
     "metadata": Object {
-      "name": "licensing-db",
+      "name": "license-db",
       "namespace": "dummy-namespace",
     },
     "stringData": Object {
-      "DATABASE_HOST": "licensing-db",
+      "DATABASE_HOST": "license-db",
       "DATABASE_NAME": "postgres",
       "DATABASE_PASSWORD": "postgres",
       "DATABASE_PORT": "5432",
@@ -26,7 +26,7 @@ Array [
     "immutable": false,
     "kind": "ConfigMap",
     "metadata": Object {
-      "name": "licensing-db-init-db-script",
+      "name": "license-db-init-db-script",
       "namespace": "dummy-namespace",
     },
   },
@@ -35,22 +35,22 @@ Array [
     "kind": "Deployment",
     "metadata": Object {
       "labels": Object {
-        "app": "licensing-db",
+        "app": "license-db",
       },
-      "name": "licensing-db",
+      "name": "license-db",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
       "replicas": 1,
       "selector": Object {
         "matchLabels": Object {
-          "app": "licensing-db",
+          "app": "license-db",
         },
       },
       "template": Object {
         "metadata": Object {
           "labels": Object {
-            "app": "licensing-db",
+            "app": "license-db",
           },
         },
         "spec": Object {
@@ -59,7 +59,7 @@ Array [
               "envFrom": Array [
                 Object {
                   "secretRef": Object {
-                    "name": "licensing-db",
+                    "name": "license-db",
                   },
                 },
               ],
@@ -71,7 +71,7 @@ Array [
                   "port": 5432,
                 },
               },
-              "name": "licensing-db",
+              "name": "license-db",
               "ports": Array [
                 Object {
                   "containerPort": 5432,
@@ -86,7 +86,7 @@ Array [
               "volumeMounts": Array [
                 Object {
                   "mountPath": "/docker-entrypoint-initdb.d/",
-                  "name": "licensing-db-init-db-script-volume",
+                  "name": "license-db-init-db-script-volume",
                 },
               ],
             },
@@ -94,9 +94,9 @@ Array [
           "volumes": Array [
             Object {
               "configMap": Object {
-                "name": "licensing-db-init-db-script",
+                "name": "license-db-init-db-script",
               },
-              "name": "licensing-db-init-db-script-volume",
+              "name": "license-db-init-db-script-volume",
             },
           ],
         },
@@ -107,7 +107,7 @@ Array [
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": Object {
-      "name": "licensing-db",
+      "name": "license-db",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
@@ -117,7 +117,7 @@ Array [
         },
       ],
       "selector": Object {
-        "app": "licensing-db",
+        "app": "license-db",
       },
       "type": "ClusterIP",
     },

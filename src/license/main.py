@@ -5,11 +5,11 @@ import uuid
 from fastapi import FastAPI
 
 
-from licensing import __version__ as version
-from licensing.logging import ColorFormatter, to_internal_log_level, LogLevel
-from licensing.api.api_v1.api import api_router
-from licensing.config import settings
-from licensing.load_initial_data import load_data, INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
+from license import __version__ as version
+from license.logging import ColorFormatter, to_internal_log_level, LogLevel
+from license.api.api_v1.api import api_router
+from license.config import settings
+from license.load_initial_data import load_data, INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
 
 # setup logging
 log_level = to_internal_log_level(settings.log_level)
@@ -84,7 +84,7 @@ async def startup():
 async def shutdown():
     pass
 
-ROUTE_PREFIX = "licensing/v1"
+ROUTE_PREFIX = "license/v1"
 
 
 app.include_router(api_router, prefix=f"/{ROUTE_PREFIX}")

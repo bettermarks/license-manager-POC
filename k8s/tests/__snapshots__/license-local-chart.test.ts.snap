@@ -1,13 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`licensing-chart should match with snapshot 1`] = `
+exports[`license-local-chart should match with snapshot 1`] = `
 Array [
   Object {
     "apiVersion": "v1",
     "imagePullSecrets": Array [],
     "kind": "ServiceAccount",
     "metadata": Object {
-      "name": "licensing-service-account",
+      "name": "license-service-account",
       "namespace": "dummy-namespace",
     },
   },
@@ -15,7 +15,7 @@ Array [
     "apiVersion": "rbac.authorization.k8s.io/v1",
     "kind": "Role",
     "metadata": Object {
-      "name": "licensing-role",
+      "name": "license-role",
       "namespace": "dummy-namespace",
     },
     "rules": Array [
@@ -38,18 +38,18 @@ Array [
     "apiVersion": "rbac.authorization.k8s.io/v1",
     "kind": "RoleBinding",
     "metadata": Object {
-      "name": "licensing-role-binding",
+      "name": "license-role-binding",
       "namespace": "dummy-namespace",
     },
     "roleRef": Object {
       "apiGroup": "rbac.authorization.k8s.io",
       "kind": "Role",
-      "name": "licensing-role",
+      "name": "license-role",
     },
     "subjects": Array [
       Object {
         "kind": "ServiceAccount",
-        "name": "licensing-service-account",
+        "name": "license-service-account",
       },
     ],
   },
@@ -66,7 +66,7 @@ Array [
     "immutable": false,
     "kind": "ConfigMap",
     "metadata": Object {
-      "name": "licensing-configmap",
+      "name": "license-configmap",
       "namespace": "dummy-namespace",
     },
   },
@@ -74,21 +74,21 @@ Array [
     "apiVersion": "apps/v1",
     "kind": "Deployment",
     "metadata": Object {
-      "name": "licensing-api-deployment",
+      "name": "license-api-deployment",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
-      "replicas": 3,
+      "replicas": 1,
       "selector": Object {
         "matchLabels": Object {
-          "app": "licensing-api",
+          "app": "license-api",
         },
       },
       "template": Object {
         "metadata": Object {
           "labels": Object {
-            "app": "licensing-api",
-            "deploymentId": "licensing-api-11defd82800",
+            "app": "license-api",
+            "deploymentId": "license-api-11defd82800",
           },
         },
         "spec": Object {
@@ -97,21 +97,21 @@ Array [
               "envFrom": Array [
                 Object {
                   "configMapRef": Object {
-                    "name": "licensing-configmap",
+                    "name": "license-configmap",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "postgres-secret",
+                    "name": "pgChart.secret.name",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "application-secret",
+                    "name": "loc00-license-application-secret",
                   },
                 },
               ],
-              "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
+              "image": "bm-license",
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
@@ -120,7 +120,7 @@ Array [
                 },
                 "initialDelaySeconds": 10,
               },
-              "name": "licensing-api",
+              "name": "license-api",
               "ports": Array [
                 Object {
                   "containerPort": 8000,
@@ -132,16 +132,6 @@ Array [
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
-              },
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 1,
-                  "memory": "1024Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.5,
-                  "memory": "512Mi",
-                },
               },
             },
           ],
@@ -155,23 +145,23 @@ Array [
               "envFrom": Array [
                 Object {
                   "configMapRef": Object {
-                    "name": "licensing-configmap",
+                    "name": "license-configmap",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "postgres-secret",
+                    "name": "pgChart.secret.name",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "application-secret",
+                    "name": "loc00-license-application-secret",
                   },
                 },
               ],
               "image": "postgres:14",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-wait-for-database",
+              "name": "license-api-wait-for-database",
               "resources": Object {
                 "limits": Object {
                   "cpu": 0.2,
@@ -194,33 +184,23 @@ Array [
               "envFrom": Array [
                 Object {
                   "configMapRef": Object {
-                    "name": "licensing-configmap",
+                    "name": "license-configmap",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "postgres-secret",
+                    "name": "pgChart.secret.name",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "application-secret",
+                    "name": "loc00-license-application-secret",
                   },
                 },
               ],
-              "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
+              "image": "bm-license",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-migration",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 1,
-                  "memory": "256Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "128Mi",
-                },
-              },
+              "name": "license-api-migration",
             },
             Object {
               "args": Array [
@@ -233,51 +213,26 @@ Array [
               "envFrom": Array [
                 Object {
                   "configMapRef": Object {
-                    "name": "licensing-configmap",
+                    "name": "license-configmap",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "postgres-secret",
+                    "name": "pgChart.secret.name",
                   },
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "application-secret",
+                    "name": "loc00-license-application-secret",
                   },
                 },
               ],
-              "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
+              "image": "bm-license",
               "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-load-fixtures",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 1,
-                  "memory": "256Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "128Mi",
-                },
-              },
+              "name": "license-api-load-fixtures",
             },
           ],
-          "nodeSelector": Object {
-            "nodetype": "application",
-          },
-          "serviceAccountName": "licensing-service-account",
-          "topologySpreadConstraints": Array [
-            Object {
-              "labelSelector": Object {
-                "matchLabels": Object {
-                  "app": "licensing-api",
-                },
-              },
-              "maxSkew": 1,
-              "topologyKey": "nodetype",
-              "whenUnsatisfiable": "DoNotSchedule",
-            },
-          ],
+          "serviceAccountName": "license-service-account",
         },
       },
     },
@@ -286,7 +241,7 @@ Array [
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": Object {
-      "name": "licensing-api-service",
+      "name": "license-api-service",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
@@ -297,7 +252,7 @@ Array [
         },
       ],
       "selector": Object {
-        "app": "licensing-api",
+        "app": "license-api",
       },
       "type": "ClusterIP",
     },
@@ -306,20 +261,20 @@ Array [
     "apiVersion": "networking.k8s.io/v1",
     "kind": "Ingress",
     "metadata": Object {
-      "name": "licensing-ingress",
+      "name": "license-ingress",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
       "ingressClassName": "nginx",
       "rules": Array [
         Object {
-          "host": "lm.bettermarks.loc",
+          "host": "license.bettermarks.loc",
           "http": Object {
             "paths": Array [
               Object {
                 "backend": Object {
                   "service": Object {
-                    "name": "licensing-api-service",
+                    "name": "license-api-service",
                     "port": Object {
                       "number": 80,
                     },

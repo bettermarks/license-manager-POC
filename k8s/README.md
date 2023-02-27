@@ -91,7 +91,7 @@ kubectl apply -f dist/<segment>-*yaml
    ```sh
    npm run build
    ```
-5. Apply the K8S manifests to the local Kubernetes cluster with the help of `skaffold` and `kustomize` and wait until the `licensing-deployment-**\*** pod` is running:
+5. Apply the K8S manifests to the local Kubernetes cluster with the help of `skaffold` and `kustomize` and wait until the `license-deployment-**\*** pod` is running:
    ```sh
    cd ..
    skaffold dev
@@ -99,10 +99,10 @@ kubectl apply -f dist/<segment>-*yaml
    All required credentials for local development are part of the repo in `k8s/loc00` folder.
 6. In oder to access the environment locally you need to add the following line to the `/etc/hosts` file:
    ```sh
-   echo "127.0.0.1 lm.bettermarks.loc" | sudo tee -a >> /etc/hosts
+   echo "127.0.0.1 license.bettermarks.loc" | sudo tee -a >> /etc/hosts
    ```
 7. License-Service status:
-   https://lm.bettermarks.loc:8443/status
+   https://license.bettermarks.loc:8443/status
 
 ## Set up License-Service on remote cluster
 
@@ -111,8 +111,8 @@ kubectl apply -f dist/<segment>-*yaml
 - The target cluster must exist.
 - The target cluster should have been configured with required secrets and tools as described in [README.md](https://github.com/bettermarks/bm-operations/blob/master/cdk8s/README.md)
   - Required secrets:
-    - licensing-postgres-secret
-    - licensing-application-secret
+    - license-postgres-secret
+    - license-application-secret
     - registry-credentials
   - Required deployments:
     - Postgres DB cluster
@@ -182,7 +182,7 @@ kubectl apply -f dist/<segment>-*yaml
    ```sh
    kubectl apply <folder_name>/<specific.yaml>
    ```
-10. In case you are deploying any of these resources to a different namespace you can use `-n <name_of_namspace>` along with the commands mentioned above.
+10. In case you are deploying any of these resources to a different namespace you can use `-n <name_of_namespace>` along with the commands mentioned above.
 
 ## Structure
 
@@ -196,11 +196,11 @@ class PostgresChart {
    +KubeDeployment kubeDeployment
 }
 
-class LicensingChart {
+class LicenseChart {
    +KubeServiceAccount serviceAccount
    +KubeRole role
    +KubeRoleBinding
-   +LicensingService licensingService
+   +LicenseService licenseService
    +KubeIngress
 }
 
@@ -208,14 +208,14 @@ class IngressNginxChart {
    +Helm ingressNginx
 }
 
-class LicensingService {
+class LicenseService {
    +KubeDeployment
    +KubeService
 }
 
 App --> PostgresChart
-App --> LicensingChart
+App --> LicenseChart
 App --> IngressNginxChart
-LicensingChart --> LicensingService
+LicenseChart --> LicenseService
 
 ```

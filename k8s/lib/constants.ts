@@ -8,12 +8,12 @@ export const APP_NODE_POOL_LABELS: NodeSelector = {
  * Name of the secret which is used by service chart to look up application secret.
  * This secret is created by AWS Secrets helper in bm-operations project. https://github.com/bettermarks/bm-operations/blob/master/cdk8s/main.ts
  */
-export const APPLICATION_SECRET = "licensing-application-secret";
+export const APPLICATION_SECRET = "license-application-secret";
 /**
  * Name of the secret which is used by service chart to look up Postgres DB credentials.
  * This secret is created  by AWS Secrets helper in bm-operations project. https://github.com/bettermarks/bm-operations/blob/master/cdk8s/main.ts
  */
-export const POSTGRES_SECRET = "licensing-postgres-secret";
+export const POSTGRES_SECRET = "license-postgres-secret";
 /**
  * Name of the secret used by Service Account to pull image from AWS ECR registry.
  * This secret is created by AWS Registry Helper Cron. https://github.com/bettermarks/bm-operations/blob/master/cdk8s/main.ts

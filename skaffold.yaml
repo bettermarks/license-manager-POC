@@ -2,7 +2,7 @@ apiVersion: skaffold/v2beta16
 kind: Config
 build:
   artifacts:
-    - image: bm-licensing
+    - image: bm-license
       docker:
         dockerfile: k8s/Dockerfile
 deploy:

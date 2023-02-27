@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from licensing.config import settings
+from license.config import settings
 
 
 def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, ssl: bool = False) -> str:

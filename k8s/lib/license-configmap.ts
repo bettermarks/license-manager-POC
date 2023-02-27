@@ -2,16 +2,16 @@ import { ConfigMap } from "cdk8s-plus-24";
 import { Construct } from "constructs";
 import { ApplicationConfig } from "./types";
 
-export type LicensingConfigMapProps = {
+export type LicenseConfigMapProps = {
   name: string;
   appConfig: ApplicationConfig;
   namespace?: string;
 };
 
-export class LicensingConfigMap extends Construct {
+export class LicenseConfigMap extends Construct {
   readonly configMap: ConfigMap;
 
-  constructor(scope: Construct, id: string, props: LicensingConfigMapProps) {
+  constructor(scope: Construct, id: string, props: LicenseConfigMapProps) {
     super(scope, id);
     const { name, namespace, appConfig } = props;
 

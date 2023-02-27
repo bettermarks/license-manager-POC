@@ -5,8 +5,8 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 from sqlalchemy.ext.asyncio import AsyncEngine
 
-from licensing.db import DATABASE_DSN
-from licensing.model.base import Model
+from license.db import DATABASE_DSN
+from license.model.base import Model
 
 config = context.config
 
@@ -25,10 +25,10 @@ target_metadata.naming_convention = {
 }
 
 # you have to import all your models to support alembic 'autogenerate'
-from licensing.model.hierarchy_provider import HierarchyProvider
-from licensing.model.product import Product
-from licensing.model.license import License
-from licensing.model.seat import Seat
+from license.model.hierarchy_provider import HierarchyProvider
+from license.model.product import Product
+from license.model.license import License
+from license.model.seat import Seat
 
 
 def run_migrations_offline() -> None:

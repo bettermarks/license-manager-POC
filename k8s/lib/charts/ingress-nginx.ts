@@ -18,7 +18,7 @@ export interface IngressNginxChartProps extends ChartProps {
    * Replicas
    * @default 3
    */
-  replicas?: number;
+  replicaCount?: number;
   /**
    * TLS secret
    */
@@ -40,7 +40,7 @@ export class IngressNginxChart extends Chart {
       version = "4.4.2",
       namespace,
       nodeSelector,
-      replicas = 3,
+      replicaCount = 3,
       tlsSecret,
     } = props;
 
@@ -93,7 +93,7 @@ export class IngressNginxChart extends Chart {
             "log-format-upstream":
               '{ "timestamp": "$time_iso8601", "nginx": {"x_forwarded_proto": "$http_x_forwarded_proto", "x_forwarded_for": "$proxy_add_x_forwarded_for", "remote_addr": "$remote_addr", "remote_user": "$remote_user", "status": "$status", "body_bytes_sent": $body_bytes_sent, "request": "$request", "request_length": $request_length, "request_method": "$request_method", "request_time": $request_time, "http_referrer": "$http_referer", "http_user_agent": "$http_user_agent", "upstream_connect_time": $upstream_connect_time, "upstream_response_time": $upstream_response_time, "upstream_bytes_sent": $upstream_bytes_sent, "upstream_bytes_received": $upstream_bytes_received, "upstream_status": "$upstream_status", "upstream_server": "$upstream_addr", "host": "$host", "cf_ray": "$http_cf_ray", "request_id": "$request_id" } }',
           },
-          replica: replicas,
+          replicaCount,
           nodeSelector: nodeSelector,
           labels: {
             app: "nginx-controller",

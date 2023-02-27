@@ -5,11 +5,11 @@ generatorOptions:
   disableNameSuffixHash: true
 
 secretGenerator:
-  # - name: loc00-licensing-application-secret
+  # - name: loc00-license-application-secret
   #   envs:
-  #     - loc00/licensing-application-secret.env
+  #     - loc00/license-application-secret.env
   - name: loc00-tls-secret
-    namespace: "licensing"
+    namespace: "license"
     type: "kubernetes.io/tls"
     files:
       - loc00/tls.key
@@ -18,5 +18,5 @@ secretGenerator:
 resources:
   # - namespace.yaml
   - dist/ingress-nginx.k8s.yaml
-  - dist/licensing.k8s.yaml
+  - dist/license.k8s.yaml
   - dist/postgres.k8s.yaml

@@ -10,7 +10,7 @@ import {
 } from "../../imports/k8s";
 import { NodeSelector } from "../types";
 
-export type LicensingServiceProps = {
+export type LicenseServiceProps = {
   name: string;
   createDeploymentOnly?: boolean;
   replicas: number;
@@ -24,10 +24,10 @@ export type LicensingServiceProps = {
   deploymentId: string;
   namespace?: string;
 };
-export class LicensingService extends Construct {
+export class LicenseService extends Construct {
   readonly service?: KubeService;
 
-  constructor(scope: Construct, id: string, props: LicensingServiceProps) {
+  constructor(scope: Construct, id: string, props: LicenseServiceProps) {
     super(scope, id);
 
     const createDeploymentOnly = !!props.createDeploymentOnly;

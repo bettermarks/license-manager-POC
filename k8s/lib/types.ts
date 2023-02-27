@@ -75,5 +75,5 @@ export enum LogLevel {
  */
 export enum Namespace {
   DEFAULT = "default",
-  LICENSING = "licensing",
+  LICENSE = "license",
 }
