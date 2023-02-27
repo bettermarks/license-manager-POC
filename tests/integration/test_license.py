@@ -1,6 +1,6 @@
 import json
 import re
-from typing import Dict
+from typing import Dict, List
 
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -53,7 +53,8 @@ def teacher_1_purchase_payload(
         product_1: Product,
         hierarchy_provider_1: HierarchyProvider,
         class_1: Class_,
-        class_2: Class_) -> dict:
+        class_2: Class_
+) -> dict:
     return {
         "owner_type": class_1.type_,
         "owner_eids": [
@@ -78,7 +79,7 @@ async def mock_get_hierarchy_provider_membership(
         teacher_no_class_2: Teacher,
         student_1: Student,
         student_2: Student
-):
+) -> List[Dict[str, str | int]]:
     """ this is our mocked 'hierarchy-provider-membership service'"""
     async def _http_get(url: str, payload: dict | None = None):
         # like www.my-hierarchy-provider.de/users/{some user_eid}/membership
