@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from dataclasses import dataclass
 
 from typing import Generator, List
 
@@ -18,9 +19,32 @@ from licensing.db import async_session as app_db_session
 # we need to import all models here to set up the database ...
 from licensing.model.hierarchy_provider import HierarchyProvider
 from licensing.model.product import Product
-from licensing.model.license import License
-from licensing.model.seat import Seat
+from licensing.model.license import License  # Please do not remove that import!!
+from licensing.model.seat import Seat  # Please do not remove that import!!
 from licensing.model.base import Model
+
+
+@dataclass
+class User:
+    eid: str
+    level: int = 0
+
+
+class Teacher(User):
+    type_: str = "teacher"
+
+
+class Student(User):
+    eid: str
+    type_: str = "student"
+    level: int = 0
+
+
+@dataclass
+class Class_:
+    eid: str
+    type_: str = "class"
+    level: int = 1
 
 
 TEST_DATABASE_NAME = "test_licensing"
