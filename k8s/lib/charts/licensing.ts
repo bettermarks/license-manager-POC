@@ -178,7 +178,7 @@ export class LicensingChart extends Chart {
         },
         {
           name: `${apiName}-migration`,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
           args: [
@@ -189,7 +189,7 @@ export class LicensingChart extends Chart {
         },
         {
           name: `${apiName}-load-fixtures`,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
           args: [
@@ -202,7 +202,7 @@ export class LicensingChart extends Chart {
       containers: [
         {
           name: apiName,
-          image: image,
+          image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           ports: [
             {
@@ -242,7 +242,7 @@ export class LicensingChart extends Chart {
         ingressClassName: "nginx",
         rules: [
           {
-            host: "lm.bettermarks.loc",
+            host: "licensing.bettermarks.loc",
             http: {
               paths: [
                 {

@@ -313,7 +313,7 @@ Array [
       "ingressClassName": "nginx",
       "rules": Array [
         Object {
-          "host": "lm.bettermarks.loc",
+          "host": "licensing.bettermarks.loc",
           "http": Object {
             "paths": Array [
               Object {

@@ -99,10 +99,10 @@ kubectl apply -f dist/<segment>-*yaml
    All required credentials for local development are part of the repo in `k8s/loc00` folder.
 6. In oder to access the environment locally you need to add the following line to the `/etc/hosts` file:
    ```sh
-   echo "127.0.0.1 lm.bettermarks.loc" | sudo tee -a >> /etc/hosts
+   echo "127.0.0.1 licensing.bettermarks.loc" | sudo tee -a >> /etc/hosts
    ```
 7. License-Service status:
-   https://lm.bettermarks.loc:8443/status
+   https://licensing.bettermarks.loc:8443/status
 
 ## Set up License-Service on remote cluster
 
@@ -182,7 +182,7 @@ kubectl apply -f dist/<segment>-*yaml
    ```sh
    kubectl apply <folder_name>/<specific.yaml>
    ```
-10. In case you are deploying any of these resources to a different namespace you can use `-n <name_of_namspace>` along with the commands mentioned above.
+10. In case you are deploying any of these resources to a different namespace you can use `-n <name_of_namespace>` along with the commands mentioned above.
 
 ## Structure
 
