@@ -18,7 +18,7 @@ cdk_update_snapshots:
 
 .PHONY: init
 init:
-	kubectl create namespace license || true
+	kubectl create namespace licensing || true
 	skaffold run --cleanup=false
 
 .PHONY: watch
