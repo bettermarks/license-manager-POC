@@ -8,18 +8,28 @@ to 'communicate' with each other, either directly or using some 'indirect' way
 ### Purchasing a license
 ```mermaid
 flowchart TD
-SPA(SPA)-->ORDS(Ordering Service);
-ORDS(Ordering Service)-->LICS(Licensing Service);
-ORDS(Ordering Service)-->HIPS(Hierarchy Provider Service);
-LICS(Licensing Service)-->HIPS(Hierarchy Provider Service);
+ORDS(Ordering Service)
+SPA(SPA)
+HIPS(Hierarchy Provider Service)
+LICS(Licensing Service)
+
+SPA--> |SSO ???| ORDS;
+ORDS-->LICS;
+ORDS-->HIPS;
+LICS-->HIPS;
 ```
 
 ### Redeeming a license
 ```mermaid
 flowchart TD
-LICS(Licensing Service)-->HIPS(Hierarchy Provider Service);
-SPA(SPA)-->APP(The application itself);
-APP(The application itself)-->LICS(Licensing Service)
+SPA(SPA)
+HIPS(Hierarchy Provider Service)
+LICS(Licensing Service)
+APP(protected content)
+
+LICS-->HIPS;
+SPA-->APP;
+APP-->LICS
 ```
 
 ## Indirect Service-Service Communication with an SPA (using signed messages)
@@ -28,23 +38,32 @@ APP(The application itself)-->LICS(Licensing Service)
 
 ```mermaid
 flowchart TB
-SPA(SPA)-->ORDS(Ordering Service);
-SPA(SPA)-->LICS(Licensing Service);
-SPA(SPA)-->HIPS(Hierarchy Provider Service);
-ORDS(Ordering Service) -.- |trusts| LICS(Licensing Service);
-LICS(Licensing Service) -.- |trusts| HIPS(Hierarchy Provider Service);
-ORDS(Ordering Service) -.- |trusts| HIPS(Hierarchy Provider Service);
+ORDS(Ordering Service)
+SPA(SPA)
+HIPS(Hierarchy Provider Service)
+LICS(Licensing Service)
+
+SPA--> |signed| ORDS;
+SPA--> |signed| LICS;
+SPA--> |SSO| HIPS;
+ORDS -.- |trusts| LICS;
+LICS -.- |trusts| HIPS;
+ORDS -.- |trusts| HIPS;
 ```
 
 ### Redeeming a license
 ```mermaid
 flowchart TD
-SPA(SPA)-->APP(The application itself);
-SPA(SPA)-->LICS(Licensing Service);
-SPA(SPA)-->HIPS(Hierarchy Provider Service);
-APP(The application itself) -.- |trusts| LICS(Licensing Service);
-LICS(Licensing Service) -.- |trusts| HIPS(Hierarchy Provider Service);
-APP(The application itself) -.- |trusts| HIPS(Hierarchy Provider Service);
+APP(protected content)
+LICS(Licensing Service)
+HIPS(Hierarchy Provider Service)
+
+SPA(SPA)-->APP;
+SPA(SPA)--> |signed| LICS;
+SPA(SPA)--> |SSO| HIPS;
+APP -.- |trusts| LICS;
+LICS -.- |trusts| HIPS;
+APP -.- |trusts| HIPS;
 ```
 
 Questions:
