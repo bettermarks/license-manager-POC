@@ -214,14 +214,14 @@ export class LicensingChart extends Chart {
           readinessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/status",
+              path: "/v1/status",
             },
             initialDelaySeconds: 10,
           },
           livenessProbe: {
             httpGet: {
               port: IntOrString.fromNumber(8000),
-              path: "/status",
+              path: "/v1/status",
             },
             initialDelaySeconds: 10,
           },

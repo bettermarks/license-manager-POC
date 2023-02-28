@@ -84,7 +84,7 @@ async def startup():
 async def shutdown():
     pass
 
-ROUTE_PREFIX = "licensing/v1"
+ROUTE_PREFIX = "/v1"
 
 
 app.include_router(api_router, prefix=f"/{ROUTE_PREFIX}")
