@@ -3,8 +3,8 @@ from typing import Any
 from fastapi import APIRouter
 from fastapi import status as http_status
 
-from license.config import settings
-from license.logging import LogLevel
+from licensing.config import settings
+from licensing.logging import LogLevel
 
 router = APIRouter()
 

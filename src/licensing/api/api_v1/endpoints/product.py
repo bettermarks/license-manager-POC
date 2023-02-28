@@ -4,9 +4,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from fastapi import status as http_status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from license.db import async_session
-from license.schema import product as schema
-from license.crud import product as crud
+from licensing.db import async_session
+from licensing.schema import product as schema
+from licensing.crud import product as crud
 
 router = APIRouter()
 

@@ -4,10 +4,10 @@ from fastapi import status as http_status, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from license.client.hierarchy_provider_client import hierarchy_provider_memberships_url
-from license.http_client import http_get
-from license.model import hierarchy_provider as model
-from license.utils import async_measure_time
+from licensing.client.hierarchy_provider_client import hierarchy_provider_memberships_url
+from licensing.http_client import http_get
+from licensing.model import hierarchy_provider as model
+from licensing.utils import async_measure_time
 
 
 # a custom type representing indexed 'hierarchy memberships'. It is basically

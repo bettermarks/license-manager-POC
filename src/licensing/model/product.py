@@ -4,7 +4,7 @@ from sqlalchemy import String, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.dialects.postgresql import JSONB
 
-from license.model.base import Model
+from licensing.model.base import Model
 
 
 class Product(Model):

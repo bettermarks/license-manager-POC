@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from license.api.api_v1.endpoints import license, product, status
+from licensing.api.api_v1.endpoints import license, product, status
 
 api_router = APIRouter()
 

@@ -7,9 +7,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import pytest
 from pytest_mock import MockerFixture
 
-from license.model import hierarchy_provider as hierarchy_provider_model
-from license.model import product as product_model
-from license.model import license as license_model
+from licensing.model import hierarchy_provider as hierarchy_provider_model
+from licensing.model import product as product_model
+from licensing.model import license as license_model
 
 
 @pytest.mark.asyncio

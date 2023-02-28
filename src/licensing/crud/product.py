@@ -3,8 +3,8 @@ from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from license.model import product as model
-from license.schema import product as schema
+from licensing.model import product as model
+from licensing.schema import product as schema
 
 
 async def get_products(session: AsyncSession) -> List[schema.Product]:

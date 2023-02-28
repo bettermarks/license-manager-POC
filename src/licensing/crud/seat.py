@@ -7,10 +7,10 @@ from sqlalchemy import select, text, bindparam, tuple_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from license.crud.hierarchy_provider import get_user_memberships
-from license.schema import seat as seat_schema
-from license.model import seat as seat_model
-from license.model import license as license_model
+from licensing.crud.hierarchy_provider import get_user_memberships
+from licensing.schema import seat as seat_schema
+from licensing.model import seat as seat_model
+from licensing.model import license as license_model
 
 
 async def get_occupied_seats(session: AsyncSession, user_eid: str) -> List[seat_schema.Seat]:

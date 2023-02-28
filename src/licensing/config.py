@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pydantic import BaseSettings
 
-from license.logging import LogLevel
+from licensing.logging import LogLevel
 
 
 class Settings(BaseSettings):

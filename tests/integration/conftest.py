@@ -12,18 +12,18 @@ from httpx import AsyncClient
 from pytest_mock import MockerFixture
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-from license.api.api_v1.api import api_router
-from license.config import settings
-from license.db import postgres_dsn
-from license.main import app, ROUTE_PREFIX
-from license.db import async_session as app_db_session
+from licensing.api.api_v1.api import api_router
+from licensing.config import settings
+from licensing.db import postgres_dsn
+from licensing.main import app, ROUTE_PREFIX
+from licensing.db import async_session as app_db_session
 
 # we need to import all models here to set up the database ...
-from license.model.hierarchy_provider import HierarchyProvider
-from license.model.product import Product
-from license.model.license import License  # Please do not remove that import!!
-from license.model.seat import Seat  # Please do not remove that import!!
-from license.model.base import Model
+from licensing.model.hierarchy_provider import HierarchyProvider
+from licensing.model.product import Product
+from licensing.model.license import License  # Please do not remove that import!!
+from licensing.model.seat import Seat  # Please do not remove that import!!
+from licensing.model.base import Model
 
 
 @dataclass

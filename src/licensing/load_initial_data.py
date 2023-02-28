@@ -1,8 +1,8 @@
 from sqlalchemy.exc import IntegrityError
 
-from license.db import async_session_context
-from license.model.hierarchy_provider import HierarchyProvider
-from license.model.product import Product
+from licensing.db import async_session_context
+from licensing.model.hierarchy_provider import HierarchyProvider
+from licensing.model.product import Product
 
 INITIAL_PRODUCTS = [
     Product(

@@ -6,9 +6,9 @@ from sqlalchemy import String, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from license.model.base import Model, int8
-from license.model import product as product_model
-from license.model import hierarchy_provider as hierarchy_provider_model
+from licensing.model.base import Model, int8
+from licensing.model import product as product_model
+from licensing.model import hierarchy_provider as hierarchy_provider_model
 
 
 class License(Model):

@@ -4,8 +4,8 @@ from typing import Optional
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from license.model.base import Model, int8
-from license.model import license as license_model
+from licensing.model.base import Model, int8
+from licensing.model import license as license_model
 
 
 class Seat(Model):

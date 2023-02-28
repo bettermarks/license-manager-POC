@@ -6,8 +6,8 @@ from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from license.schema import product as schema
-from license.model import product as model
+from licensing.schema import product as schema
+from licensing.model import product as model
 
 
 @pytest.mark.asyncio

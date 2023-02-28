@@ -5,11 +5,11 @@ from fastapi import status as http_status, HTTPException
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from license.crud.hierarchy_provider import get_user_memberships, lookup_membership
-from license.crud.product import get_product
-from license.model import license as model
-from license.schema import license as schema
-from license.utils import async_measure_time
+from licensing.crud.hierarchy_provider import get_user_memberships, lookup_membership
+from licensing.crud.product import get_product
+from licensing.model import license as model
+from licensing.schema import license as schema
+from licensing.utils import async_measure_time
 
 
 @async_measure_time

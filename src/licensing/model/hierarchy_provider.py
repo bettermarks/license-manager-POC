@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy import String
 from sqlalchemy.orm import mapped_column, Mapped
 
-from license.model.base import Model
+from licensing.model.base import Model
 
 
 class HierarchyProvider(Model):
