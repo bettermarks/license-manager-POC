@@ -25,7 +25,7 @@ flowchart TD
 SPA(SPA)
 HIPS(Hierarchy Provider Service)
 LICS(Licensing Service)
-APP(protected content)
+APP(protected content / <br> bm-backend)
 
 LICS-->HIPS;
 SPA-->APP;
@@ -43,7 +43,7 @@ SPA(SPA)
 HIPS(Hierarchy Provider Service)
 LICS(Licensing Service)
 
-SPA--> |signed| ORDS;
+SPA--> |partially signed| ORDS;
 SPA--> |signed| LICS;
 SPA--> |SSO| HIPS;
 ORDS -.- |trusts| LICS;
@@ -54,11 +54,11 @@ ORDS -.- |trusts| HIPS;
 ### Redeeming a license
 ```mermaid
 flowchart TD
-APP(protected content)
+APP(protected content /<br> bm-backend)
 LICS(Licensing Service)
 HIPS(Hierarchy Provider Service)
 
-SPA(SPA)-->APP;
+SPA(SPA)--> |signed| APP;
 SPA(SPA)--> |signed| LICS;
 SPA(SPA)--> |SSO| HIPS;
 APP -.- |trusts| LICS;
