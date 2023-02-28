@@ -95,15 +95,15 @@ async def test_purchase_license__ok(
     payload = teacher_1_purchase_payload
     response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
     license_uuid = json.loads(response._content)["license_uuid"]
+    print("license_uuid = ", license_uuid)
 
-    # ok. we should have a lciense in the DB!
-    #lic = (
-    #    await session.execute(
-    #        select(license_model.License).where(license_model.License.uuid == license_uuid))
-    #).scalar_one_or_none()
-    #print("license = ", lic)
+    # ok. we should have a liciense in the DB!
+    lic = (
+        await session.execute(
+            select(license_model.License).where(license_model.License.uuid == license_uuid))
+    ).all()
+    print("license = ", lic)
 
-    #print("license_uuid = ", license_uuid)
     assert response.status_code == 201
 
     # TODO to be continued ....
