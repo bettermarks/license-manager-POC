@@ -17,7 +17,6 @@ LICS(Licensing Service)-->HIPS(Hierarchy Provider Service);
 ### Redeeming a license
 ```mermaid
 flowchart TD
-SPA(SPA)-->LICS(Licensing Service);
 LICS(Licensing Service)-->HIPS(Hierarchy Provider Service);
 SPA(SPA)-->APP(The application itself);
 APP(The application itself)-->LICS(Licensing Service)
