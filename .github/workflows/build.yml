@@ -3,7 +3,7 @@ name: "Build Image and Push to ECR"
 on:
   push:
     branches:
-      - master
+      - main
 
 
 jobs:
