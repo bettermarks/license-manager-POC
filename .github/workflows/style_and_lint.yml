@@ -1,0 +1,22 @@
+name: Codestyle
+
+on:
+  check_run:
+    types:
+    # Check runs completing successfully can unblock the
+    # corresponding pull requests and make them mergeable.
+    - completed
+  pull_request:
+    branches: ['master']
+
+jobs:
+  codestyle:
+    runs-on: ubuntu-latest
+    container: python:3.11-slim
+    steps:
+      - uses: actions/checkout@v3
+      - uses: psf/black@23.1.0
+      - name: Install flake8
+        run: pip install flake8
+      - name: Run flake8
+        run: flake8 .
