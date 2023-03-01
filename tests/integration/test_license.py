@@ -1,4 +1,5 @@
 import json
+from dataclasses import asdict
 
 from httpx import AsyncClient
 from sqlalchemy import select
@@ -6,6 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import pytest
 from pytest_mock import MockerFixture
+from sqlalchemy.orm import selectinload
 
 from licensing.model import hierarchy_provider as hierarchy_provider_model
 from licensing.model import product as product_model
@@ -95,16 +97,34 @@ async def test_purchase_license__ok(
     payload = teacher_1_purchase_payload
     response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
     license_uuid = json.loads(response._content)["license_uuid"]
-    print("license_uuid = ", license_uuid)
 
-    # ok. we should have a liciense in the DB!
-    lic = (
+    # ok. we should have a license in the DB!
+    licenses = (
         await session.execute(
-            select(license_model.License).where(license_model.License.uuid == license_uuid))
-    ).all()
-    print("license = ", lic)
+            select(
+                license_model.License
+            ).where(
+                license_model.License.uuid == license_uuid
+            ).order_by(
+                license_model.License.owner_eid
+            ).options(   # we need that as async does not support lazy loading!
+                selectinload(license_model.License.product)
+            ).options(   # we need that as async does not support lazy loading!
+                selectinload(license_model.License.hierarchy_provider)
+            )
+        )
+    ).scalars().all()
 
     assert response.status_code == 201
+    assert len(licenses) == 2
+    assert {
+            "owner_type": licenses[0].owner_type,
+            "owner_eids": [l.owner_eid for l in licenses],
+            "valid_from": licenses[0].valid_from.strftime("%Y-%m-%d"),
+            "valid_to": licenses[0].valid_to.strftime("%Y-%m-%d"),
+            "seats": licenses[0].seats,
+            "hierarchy_provider_url": licenses[0].hierarchy_provider.url,
+            "product_eid": licenses[0].product.eid
+        } == teacher_1_purchase_payload
 
-    # TODO to be continued ....
 
