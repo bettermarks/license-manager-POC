@@ -1,5 +1,4 @@
 import json
-from dataclasses import asdict
 
 from httpx import AsyncClient
 from sqlalchemy import select
@@ -9,8 +8,6 @@ import pytest
 from pytest_mock import MockerFixture
 from sqlalchemy.orm import selectinload
 
-from licensing.model import hierarchy_provider as hierarchy_provider_model
-from licensing.model import product as product_model
 from licensing.model import license as license_model
 
 
