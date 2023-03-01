@@ -99,7 +99,7 @@ def class_3() -> Class_:
     return Class_(eid="class_3")
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def product_1() -> Product:
     return Product(
         eid="full_access",
@@ -109,7 +109,7 @@ def product_1() -> Product:
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def hierarchy_provider_1() -> HierarchyProvider:
     return HierarchyProvider(
         url="http://mocked_hierarchy_provider.com/hierarchy",
@@ -119,12 +119,12 @@ def hierarchy_provider_1() -> HierarchyProvider:
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def products(product_1) -> List[Product]:
     return [product_1]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 def hierarchy_providers(hierarchy_provider_1) -> List[HierarchyProvider]:
     return [hierarchy_provider_1]
 
@@ -150,7 +150,7 @@ def teacher_1_purchase_payload(
     }
 
 
-@pytest.fixture()
+@pytest.fixture
 async def mock_get_hierarchy_provider_membership(
         mocker: MockerFixture, class_1, class_2, class_3, teacher_1, teacher_no_class_2, student_1, student_2
 ) -> List[Dict[str, str | int]]:
@@ -195,7 +195,7 @@ async def start_app():
     return app
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 async def app(products, hierarchy_providers) -> FastAPI:
     # Setup:
     logging.debug("Setup ...")
@@ -220,16 +220,19 @@ async def app(products, hierarchy_providers) -> FastAPI:
             await conn.run_sync(target_metadata.drop_all)
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 async def session(app: FastAPI) -> AsyncSession:
     try:
         async with async_test_session_factory() as session:
             yield session
+    except Exception as ex:
+        await session.rollback()
+        raise ex
     finally:
         await session.close()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 async def client(app: FastAPI, session: AsyncSession) -> AsyncClient:
     def _session():
         yield session
