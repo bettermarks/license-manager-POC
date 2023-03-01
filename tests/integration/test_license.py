@@ -128,3 +128,28 @@ async def test_purchase_license__ok(
         } == teacher_1_purchase_payload
 
 
+@pytest.mark.asyncio
+async def test_purchase_license__409_license_purchased_twice(
+        client: AsyncClient,
+        session: AsyncSession,
+        teacher_1,
+        teacher_1_purchase_payload,
+        mock_get_hierarchy_provider_membership
+):
+    """
+    Try to purchase the same license twice
+    """
+    payload = teacher_1_purchase_payload
+    response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
+    assert response.status_code == 201
+    response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
+    assert response.status_code == 409
+    assert json.loads(response._content) == {
+        "detail": (
+            f"License creation failed: A license for at least one of the owner "
+            f"EIDs'({teacher_1_purchase_payload['owner_eids']})"
+            f"({teacher_1_purchase_payload['owner_type']})', valid from "
+            f"'{teacher_1_purchase_payload['valid_from']}' to "
+            f"'{teacher_1_purchase_payload['valid_to']}' already has been created."
+        )
+    }

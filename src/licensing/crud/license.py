@@ -86,7 +86,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
             detail=(
                 f"License creation failed: A license for at least one of the owner EIDs"
                 f"'({license_data.owner_eids})({license_data.owner_type})', "
-                f"valid from '{license_data.valid_from}' to {license_data.valid_to} "
+                f"valid from '{license_data.valid_from}' to '{license_data.valid_to}' "
                 f"already has been created."
             )
         )
