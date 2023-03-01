@@ -1,9 +1,7 @@
 name: "Build Image and Push to ECR"
 
 on:
-  workflow_run:
-    types:
-      - completed
+  push:
     branches:
       - master
 
