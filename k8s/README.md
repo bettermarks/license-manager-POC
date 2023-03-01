@@ -102,7 +102,7 @@ kubectl apply -f dist/<segment>-*yaml
    echo "127.0.0.1 licensing.bettermarks.loc" | sudo tee -a >> /etc/hosts
    ```
 7. License-Service status:
-   https://licensing.bettermarks.loc:8443/status
+   https://licensing.bettermarks.loc:8443/v1/status
 
 ## Set up License-Service on remote cluster
 
