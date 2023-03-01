@@ -1,10 +1,15 @@
 import { Quantity } from "../imports/k8s";
 
-import { ApplicationConfig, DeploymentConfig, LogLevel, Segment } from "./types";
+import {
+  ApplicationConfig,
+  DeploymentConfig,
+  LogLevel,
+  Segment,
+} from "./types";
 
 /**
  * Information to go in secrets
- * 
+ *
  * DB related:
  * - DATABASE_HOST
  * - DATABASE_PORT
@@ -13,7 +18,7 @@ import { ApplicationConfig, DeploymentConfig, LogLevel, Segment } from "./types"
  * - DATABASE_NAME
  *
  * Application related:
- * 
+ *
  */
 
 /**
@@ -26,7 +31,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm"
+    DATABASE_NAME: "licm",
   },
   [Segment.DEV00]: {
     LOG_HANDLER: "console",
@@ -34,7 +39,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm"
+    DATABASE_NAME: "licm",
   },
   [Segment.CI00]: {
     LOG_HANDLER: "console",
@@ -42,7 +47,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm"
+    DATABASE_NAME: "licm",
   },
   [Segment.PRO00]: {
     LOG_HANDLER: "console",
@@ -50,7 +55,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm"
+    DATABASE_NAME: "licm",
   },
 };
 

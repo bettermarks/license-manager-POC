@@ -49,7 +49,7 @@ This is giving a brief introduction how to run License-Manager on a local or rem
 
 - Synthesize k8s manifests from charts to dist/ (ready for 'kubectl apply -f')
   ```sh
-  npm run synth
+  make k8s_synth
   ```
 
 ### Upgrades

@@ -42,7 +42,7 @@ export class LicensingService extends Construct {
       replicas,
       serviceAccountName,
       servicePort,
-      volumes
+      volumes,
     } = props;
 
     /**
