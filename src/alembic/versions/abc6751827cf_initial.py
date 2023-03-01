@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 794270842e94
+Revision ID: abc6751827cf
 Revises: 
-Create Date: 2023-02-26 23:33:01.995998
+Create Date: 2023-03-01 08:20:58.375221
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = '794270842e94'
+revision = 'abc6751827cf'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -48,13 +48,13 @@ def upgrade() -> None:
     op.create_index(op.f('ix_product_id'), 'product', ['id'], unique=False)
     op.create_index(op.f('ix_product_name'), 'product', ['name'], unique=False)
     op.create_table('license',
+    sa.Column('uuid', sa.UUID(), nullable=False),
     sa.Column('ref_product', sa.BIGINT(), nullable=False),
     sa.Column('ref_hierarchy_provider', sa.BIGINT(), nullable=False),
     sa.Column('purchaser_eid', sa.String(length=256), nullable=False),
     sa.Column('owner_type', sa.String(length=256), nullable=False),
     sa.Column('owner_level', sa.Integer(), nullable=False),
     sa.Column('owner_eid', sa.String(length=256), nullable=False),
-    sa.Column('license_uuid', sa.UUID(), nullable=False),
     sa.Column('valid_from', sa.Date(), nullable=False),
     sa.Column('valid_to', sa.Date(), nullable=False),
     sa.Column('seats', sa.Integer(), nullable=True),
@@ -69,13 +69,13 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_license_created'), 'license', ['created'], unique=False)
     op.create_index(op.f('ix_license_id'), 'license', ['id'], unique=False)
-    op.create_index(op.f('ix_license_license_uuid'), 'license', ['license_uuid'], unique=False)
     op.create_index(op.f('ix_license_owner_eid'), 'license', ['owner_eid'], unique=False)
     op.create_index(op.f('ix_license_owner_level'), 'license', ['owner_level'], unique=False)
     op.create_index(op.f('ix_license_owner_type'), 'license', ['owner_type'], unique=False)
     op.create_index(op.f('ix_license_purchaser_eid'), 'license', ['purchaser_eid'], unique=False)
     op.create_index(op.f('ix_license_ref_hierarchy_provider'), 'license', ['ref_hierarchy_provider'], unique=False)
     op.create_index(op.f('ix_license_ref_product'), 'license', ['ref_product'], unique=False)
+    op.create_index(op.f('ix_license_uuid'), 'license', ['uuid'], unique=False)
     op.create_index(op.f('ix_license_valid_from'), 'license', ['valid_from'], unique=False)
     op.create_index(op.f('ix_license_valid_to'), 'license', ['valid_to'], unique=False)
     op.create_table('seat',
@@ -115,13 +115,13 @@ def downgrade() -> None:
     op.drop_table('seat')
     op.drop_index(op.f('ix_license_valid_to'), table_name='license')
     op.drop_index(op.f('ix_license_valid_from'), table_name='license')
+    op.drop_index(op.f('ix_license_uuid'), table_name='license')
     op.drop_index(op.f('ix_license_ref_product'), table_name='license')
     op.drop_index(op.f('ix_license_ref_hierarchy_provider'), table_name='license')
     op.drop_index(op.f('ix_license_purchaser_eid'), table_name='license')
     op.drop_index(op.f('ix_license_owner_type'), table_name='license')
     op.drop_index(op.f('ix_license_owner_level'), table_name='license')
     op.drop_index(op.f('ix_license_owner_eid'), table_name='license')
-    op.drop_index(op.f('ix_license_license_uuid'), table_name='license')
     op.drop_index(op.f('ix_license_id'), table_name='license')
     op.drop_index(op.f('ix_license_created'), table_name='license')
     op.drop_table('license')
