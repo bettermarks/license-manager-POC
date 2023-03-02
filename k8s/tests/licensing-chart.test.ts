@@ -20,7 +20,8 @@ describe("licensing-chart", () => {
       nodeSelector: APP_NODE_POOL_LABELS,
       segment: segment,
       migrationJobResources: DEPLOYMENT_CONFIG[segment].migrationJobResources,
-      loadFixturesJobResources: DEPLOYMENT_CONFIG[segment].loadFixturesJobResources,
+      loadFixturesJobResources:
+        DEPLOYMENT_CONFIG[segment].loadFixturesJobResources,
       apiResources: DEPLOYMENT_CONFIG[segment].apiResources,
       apiReplicas: DEPLOYMENT_CONFIG[segment].apiReplicas,
     });

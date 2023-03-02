@@ -5,7 +5,7 @@ import { LicensingChart } from "./lib/charts/licensing";
 import { Segment, Namespace } from "./lib/types";
 import { DEPLOYMENT_CONFIG } from "./lib/config";
 import {
-  APP_NODE_POOL_LABELS, 
+  APP_NODE_POOL_LABELS,
   APPLICATION_SECRET,
   POSTGRES_IMAGE,
   POSTGRES_SECRET,
@@ -20,8 +20,8 @@ const IMAGE_REPO = `676249682729.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE_NAME
 const app = new App();
 
 if (SEGMENT === Segment.LOC00) {
-  const pgChart = new PostgresChart(app, "postgres", { 
-    image: POSTGRES_IMAGE, 
+  const pgChart = new PostgresChart(app, "postgres", {
+    image: POSTGRES_IMAGE,
     name: "licensing-db",
     namespace: Namespace.LICENSING,
   });
@@ -49,7 +49,8 @@ if (SEGMENT === Segment.LOC00) {
     imagePullSecrets: [REGISTRY_CREDENTIALS],
     nodeSelector: APP_NODE_POOL_LABELS,
     migrationJobResources: DEPLOYMENT_CONFIG[SEGMENT].migrationJobResources,
-    loadFixturesJobResources: DEPLOYMENT_CONFIG[SEGMENT].loadFixturesJobResources,
+    loadFixturesJobResources:
+      DEPLOYMENT_CONFIG[SEGMENT].loadFixturesJobResources,
     apiResources: DEPLOYMENT_CONFIG[SEGMENT].apiResources,
     apiReplicas: DEPLOYMENT_CONFIG[SEGMENT].apiReplicas,
   });
