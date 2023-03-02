@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.db import postgres_dsn
-from licensing.main import app, ROUTE_PREFIX
+from licensing.main import ROUTE_PREFIX
 from licensing.db import async_session as app_db_session
 
 # we need to import all models here to set up the database ...
@@ -53,15 +53,19 @@ TEST_DATABASE_DSN = postgres_dsn(
     settings.database_port,
     settings.database_user,
     settings.database_password,
-    TEST_DATABASE_NAME
+    TEST_DATABASE_NAME,
 )
 
 # we need that for setting up the DB tables ...
 target_metadata = Model.metadata
 
 # redefinition of async_engine for our tests ...
-async_test_engine = create_async_engine(TEST_DATABASE_DSN, pool_pre_ping=True, echo=False)
-async_test_session_factory = async_sessionmaker(async_test_engine, expire_on_commit=False)
+async_test_engine = create_async_engine(
+    TEST_DATABASE_DSN, pool_pre_ping=True, echo=False
+)
+async_test_session_factory = async_sessionmaker(
+    async_test_engine, expire_on_commit=False
+)
 
 
 @pytest.fixture
@@ -105,7 +109,7 @@ def product_1() -> Product:
         eid="full_access",
         name="full access for all bettermarks content",
         description="This product gives full access to all bettermarks books",
-        permissions=[{"*": "rx"}]
+        permissions=[{"*": "rx"}],
     )
 
 
@@ -115,7 +119,7 @@ def hierarchy_provider_1() -> HierarchyProvider:
         url="http://mocked_hierarchy_provider.com/hierarchy",
         short_name="a mocked hierarchy provider",
         name="some mocked hierarchy provider",
-        description="This is some mocked hierarchy provider"
+        description="This is some mocked hierarchy provider",
     )
 
 
@@ -131,33 +135,35 @@ def hierarchy_providers(hierarchy_provider_1) -> List[HierarchyProvider]:
 
 @pytest.fixture
 def teacher_1_purchase_payload(
-        product_1: Product,
-        hierarchy_provider_1: HierarchyProvider,
-        class_1,
-        class_2
+    product_1: Product, hierarchy_provider_1: HierarchyProvider, class_1, class_2
 ) -> dict:
     return {
         "owner_type": class_1.type_,
-        "owner_eids": [
-            class_1.eid,
-            class_2.eid
-        ],
+        "owner_eids": [class_1.eid, class_2.eid],
         "valid_from": "2023-02-10",
         "valid_to": "2024-02-10",
         "seats": 100,
         "hierarchy_provider_url": hierarchy_provider_1.url,
-        "product_eid": product_1.eid
+        "product_eid": product_1.eid,
     }
 
 
 @pytest.fixture
 async def mock_get_hierarchy_provider_membership(
-        mocker: MockerFixture, class_1, class_2, class_3, teacher_1, teacher_no_class_2, student_1, student_2
+    mocker: MockerFixture,
+    class_1,
+    class_2,
+    class_3,
+    teacher_1,
+    teacher_no_class_2,
+    student_1,
+    student_2,
 ) -> List[Dict[str, str | int]]:
-    """ this is our mocked 'hierarchy-provider-membership service'"""
+    """this is our mocked 'hierarchy-provider-membership service'"""
+
     async def _http_get(url: str, payload: dict | None = None):
         # like www.my-hierarchy-provider.de/users/{some user_eid}/membership
-        user_eid = re.findall('\w+/users/(\w+)/membership', url)[0]
+        user_eid = re.findall("\w+/users/(\w+)/membership", url)[0]  # noqa: W605
 
         match user_eid:
             case teacher_1.eid:
@@ -165,7 +171,7 @@ async def mock_get_hierarchy_provider_membership(
                     {"type": class_1.type_, "level": class_1.level, "eid": class_1.eid},
                     {"type": class_2.type_, "level": class_2.level, "eid": class_2.eid},
                 ]
-            case teacher_no_class_2.eid:   # a teacher that is not member of 'class_1'
+            case teacher_no_class_2.eid:  # a teacher that is not member of 'class_1'
                 return [
                     {"type": class_1.type_, "level": class_1.level, "eid": class_1.eid},
                     {"type": class_3.type_, "level": class_3.level, "eid": class_3.eid},
@@ -240,8 +246,9 @@ async def client(app: FastAPI, session: AsyncSession) -> AsyncClient:
     # Overrides the attached DB session with our nice 'test DB session'.
     # Now for all tests, the test database is used instead of the 'app database'
     app.dependency_overrides[app_db_session] = _session
-    async with AsyncClient(app=app, base_url=f"http://test-server/{ROUTE_PREFIX}") as client:
+    async with AsyncClient(
+        app=app, base_url=f"http://test-server/{ROUTE_PREFIX}"
+    ) as client:
         yield client
 
     app.dependency_overrides.setdefault
-

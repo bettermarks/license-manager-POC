@@ -19,9 +19,8 @@ target_metadata.naming_convention = {
     "ix": "ix_%(column_0_label)s",
     "uq": "uq_%(table_name)s_%(column_0_name)s",
     "ck": "ck_%(table_name)s_%(constraint_name)s",
-    "fk": "fk_%(table_name)s_%(column_0_name)"
-          "s_%(referred_table_name)s",
-    "pk": "pk_%(table_name)s"
+    "fk": "fk_%(table_name)s_%(column_0_name)" "s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s",
 }
 
 # you have to import all your models to support alembic 'autogenerate'
@@ -45,6 +44,7 @@ def run_migrations_offline() -> None:
 
 # modified following https://pytest-alembic.readthedocs.io/en/latest/asyncio.html
 
+
 def run_migrations_online():
     config_section = config.get_section(config.config_ini_section)
     url = DATABASE_DSN
@@ -61,7 +61,8 @@ def run_migrations_online():
             )
         )
 
-    # Note, we decide whether to run asynchronously based on the kind of engine we're dealing with.
+    # Note, we decide whether to run asynchronously based on the kind of
+    # engine we're dealing with.
     if isinstance(connectable, AsyncEngine):
         asyncio.run(run_async_migrations(connectable))
     else:

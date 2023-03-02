@@ -9,7 +9,11 @@ from licensing import __version__ as version
 from licensing.logging import ColorFormatter, to_internal_log_level, LogLevel
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
-from licensing.load_initial_data import load_data, INITIAL_PRODUCTS, INITIAL_HIERARCHY_PROVIDERS
+from licensing.load_initial_data import (
+    load_data,
+    INITIAL_PRODUCTS,
+    INITIAL_HIERARCHY_PROVIDERS,
+)
 
 # setup logging
 log_level = to_internal_log_level(settings.log_level)
@@ -26,9 +30,10 @@ tags_metadata = [
     {
         "name": "Licenses",
         "description": (
-            "Purchasing and redeeming operations for licenses. A license is basically a "
-            "'relation' between a product and one or more 'license owners' with some constraints "
-            "like a start date, an end date and a number of open 'seats'."
+            "Purchasing and redeeming operations for licenses. A license is basically "
+            "a 'relation' between a product and one or more 'license owners' with "
+            "some constraints like a start date, an end date and a number of open "
+            "'seats'."
         ),
     },
     {
@@ -40,9 +45,7 @@ tags_metadata = [
     },
     {
         "name": "Debug",
-        "description": (
-            "The API status and other useful (debug) information"
-        ),
+        "description": ("The API status and other useful (debug) information"),
     },
 ]
 
@@ -50,11 +53,11 @@ tags_metadata = [
 app = FastAPI(
     title="License Manager POC",
     version=version,
-    openapi_url=f"/v1/openapi.json",
+    openapi_url="/v1/openapi.json",
     debug=True if settings.log_level == LogLevel.DEBUG else False,
     description="A generic license managing application",
     openapi_tags=tags_metadata,
-    log_level=log_level
+    log_level=log_level,
 )
 
 
@@ -65,11 +68,13 @@ async def log_requests(request, call_next):
     logging.debug(f"request_id={request_id} started request at path={request.url.path}")
     start = time.time()
     response = await call_next(request)
-    logging.debug((
-        f"request_id={request_id} "
-        f"time_used={'{0:.2f}'.format((time.time() - start) * 1000)}ms "
-        f"status_code={response.status_code}"
-    ))
+    logging.debug(
+        (
+            f"request_id={request_id} "
+            f"time_used={'{0:.2f}'.format((time.time() - start) * 1000)}ms "
+            f"status_code={response.status_code}"
+        )
+    )
     return response
 
 
@@ -83,6 +88,7 @@ async def startup():
 @app.on_event("shutdown")
 async def shutdown():
     pass
+
 
 ROUTE_PREFIX = "/v1"
 

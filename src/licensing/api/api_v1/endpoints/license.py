@@ -14,17 +14,17 @@ router = APIRouter()
 
 @router.post("/{purchaser_eid}/purchases", status_code=http_status.HTTP_201_CREATED)
 async def purchase_license(
-        purchaser_eid: str,
-        license_data: schema.LicenseCreate,
-        session: AsyncSession = Depends(async_session)
+    purchaser_eid: str,
+    license_data: schema.LicenseCreate,
+    session: AsyncSession = Depends(async_session),
 ) -> Dict:
     return await license_crud.purchase(session, purchaser_eid, license_data)
 
 
 @router.get("/{user_eid}/permissions", status_code=http_status.HTTP_200_OK)
 async def get_permissions(
-        hierarchy_provider_url: str,
-        user_eid: str,
-        session: AsyncSession = Depends(async_session)
+    hierarchy_provider_url: str,
+    user_eid: str,
+    session: AsyncSession = Depends(async_session),
 ) -> List[Any]:
     return await seat_crud.get_permissions(session, hierarchy_provider_url, user_eid)

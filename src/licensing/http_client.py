@@ -4,7 +4,7 @@ from typing import Any
 import aiohttp
 
 """
-HTTP client functions 
+HTTP client functions
 """
 
 
@@ -29,7 +29,7 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
     # Exception handling for the 'bad' cases.
     except aiohttp.client_exceptions.ClientConnectorError as e:
         logging.error(
-            f"HTTP GET call to {url} using params {payload} raised a ClientConnectorError: '{e}' No result returned."
+            f"HTTP GET call to {url} using params {payload} raised a "
+            f"ClientConnectorError: '{e}' No result returned."
         )
         raise
-

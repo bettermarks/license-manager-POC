@@ -7,7 +7,9 @@ from sqlalchemy.orm import sessionmaker
 from licensing.config import settings
 
 
-def postgres_dsn(host: str, port: str, user: str, password: str, db_name: str, ssl: bool = False) -> str:
+def postgres_dsn(
+    host: str, port: str, user: str, password: str, db_name: str, ssl: bool = False
+) -> str:
     return (
         f"postgresql+asyncpg://{user}:{urllib.parse.quote(password)}"
         f"@{host}:{port}"
@@ -21,17 +23,22 @@ DATABASE_DSN = postgres_dsn(
     settings.database_port,
     settings.database_user,
     settings.database_password,
-    settings.database_name
+    settings.database_name,
 )
 
 # SQLAlchemy session
 # TODO True if settings.LOGLEVEL == logging.DEBUG else False   # lots of logging ...
 async_engine = create_async_engine(DATABASE_DSN, echo=False)  #
-async_session_factory = sessionmaker(bind=async_engine, expire_on_commit=False, class_=AsyncSession)
+async_session_factory = sessionmaker(
+    bind=async_engine, expire_on_commit=False, class_=AsyncSession
+)
 
 
 async def async_session() -> AsyncSession:
-    """This is the session generator usually injected using FastAPI 'Depends' function ..."""
+    """
+    This is the session generator usually injected using FastAPI 'Depends'
+    function ...
+    """
     try:
         async with async_session_factory() as session:
             yield session

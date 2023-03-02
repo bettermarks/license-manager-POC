@@ -12,7 +12,9 @@ from licensing.model import license as license_model
 
 
 @pytest.mark.asyncio
-async def test_purchase_license__422_product(client: AsyncClient, teacher_1, teacher_1_purchase_payload):
+async def test_purchase_license__422_product(
+    client: AsyncClient, teacher_1, teacher_1_purchase_payload
+):
     """
     Requested product is not registered
     """
@@ -26,12 +28,16 @@ async def test_purchase_license__422_product(client: AsyncClient, teacher_1, tea
 
 
 @pytest.mark.asyncio
-async def test_purchase_license__422_hierarchy_provider(client: AsyncClient, teacher_1, teacher_1_purchase_payload):
+async def test_purchase_license__422_hierarchy_provider(
+    client: AsyncClient, teacher_1, teacher_1_purchase_payload
+):
     """
     Requested hierarchy provider is not registered
     """
     payload = teacher_1_purchase_payload
-    payload["hierarchy_provider_url"] = "http://not_existing_hierarchy_provider.com/hierarchy"
+    payload[
+        "hierarchy_provider_url"
+    ] = "http://not_existing_hierarchy_provider.com/hierarchy"
     response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
     assert response.status_code == 422
     assert json.loads(response._content) == {
@@ -44,15 +50,12 @@ async def test_purchase_license__422_hierarchy_provider(client: AsyncClient, tea
 
 @pytest.mark.asyncio
 async def test_purchase_license__500_hierarchy_provider(
-        mocker: MockerFixture, client: AsyncClient, teacher_1, teacher_1_purchase_payload
+    mocker: MockerFixture, client: AsyncClient, teacher_1, teacher_1_purchase_payload
 ):
     """
     Hierarchy provider is down
     """
-    mocker.patch(
-        "licensing.crud.hierarchy_provider.http_get",
-        side_effect=Exception
-    )
+    mocker.patch("licensing.crud.hierarchy_provider.http_get", side_effect=Exception)
     payload = teacher_1_purchase_payload
     response = await client.post(f"/users/{teacher_1.eid}/purchases", json=payload)
     assert response.status_code == 500
@@ -60,18 +63,20 @@ async def test_purchase_license__500_hierarchy_provider(
 
 @pytest.mark.asyncio
 async def test_purchase_license__422_not_matching_owner(
-        client: AsyncClient,
-        session: AsyncSession,
-        teacher_no_class_2,
-        class_2,
-        teacher_1_purchase_payload,
-        mock_get_hierarchy_provider_membership
+    client: AsyncClient,
+    session: AsyncSession,
+    teacher_no_class_2,
+    class_2,
+    teacher_1_purchase_payload,
+    mock_get_hierarchy_provider_membership,
 ):
     """
     License cannot be purchased, because purchasing teacher is not membership of given owner class
     """
     payload = teacher_1_purchase_payload
-    response = await client.post(f"/users/{teacher_no_class_2.eid}/purchases", json=payload)
+    response = await client.post(
+        f"/users/{teacher_no_class_2.eid}/purchases", json=payload
+    )
     assert response.status_code == 422
     assert json.loads(response._content) == {
         "detail": (
@@ -82,11 +87,11 @@ async def test_purchase_license__422_not_matching_owner(
 
 @pytest.mark.asyncio
 async def test_purchase_license__ok(
-        client: AsyncClient,
-        session: AsyncSession,
-        teacher_1,
-        teacher_1_purchase_payload,
-        mock_get_hierarchy_provider_membership
+    client: AsyncClient,
+    session: AsyncSession,
+    teacher_1,
+    teacher_1_purchase_payload,
+    mock_get_hierarchy_provider_membership,
 ):
     """
     Yes, purchase a license!
@@ -97,41 +102,43 @@ async def test_purchase_license__ok(
 
     # ok. we should have a license in the DB!
     licenses = (
-        await session.execute(
-            select(
-                license_model.License
-            ).where(
-                license_model.License.uuid == license_uuid
-            ).order_by(
-                license_model.License.owner_eid
-            ).options(   # we need that as async does not support lazy loading!
-                selectinload(license_model.License.product)
-            ).options(   # we need that as async does not support lazy loading!
-                selectinload(license_model.License.hierarchy_provider)
+        (
+            await session.execute(
+                select(license_model.License)
+                .where(license_model.License.uuid == license_uuid)
+                .order_by(license_model.License.owner_eid)
+                .options(  # we need that as async does not support lazy loading!
+                    selectinload(license_model.License.product)
+                )
+                .options(  # we need that as async does not support lazy loading!
+                    selectinload(license_model.License.hierarchy_provider)
+                )
             )
         )
-    ).scalars().all()
+        .scalars()
+        .all()
+    )
 
     assert response.status_code == 201
     assert len(licenses) == 2
     assert {
-            "owner_type": licenses[0].owner_type,
-            "owner_eids": [l.owner_eid for l in licenses],
-            "valid_from": licenses[0].valid_from.strftime("%Y-%m-%d"),
-            "valid_to": licenses[0].valid_to.strftime("%Y-%m-%d"),
-            "seats": licenses[0].seats,
-            "hierarchy_provider_url": licenses[0].hierarchy_provider.url,
-            "product_eid": licenses[0].product.eid
-        } == teacher_1_purchase_payload
+        "owner_type": licenses[0].owner_type,
+        "owner_eids": [lic.owner_eid for lic in licenses],
+        "valid_from": licenses[0].valid_from.strftime("%Y-%m-%d"),
+        "valid_to": licenses[0].valid_to.strftime("%Y-%m-%d"),
+        "seats": licenses[0].seats,
+        "hierarchy_provider_url": licenses[0].hierarchy_provider.url,
+        "product_eid": licenses[0].product.eid,
+    } == teacher_1_purchase_payload
 
 
 @pytest.mark.asyncio
 async def test_purchase_license__409_license_purchased_twice(
-        client: AsyncClient,
-        session: AsyncSession,
-        teacher_1,
-        teacher_1_purchase_payload,
-        mock_get_hierarchy_provider_membership
+    client: AsyncClient,
+    session: AsyncSession,
+    teacher_1,
+    teacher_1_purchase_payload,
+    mock_get_hierarchy_provider_membership,
 ):
     """
     Try to purchase the same license twice

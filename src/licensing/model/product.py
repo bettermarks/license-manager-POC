@@ -12,5 +12,3 @@ class Product(Model):
     name: Mapped[str] = mapped_column(String(256), index=True)
     description: Mapped[Optional[str]] = mapped_column(String(512))
     permissions: Mapped[JSON] = mapped_column(JSONB)
-
-

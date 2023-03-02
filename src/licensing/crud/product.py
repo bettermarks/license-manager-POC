@@ -11,9 +11,7 @@ async def get_products(session: AsyncSession) -> List[schema.Product]:
     """
     gets all available products
     """
-    return (
-        await session.execute(statement=select(model.Product))
-    ).scalars().all()
+    return (await session.execute(statement=select(model.Product))).scalars().all()
 
 
 async def get_product(session: AsyncSession, eid: str) -> schema.Product:
@@ -21,5 +19,7 @@ async def get_product(session: AsyncSession, eid: str) -> schema.Product:
     gets a product with a given EID or nothing
     """
     return (
-        await session.execute(statement=select(model.Product).where(model.Product.eid == eid))
+        await session.execute(
+            statement=select(model.Product).where(model.Product.eid == eid)
+        )
     ).scalar_one_or_none()
