@@ -1,5 +1,11 @@
 import { Chart, ChartProps } from "cdk8s";
-import { ConfigMap, ImagePullPolicy, ISecret, Secret, ServiceType } from "cdk8s-plus-24";
+import {
+  ConfigMap,
+  ImagePullPolicy,
+  ISecret,
+  Secret,
+  ServiceType,
+} from "cdk8s-plus-24";
 import { Construct } from "constructs";
 import { IntOrString, KubeDeployment, KubeService } from "../../imports/k8s";
 
@@ -36,8 +42,8 @@ export class PostgresChart extends Chart {
         DATABASE_PASSWORD: "postgres",
         DATABASE_NAME: "postgres",
         POSTGRES_PASSWORD: "postgres",
-        POSTGRES_USER:"postgres",
-        POSTGRES_DB:"postgres"
+        POSTGRES_USER: "postgres",
+        POSTGRES_DB: "postgres",
       },
     });
 

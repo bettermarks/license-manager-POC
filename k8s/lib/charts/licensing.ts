@@ -8,7 +8,7 @@ import {
   ResourceRequirements,
   KubeRole,
   KubeServiceAccount,
-  KubeRoleBinding
+  KubeRoleBinding,
 } from "../../imports/k8s";
 import { Construct } from "constructs";
 import { NodeSelector, Segment } from "../types";
@@ -17,7 +17,6 @@ import { LicensingService } from "../services/licensing-service";
 import { APPLICATION_CONFIG } from "../config";
 import { POSTGRES_IMAGE } from "../constants";
 import { LicensingConfigMap } from "../licensing-configmap";
-
 
 /**
  * This class is the implementation detail of Licensing deployment.
@@ -53,12 +52,12 @@ export type LicensingChartProps = ChartProps & {
   /**
    * API replicas
    * @default 3
-  */
+   */
   apiReplicas?: number;
   /**
    * Secret names for AWS ECR registry
    * @default []
-  */
+   */
   imagePullSecrets?: ReadonlyArray<string>;
 };
 
@@ -81,16 +80,22 @@ export class LicensingChart extends Chart {
       postgresSecret,
       segment,
       name,
-      imagePullSecrets = []
+      imagePullSecrets = [],
     } = props;
 
-    const serviceAccount = new KubeServiceAccount(this, `${name}-service-account`, {
-      metadata: {
-        name: `${name}-service-account`,
-        namespace,
-      },
-      imagePullSecrets: imagePullSecrets?.map((secretRef) => ({ name: secretRef })),
-    });
+    const serviceAccount = new KubeServiceAccount(
+      this,
+      `${name}-service-account`,
+      {
+        metadata: {
+          name: `${name}-service-account`,
+          namespace,
+        },
+        imagePullSecrets: imagePullSecrets?.map((secretRef) => ({
+          name: secretRef,
+        })),
+      }
+    );
 
     const role = new KubeRole(this, `${name}-role`, {
       metadata: {
@@ -125,7 +130,7 @@ export class LicensingChart extends Chart {
           name: new LicensingConfigMap(this, `${name}-configmap`, {
             appConfig: APPLICATION_CONFIG[segment],
             name,
-            namespace
+            namespace,
           }).configMap.name,
         },
       },
@@ -134,22 +139,22 @@ export class LicensingChart extends Chart {
           name: postgresSecret,
         },
       },
-      ...(applicationSecret)
+      ...(applicationSecret
         ? [
-          {
-            secretRef: {
-              name: applicationSecret,
+            {
+              secretRef: {
+                name: applicationSecret,
+              },
             },
-          },
-        ]
-        : []
+          ]
+        : []),
     ];
 
     const apiName = `${name}-api`;
     /**
      * DeploymentID is a unique identifier for each deployment
      */
-    const deploymentId = Date.now().toString(16);  // TODO: this should be rethought
+    const deploymentId = Date.now().toString(16); // TODO: this should be rethought
     const licensingService = new LicensingService(this, `${apiName}-service`, {
       name: apiName,
       namespace,
@@ -163,7 +168,11 @@ export class LicensingChart extends Chart {
           name: `${apiName}-wait-for-database`,
           image: POSTGRES_IMAGE,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: ["sh", "-c", "until pg_isready --host ${DATABASE_HOST}; do sleep 1; done"],
+          command: [
+            "sh",
+            "-c",
+            "until pg_isready --host ${DATABASE_HOST}; do sleep 1; done",
+          ],
           envFrom: applicationEnv,
           resources: {
             requests: {
@@ -181,9 +190,7 @@ export class LicensingChart extends Chart {
           image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
-          args: [
-            "alembic upgrade head"
-          ],
+          args: ["alembic upgrade head"],
           envFrom: applicationEnv,
           resources: migrationJobResources,
         },
@@ -192,9 +199,7 @@ export class LicensingChart extends Chart {
           image,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
           command: ["bash", "-c"],
-          args: [
-            `echo "TODO: load_initial_products here"`,
-          ],
+          args: [`echo "TODO: load_initial_products here"`],
           envFrom: applicationEnv,
           resources: loadFixturesJobResources,
         },
