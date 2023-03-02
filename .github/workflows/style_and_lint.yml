@@ -7,7 +7,7 @@ on:
     # corresponding pull requests and make them mergeable.
     - completed
   pull_request:
-    branches: ['master']
+    branches: ['main']
 
 jobs:
   codestyle:
