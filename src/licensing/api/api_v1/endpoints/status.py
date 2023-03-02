@@ -14,5 +14,4 @@ def get_status() -> Any:
     return {
         "status": "OK",
         "debug": True if settings.log_level == LogLevel.DEBUG else False,
-
     }

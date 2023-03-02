@@ -4,7 +4,9 @@ from pydantic import BaseModel, Field
 
 
 class SeatBase(BaseModel):
-    user_eid: str = Field(min_length=1, max_length=256, default="30001048769")  # TODO remove default
+    user_eid: str = Field(
+        min_length=1, max_length=256, default="30001048769"
+    )  # TODO remove default
 
 
 class SeatCreate(SeatBase):
@@ -20,5 +22,3 @@ class Seat(SeatBase):
 
     class Config:
         orm_mode = True
-
-

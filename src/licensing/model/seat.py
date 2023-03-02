@@ -10,7 +10,7 @@ from licensing.model import license as license_model
 
 class Seat(Model):
     # columns
-    ref_license: Mapped[int8] = mapped_column(ForeignKey('license.id'), index=True)
+    ref_license: Mapped[int8] = mapped_column(ForeignKey("license.id"), index=True)
     user_eid: Mapped[str] = mapped_column(String(256), index=True)
     occupied_at: Mapped[datetime] = mapped_column(index=True)
     released_at: Mapped[Optional[datetime]] = mapped_column(index=True)

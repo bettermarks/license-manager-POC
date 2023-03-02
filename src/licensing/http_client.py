@@ -32,4 +32,3 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
             f"HTTP GET call to {url} using params {payload} raised a ClientConnectorError: '{e}' No result returned."
         )
         raise
-

@@ -14,8 +14,12 @@ from licensing.model import hierarchy_provider as hierarchy_provider_model
 class License(Model):
     uuid: Mapped[uuid_module.UUID] = mapped_column(UUID(as_uuid=True), index=True)
 
-    ref_product: Mapped[int8] = mapped_column(ForeignKey('product.id'), init=False, index=True)
-    ref_hierarchy_provider: Mapped[int8] = mapped_column(ForeignKey('hierarchy_provider.id'), init=False, index=True)
+    ref_product: Mapped[int8] = mapped_column(
+        ForeignKey("product.id"), init=False, index=True
+    )
+    ref_hierarchy_provider: Mapped[int8] = mapped_column(
+        ForeignKey("hierarchy_provider.id"), init=False, index=True
+    )
 
     purchaser_eid: Mapped[str] = mapped_column(String(256), index=True)
     owner_type: Mapped[str] = mapped_column(String(256), index=True)
@@ -28,9 +32,9 @@ class License(Model):
 
     # Relationships
     product: Mapped[product_model.Product] = relationship("Product", init=False)
-    hierarchy_provider: Mapped[hierarchy_provider_model.HierarchyProvider] = relationship(
-        "HierarchyProvider", init=False
-    )
+    hierarchy_provider: Mapped[
+        hierarchy_provider_model.HierarchyProvider
+    ] = relationship("HierarchyProvider", init=False)
 
     __table_args__ = (
         UniqueConstraint(
@@ -40,6 +44,6 @@ class License(Model):
             "owner_type",
             "owner_eid",
             "valid_from",
-            "valid_to"
+            "valid_to",
         ),
     )

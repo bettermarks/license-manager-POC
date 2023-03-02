@@ -13,7 +13,9 @@ from licensing.utils import async_measure_time
 
 
 @async_measure_time
-async def purchase(session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate) -> Dict[str, str]:
+async def purchase(
+    session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate
+) -> Dict[str, str]:
     """
     The license purchase process performed by a user for one or more entities, they are member of.
 
@@ -30,7 +32,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
     if not product:
         raise HTTPException(
             status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"License creation failed: product with EID '{license_data.product_eid}' cannot be not found."
+            detail=f"License creation failed: product with EID '{license_data.product_eid}' cannot be not found.",
         )
 
     # 3. check, if owners are in the purchasers hierarchy path (exception is raised, if not!)
@@ -46,8 +48,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
         )
     except HTTPException as ex:
         raise HTTPException(
-            status_code=ex.status_code,
-            detail=f"License creation failed: {ex.detail}"
+            status_code=ex.status_code, detail=f"License creation failed: {ex.detail}"
         )
     # generate a random UUID as a license identifier
     license_uuid = uuid.uuid4()
@@ -58,7 +59,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
         if not membership:
             raise HTTPException(
                 status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership."
+                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership.",
             )
 
         # 3.2. create license (will be rolled back, if some checks for 'owners' fail ...
@@ -71,7 +72,7 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
             valid_from=license_data.valid_from,
             valid_to=license_data.valid_to,
             seats=license_data.seats,
-            is_seats_shared=len(license_data.owner_eids) > 1
+            is_seats_shared=len(license_data.owner_eids) > 1,
         )
         lic.product = product
         lic.hierarchy_provider = hierarchy_provider
@@ -88,6 +89,6 @@ async def purchase(session: AsyncSession, purchaser_eid: str, license_data: sche
                 f"'({license_data.owner_eids})({license_data.owner_type})', "
                 f"valid from '{license_data.valid_from}' to '{license_data.valid_to}' "
                 f"already has been created."
-            )
+            ),
         )
     return {"license_uuid": license_uuid}

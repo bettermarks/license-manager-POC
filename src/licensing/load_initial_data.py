@@ -9,26 +9,26 @@ INITIAL_PRODUCTS = [
         eid="full_access",
         name="full access for all bettermarks content",
         description="This product gives full access to all bettermarks books",
-        permissions=[{"*": "rx"}]
+        permissions=[{"*": "rx"}],
     ),
     Product(
         eid="book_bruchrechnen_full_access",
         name="full access for book bettermarks 'Bruchrechnen'",
         description="This product gives full access to book 'Bruchrechnen'",
-        permissions=[{"book_bruchrechnen": "rx"}]
+        permissions=[{"book_bruchrechnen": "rx"}],
     ),
     Product(
         eid="book_bruchrechnen_read",
         name="read access for book bettermarks 'Bruchrechnen'",
         description="This product gives read access to book 'Bruchrechnen'",
-        permissions=[{"book_bruchrechnen": "r"}]
+        permissions=[{"book_bruchrechnen": "r"}],
     ),
     Product(
         eid="book_primzahlen_read",
         name="read access for book bettermarks 'Primzahlen'",
         description="This product gives read access to book 'Primzahlen'",
-        permissions=[{"book_primzahlen": "r"}]
-    )
+        permissions=[{"book_primzahlen": "r"}],
+    ),
 ]
 
 INITIAL_HIERARCHY_PROVIDERS = [
@@ -36,7 +36,7 @@ INITIAL_HIERARCHY_PROVIDERS = [
         url="http://0.0.0.0:5001/hierarchy",
         short_name="glu",
         name="GLU user class management system",
-        description="This is our GLU user class management system used to get valid hierarchies"
+        description="This is our GLU user class management system used to get valid hierarchies",
     ),
     HierarchyProvider(
         url="https://unviention-hb.de/hierarchy",
@@ -49,7 +49,7 @@ INITIAL_HIERARCHY_PROVIDERS = [
         short_name="schulcloud_ni",
         name="Schulcloud NI user class management system",
         description="This is the Schulcloud NI user class management system used to get valid hierarchies",
-    )
+    ),
 ]
 
 
@@ -61,5 +61,3 @@ async def load_data(data):
                 await session.commit()
             except IntegrityError:
                 await session.rollback()
-
-
