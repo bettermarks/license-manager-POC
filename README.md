@@ -9,6 +9,12 @@ A sequence diagram describing some kind of 'purchasing a license' process and 'r
 process can be found here:
 [Purchasing and redeeming process](./docs/purchase_redeem_process.md)
 
+We also describe two architecture models for client-service communication here.
+[Client Service Communication](./docs/service-communication.md)
+
+And some comparison between the new 'seat model' and the classic GLU 'Simple Inheritance License Model'.
+[General License Models](./docs/seat-model-vs-simple-inheritance-model.md)
+
 
 ## Data Model
 This is the currently imple,ented data model:
