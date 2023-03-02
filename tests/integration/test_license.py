@@ -123,7 +123,7 @@ async def test_purchase_license__ok(
     assert len(licenses) == 2
     assert {
         "owner_type": licenses[0].owner_type,
-        "owner_eids": [l.owner_eid for l in licenses],
+        "owner_eids": [lic.owner_eid for lic in licenses],
         "valid_from": licenses[0].valid_from.strftime("%Y-%m-%d"),
         "valid_to": licenses[0].valid_to.strftime("%Y-%m-%d"),
         "seats": licenses[0].seats,

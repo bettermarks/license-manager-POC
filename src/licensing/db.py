@@ -35,7 +35,10 @@ async_session_factory = sessionmaker(
 
 
 async def async_session() -> AsyncSession:
-    """This is the session generator usually injected using FastAPI 'Depends' function ..."""
+    """
+    This is the session generator usually injected using FastAPI 'Depends'
+    function ...
+    """
     try:
         async with async_session_factory() as session:
             yield session

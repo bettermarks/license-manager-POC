@@ -1,7 +1,8 @@
 import logging
 
 """
-Thanks to https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
+Thanks to
+https://stackoverflow.com/questions/384076/how-can-i-color-python-logging-output
 """
 
 
@@ -14,7 +15,6 @@ class LogLevel:
 
 
 class ColorFormatter(logging.Formatter):
-
     blue = "\x1b[36;20m"
     grey = "\x1b[38;20m"
     green = "\x1b[32;20m"

@@ -61,7 +61,8 @@ def run_migrations_online():
             )
         )
 
-    # Note, we decide whether to run asynchronously based on the kind of engine we're dealing with.
+    # Note, we decide whether to run asynchronously based on the kind of
+    # engine we're dealing with.
     if isinstance(connectable, AsyncEngine):
         asyncio.run(run_async_migrations(connectable))
     else:

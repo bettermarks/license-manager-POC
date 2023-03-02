@@ -3,7 +3,7 @@ import re
 from typing import Optional
 from typing_extensions import Annotated
 
-from sqlalchemy import BIGINT, TIMESTAMP, func
+from sqlalchemy import BIGINT, TIMESTAMP
 from sqlalchemy.orm import (
     DeclarativeBase,
     declared_attr,

@@ -15,7 +15,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sess
 from licensing.api.api_v1.api import api_router
 from licensing.config import settings
 from licensing.db import postgres_dsn
-from licensing.main import app, ROUTE_PREFIX
+from licensing.main import ROUTE_PREFIX
 from licensing.db import async_session as app_db_session
 
 # we need to import all models here to set up the database ...
@@ -163,7 +163,7 @@ async def mock_get_hierarchy_provider_membership(
 
     async def _http_get(url: str, payload: dict | None = None):
         # like www.my-hierarchy-provider.de/users/{some user_eid}/membership
-        user_eid = re.findall("\w+/users/(\w+)/membership", url)[0]
+        user_eid = re.findall("\w+/users/(\w+)/membership", url)[0]  # noqa: W605
 
         match user_eid:
             case teacher_1.eid:

@@ -36,19 +36,28 @@ INITIAL_HIERARCHY_PROVIDERS = [
         url="http://0.0.0.0:5001/hierarchy",
         short_name="glu",
         name="GLU user class management system",
-        description="This is our GLU user class management system used to get valid hierarchies",
+        description=(
+            "This is our GLU user class management system "
+            "used to get valid hierarchies"
+        ),
     ),
     HierarchyProvider(
         url="https://unviention-hb.de/hierarchy",
         short_name="univention_hb",
         name="Univention HB user class management system",
-        description="This is the Univention HB user class management system used to get valid hierarchies",
+        description=(
+            "This is the Univention HB user class management system "
+            "used to get valid hierarchies"
+        ),
     ),
     HierarchyProvider(
         url="https://schulcloud-ni.de/hierarchy",
         short_name="schulcloud_ni",
         name="Schulcloud NI user class management system",
-        description="This is the Schulcloud NI user class management system used to get valid hierarchies",
+        description=(
+            "This is the Schulcloud NI user class management system "
+            "used to get valid hierarchies"
+        ),
     ),
 ]
 

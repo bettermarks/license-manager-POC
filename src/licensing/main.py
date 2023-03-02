@@ -30,9 +30,10 @@ tags_metadata = [
     {
         "name": "Licenses",
         "description": (
-            "Purchasing and redeeming operations for licenses. A license is basically a "
-            "'relation' between a product and one or more 'license owners' with some constraints "
-            "like a start date, an end date and a number of open 'seats'."
+            "Purchasing and redeeming operations for licenses. A license is basically "
+            "a 'relation' between a product and one or more 'license owners' with "
+            "some constraints like a start date, an end date and a number of open "
+            "'seats'."
         ),
     },
     {
@@ -52,7 +53,7 @@ tags_metadata = [
 app = FastAPI(
     title="License Manager POC",
     version=version,
-    openapi_url=f"/v1/openapi.json",
+    openapi_url="/v1/openapi.json",
     debug=True if settings.log_level == LogLevel.DEBUG else False,
     description="A generic license managing application",
     openapi_tags=tags_metadata,

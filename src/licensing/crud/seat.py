@@ -1,9 +1,7 @@
 import datetime
-import uuid
-from functools import reduce
 from typing import List, Any, Tuple, Set
 
-from sqlalchemy import select, text, bindparam, tuple_, func, case
+from sqlalchemy import select, tuple_, func, case
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -90,7 +88,8 @@ async def get_permissions(
     # 0. check, if requesting user is purchaser
     # TODO
 
-    # 1. get the hierarchy list (for the user) from the hierarchy provider (or raise an exception)
+    # 1. get the hierarchy list (for the user) from the hierarchy provider
+    # (or raise an exception)
     hierarchy_provider, memberships = await get_user_memberships(
         session, hierarchy_provider_url, user_eid
     )
@@ -111,28 +110,30 @@ async def get_permissions(
             datetime.date.today(),
         )
 
-        for l in licenses:
-            # print("license =", (l.is_occupied, l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+        for lic in licenses:
+            # print("license =", (l.is_occupied, l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))  # noqa: E501
             print(
-                f"licens id = {l[0].id},  license product = {l[0].product} license free seats = {l[0].seats - l[1]}"
+                f"licens id = {lic[0].id},  license product = {lic[0].product} license "
+                f"free seats = {lic[0].seats - lic[1]}"
             )
-        # for x in await get_free_seats_for_licenses(session, [l.license_uuid for l in licenses]):
+        # for x in await get_free_seats_for_licenses(session, [l.license_uuid for l in licenses]):  # noqa: E501
         #    print(f"license {x}")
 
-        # ok, sort the licenses list by product.eid and by owner_level ascending and then
-        # create a new list, in which only the first elements for every distinct product eid
-        # are inserted. This gives a list of all licenses, where all possible products are
-        # available
+        # ok, sort the licenses list by product.eid and by owner_level ascending and
+        # then create a new list, in which only the first elements for every distinct
+        # product eid are inserted. This gives a list of all licenses, where all
+        # possible products are available
         # unique = reduce(
-        #    lambda acc, l: acc + [l] if (acc and acc[-1].product.eid != l.product.eid) or (not acc) else acc,
+        #    lambda acc, l: acc + [l] if (acc and acc[-1].product.eid != l.product.eid) or (not acc) else acc,  # noqa: E501
         #    sorted(licenses, key=lambda l: (l.product.eid, l.owner_level)),
         #    []
         # )
 
         # for l in unique:
-        #    print("unique =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))
+        #    print("unique =", (l.product.eid, l.owner_level, l.id, l.license_uuid, l.owner_eid, l.product.permissions))  # noqa: E501
 
-        # reserve a seat for the first one!  # TODO This is not a valid solution. Will be discussed!
+        # reserve a seat for the first one!
+        # TODO This is not a valid solution. Will be discussed!
         if licenses:
             return [
                 {"allow": "all"}

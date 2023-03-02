@@ -49,7 +49,8 @@ async def get_user_memberships(
     gets the membership list for a user by requesting the hierarchy provider.
     catches any exception raised from the request and 'translate' it to some 500
     http error.
-    :return a tuple (the registered hierarchy provider object, the memberships of 'Memberships' type (see above))
+    :return a tuple (the registered hierarchy provider object, the memberships of
+        'Memberships' type (see above))
     :raises HTTPException: possible codes 422 or 500
     """
     hierarchy_provider = await get_hierarchy_provider(session, url)
@@ -74,17 +75,21 @@ async def get_user_memberships(
     except Exception as e:
         raise HTTPException(
             status_code=http_status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Hierarchy provider server at base URL='{url}' did not respond properly ({e}).",
+            detail=(
+                f"Hierarchy provider server at base URL='{url}' did not respond "
+                f"properly ({e})."
+            ),
         )
 
 
 def lookup_membership(memberships: Memberships, typ: str, eid: str):
     """
-    looks up some membership in a given 'Memberships' structure (see above), that is got from
-    the hierarchy provider
+    looks up some membership in a given 'Memberships' structure (see above),
+    that is got from the hierarchy provider
     :param memberships: the memberships dict to be looked up
     :param typ: a given type to be looked up (together with an eid)
     :param eid: a given eid to be looked up (together wit ha type)
-    :return: a dict like {"type": <<some type>>, "eid": <<some eid>>, "level": <<some level>>} OR {}
+    :return: a dict like
+        {"type": <<some type>>, "eid": <<some eid>>, "level": <<some level>>} OR {}
     """
     return memberships.get((typ, eid), {})

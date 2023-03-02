@@ -17,11 +17,13 @@ async def purchase(
     session: AsyncSession, purchaser_eid: str, license_data: schema.LicenseCreate
 ) -> Dict[str, str]:
     """
-    The license purchase process performed by a user for one or more entities, they are member of.
+    The license purchase process performed by a user for one or more entities,
+    they are member of.
 
     :param session: the SQLAlchemy session
     :param purchaser_eid: the EID of the license purchaser
-    :param license_data: license data (pydantic schema) containing license info like 'valid_from', etc.
+    :param license_data: license data (pydantic schema) containing license info like
+        'valid_from', etc.
     :raises HTTPException: possible codes 409, 422 or 500
     """
     # 0. check, if requesting user is purchaser
@@ -32,16 +34,23 @@ async def purchase(
     if not product:
         raise HTTPException(
             status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"License creation failed: product with EID '{license_data.product_eid}' cannot be not found.",
+            detail=(
+                f"License creation failed: product with EID "
+                f"'{license_data.product_eid}' cannot be not found."
+            ),
         )
 
-    # 3. check, if owners are in the purchasers hierarchy path (exception is raised, if not!)
-    # checks, if the requested license owners are in the 'hierarchy path' of the purchaser.
-    # That means: is the purchaser 'allowed' to purchase a license for the given owners?
+    # 3. check, if owners are in the purchasers hierarchy path (exception is raised, if
+    # not!)
+    # checks, if the requested license owners are in the 'hierarchy path' of the
+    # purchaser.
+    # That means: is the purchaser 'allowed' to purchase a license for the given
+    # owners?
     # This is true, if and only if the purchaser is 'member' of the license owner, f.e.
     # some class or some school. If everything is fine, create the license!
 
-    # 3.1 get all the 'memberships' (for the purchaser) from the hierarchy provider (or raise an exception (422,500))
+    # 3.1 get all the 'memberships' (for the purchaser) from the hierarchy provider (or
+    # raise an exception (422,500))
     try:
         hierarchy_provider, memberships = await get_user_memberships(
             session, license_data.hierarchy_provider_url, purchaser_eid
@@ -59,7 +68,10 @@ async def purchase(
         if not membership:
             raise HTTPException(
                 status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail=f"License creation failed: license owner ('{owner_eid}') does not match any users membership.",
+                detail=(
+                    f"License creation failed: license owner ('{owner_eid}') does "
+                    f"not match any users membership."
+                ),
             )
 
         # 3.2. create license (will be rolled back, if some checks for 'owners' fail ...
@@ -81,7 +93,7 @@ async def purchase(
     # ok, everything seems to be fine, commit!
     try:
         await session.commit()
-    except IntegrityError as _ex:
+    except IntegrityError:
         raise HTTPException(
             status_code=http_status.HTTP_409_CONFLICT,
             detail=(
