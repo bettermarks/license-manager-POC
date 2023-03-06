@@ -7,10 +7,8 @@ WORKDIR /code
 COPY ./requirements* /code/
 
 RUN python3 -m pip install --no-cache-dir -IU pip
-# RUN python3 -m pip install --no-cache-dir -IU shiv
 
 COPY . /code/
-RUN pip install --no-cache-dir .
-# RUN shiv . --compile-pyc -c app-ucm -o app.pyz
+RUN python3 -m pip install --no-cache-dir .
 
 CMD ["uvicorn", "licensing.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "1"]

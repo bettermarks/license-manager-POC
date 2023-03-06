@@ -4,7 +4,7 @@ build:
   artifacts:
     - image: bm-licensing
       docker:
-        dockerfile: k8s/Dockerfile
+        dockerfile: k8s/Dockerfile.dev
 deploy:
   kustomize:
     paths:

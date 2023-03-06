@@ -9,11 +9,14 @@ services:
     ports:
       - 8002:8000
     environment:
+      - SEGMENT=loc00
       - DATABASE_HOST=postgres
       - DATABASE_PORT=5432
       - DATABASE_USER=licm
       - DATABASE_PASSWORD=licm
       - DATABASE_NAME=licm
+      - LOG_FORMAT=console
+      - LOG_LEVEL=DEBUG
     depends_on:
       - postgres
 

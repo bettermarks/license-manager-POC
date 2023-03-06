@@ -12,6 +12,8 @@ alembic==1.9.3
     # via -r requirements.in
 anyio==3.6.2
     # via starlette
+asgi-correlation-id==4.1.0
+    # via -r requirements.in
 async-timeout==4.0.2
     # via aiohttp
 asyncpg==0.27.0
@@ -57,6 +59,8 @@ pydantic[dotenv]==1.10.4
     # via
     #   -r requirements.in
     #   fastapi
+python-decouple==3.8
+    # via -r requirements.in
 python-dotenv==0.21.1
     # via pydantic
 pyyaml==6.0
@@ -70,7 +74,11 @@ sqlalchemy[asyncio]==2.0.2
     #   -r requirements.in
     #   alembic
 starlette==0.22.0
-    # via fastapi
+    # via
+    #   asgi-correlation-id
+    #   fastapi
+structlog==22.3.0
+    # via -r requirements.in
 typing-extensions==4.4.0
     # via
     #   pydantic

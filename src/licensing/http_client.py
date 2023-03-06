@@ -1,4 +1,4 @@
-import logging
+import structlog
 from typing import Any
 
 import aiohttp
@@ -6,6 +6,8 @@ import aiohttp
 """
 HTTP client functions
 """
+
+logger = structlog.stdlib.get_logger(__name__)
 
 
 async def http_get(url: str, payload: dict | None = None) -> Any:
@@ -28,8 +30,10 @@ async def http_get(url: str, payload: dict | None = None) -> Any:
                 return await response.json()
     # Exception handling for the 'bad' cases.
     except aiohttp.client_exceptions.ClientConnectorError as e:
-        logging.error(
-            f"HTTP GET call to {url} using params {payload} raised a "
-            f"ClientConnectorError: '{e}' No result returned."
+        logger.error(
+            "HTTP GET call raised a ClientConnectorError. No result returned.",
+            url=url,
+            payload=payload,
+            error=e,
         )
         raise
