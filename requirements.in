@@ -1,10 +1,13 @@
 aiohttp
 alembic
+asgi-correlation-id
 asyncpg
+python-decouple
 elastic-apm
 fastapi
 pydantic[dotenv]
 pyyaml
 requests
+structlog
 SQLAlchemy[asyncio]==2.0.2
 uvicorn

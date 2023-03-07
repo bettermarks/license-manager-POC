@@ -1,5 +1,5 @@
 import asyncio
-import logging
+import structlog
 import re
 from dataclasses import dataclass
 
@@ -13,7 +13,7 @@ from pytest_mock import MockerFixture
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
 from licensing.api.api_v1.api import api_router
-from licensing.config import settings
+from licensing import settings
 from licensing.db import postgres_dsn
 from licensing.main import ROUTE_PREFIX
 from licensing.db import async_session as app_db_session
@@ -24,6 +24,8 @@ from licensing.model.product import Product
 from licensing.model.license import License  # Please do not remove that import!!
 from licensing.model.seat import Seat  # Please do not remove that import!!
 from licensing.model.base import Model
+
+logger = structlog.stdlib.get_logger(__name__)
 
 
 @dataclass
@@ -204,7 +206,7 @@ async def start_app():
 @pytest.fixture
 async def app(products, hierarchy_providers) -> FastAPI:
     # Setup:
-    logging.debug("Setup ...")
+    logger.debug("Setup ...")
     try:
         # (re)create tables
         async with async_test_engine.begin() as conn:
@@ -221,7 +223,7 @@ async def app(products, hierarchy_providers) -> FastAPI:
 
     finally:
         # Teardown:
-        logging.debug("Teardown ...")
+        logger.debug("Teardown ...")
         async with async_test_engine.begin() as conn:
             await conn.run_sync(target_metadata.drop_all)
 

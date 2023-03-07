@@ -1,28 +1,26 @@
 import time
-import logging
-import uuid
+import structlog
 
+from asgi_correlation_id import CorrelationIdMiddleware
+from asgi_correlation_id.context import correlation_id
 from elasticapm.contrib.starlette import make_apm_client, ElasticAPM
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
+from uvicorn.protocols.utils import get_path_with_query_string
 
+from licensing import settings
 from licensing import __version__ as version
-from licensing.logging import ColorFormatter, to_internal_log_level, LogLevel
+from licensing.logging import setup_logging, LogLevel
 from licensing.api.api_v1.api import api_router
-from licensing.config import settings
 from licensing.load_initial_data import (
     load_data,
     INITIAL_PRODUCTS,
     INITIAL_HIERARCHY_PROVIDERS,
 )
 
-# setup logging
-log_level = to_internal_log_level(settings.log_level)
-logger = logging.getLogger()
-logger.setLevel(log_level)
-ch = logging.StreamHandler()
-ch.setLevel(log_level)
-ch.setFormatter(ColorFormatter())
-logger.addHandler(ch)
+
+setup_logging(settings.log_format, settings.log_level)
+access_logger = structlog.stdlib.get_logger("api.access")
+logger = structlog.stdlib.get_logger(__name__)
 
 
 # some metadata for our API (will be nicely printed out via /docs)
@@ -49,33 +47,69 @@ tags_metadata = [
     },
 ]
 
-# tha main FastAPI 'app' setup ...
 app = FastAPI(
-    title="License Manager POC",
+    title="Licensing Service",
     version=version,
     openapi_url="/v1/openapi.json",
     debug=True if settings.log_level == LogLevel.DEBUG else False,
     description="A generic license managing application",
     openapi_tags=tags_metadata,
-    log_level=log_level,
 )
 
 
+# TODO: do we need request logs?
 @app.middleware("http")
-async def log_requests(request, call_next):
-    """We are intercepting requests to do some logging."""
-    request_id = uuid.uuid4()
-    logging.debug(f"request_id={request_id} started request at path={request.url.path}")
-    start = time.time()
-    response = await call_next(request)
-    logging.debug(
-        (
-            f"request_id={request_id} "
-            f"time_used={'{0:.2f}'.format((time.time() - start) * 1000)}ms "
-            f"status_code={response.status_code}"
-        )
-    )
-    return response
+async def logging_middleware(request: Request, call_next) -> Response:
+    structlog.contextvars.clear_contextvars()
+    # These context vars will be added to all log entries emitted during the request
+    request_id = correlation_id.get()
+    structlog.contextvars.bind_contextvars(request_id=request_id)
+
+    start_time = time.perf_counter_ns()
+
+    # If the call_next raises an error, we still want to return our own 500 response,
+    # so we can add headers to it (process time, request ID...)
+    response = Response(status_code=500)
+    try:
+        response = await call_next(request)
+    except Exception:
+        # TODO: Validate that we don't swallow exceptions (unit test?)
+        structlog.stdlib.get_logger("api.error").exception("Uncaught exception")
+        raise
+    finally:
+        process_time = time.perf_counter_ns() - start_time
+        status_code = response.status_code
+        url = get_path_with_query_string(request.scope)
+        client_host = request.client.host
+        client_port = request.client.port
+        http_method = request.method
+        http_version = request.scope["http_version"]
+        # Recreate the Uvicorn access log format, but add all parameters as structured
+        # information. Ignore status calls
+        if not request.app.url_path_for("get_status") in request.url.path:
+            access_logger.info(
+                f'{client_host}:{client_port} - "{http_method} {url} '
+                f'HTTP/{http_version}" {status_code}',
+                http={
+                    "url": str(request.url),
+                    "status_code": status_code,
+                    "method": http_method,
+                    "request_id": request_id,
+                },
+                network={"client": {"ip": client_host, "port": client_port}},
+                duration=process_time,
+            )
+        # response.headers["X-Process-Time"] = str(process_time / 10**9)
+        return response
+
+
+# This middleware must be placed after the logging, to populate the context with the
+# request ID
+# NOTE: Why last??
+# Answer: middlewares are applied in the reverse order of when they are added (you can
+# verify this by debugging `app.middleware_stack` and recursively drilling down the
+# `app` property).
+app.add_middleware(CorrelationIdMiddleware)
 
 
 # add application performance monitoring middleware
@@ -86,9 +120,10 @@ apm = make_apm_client(
         "SERVER_URL": settings.apm_url,
         "ENVIRONMENT": settings.segment,
         "TRANSACTIONS_IGNORE_PATTERNS": ["^OPTIONS", "/v1/status"],
-        "ENABLED": settings.apm_enabled == "true",
+        "ENABLED": settings.apm_enabled,
         "SERVICE_VERSION": version,
-        "TRANSACTION_SAMPLE_RATE": float(settings.apm_transaction_sample_rate or 0.1),
+        "TRANSACTION_SAMPLE_RATE": settings.apm_transaction_sample_rate,
+        "COLLECT_LOCAL_VARIABLES": True,  # TODO: check
     }
 )
 app.add_middleware(ElasticAPM, client=apm)

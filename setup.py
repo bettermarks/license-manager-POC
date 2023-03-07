@@ -31,7 +31,7 @@ setuptools.setup(
     version="0.0.1",
     author="bettermarks GmbH",
     author_email="bmdevops@bettermarks.com",
-    description="License Manager POC.",
+    description="Licensing Service.",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     url="",

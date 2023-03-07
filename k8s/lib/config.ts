@@ -27,19 +27,19 @@ import {
 export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   [Segment.LOC00]: {
     SEGMENT: Segment.LOC00,
-    LOG_HANDLER: "console",
+    LOG_FORMAT: "console",
     LOG_LEVEL: LogLevel.DEBUG,
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",
     DATABASE_NAME: "licm",
-    APM_URL: "https://apm.bettermarks.com",
+    APM_URL: "",
     APM_ENABLED: false,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
   },
   [Segment.DEV00]: {
     SEGMENT: Segment.DEV00,
-    LOG_HANDLER: "console",
+    LOG_FORMAT: "json",
     LOG_LEVEL: LogLevel.DEBUG,
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
@@ -51,7 +51,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   },
   [Segment.CI00]: {
     SEGMENT: Segment.CI00,
-    LOG_HANDLER: "console",
+    LOG_FORMAT: "json",
     LOG_LEVEL: LogLevel.DEBUG,
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
@@ -63,8 +63,8 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
   },
   [Segment.PRO00]: {
     SEGMENT: Segment.PRO00,
-    LOG_HANDLER: "console",
-    LOG_LEVEL: LogLevel.DEBUG,
+    LOG_FORMAT: "json",
+    LOG_LEVEL: LogLevel.INFO,
     DATABASE_USER: "postgres",
     DATABASE_HOST: "localhost",
     DATABASE_PORT: "5432",

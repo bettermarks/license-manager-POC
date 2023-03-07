@@ -12,7 +12,7 @@ from licensing.model import product as model
 
 @pytest.mark.asyncio
 async def test_get_products__ok(client: AsyncClient, products):
-    response = await client.get("/products/")
+    response = await client.get("/products")
     assert response.status_code == 200
     assert json.loads(response._content) == [
         asdict(schema.Product.from_orm(p)) for p in products

@@ -8,10 +8,7 @@ COPY . /code
 WORKDIR /code
 
 RUN python3 -m pip install --no-cache-dir -IU pip 
-# RUN python3 -m pip install --no-cache-dir -IU shiv
 
 RUN pip install --no-cache-dir .
 RUN pip install --no-cache-dir -r requirements-dev.in
 # RUN pytest --cov licensing
-
-# RUN shiv . --compile-pyc -c app-licensing -o app.pyz

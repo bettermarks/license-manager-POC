@@ -31,7 +31,7 @@ export type NodeSelector = {
 
 export type ApplicationConfig = {
   SEGMENT: string,
-  LOG_HANDLER: string;
+  LOG_FORMAT: string;
   LOG_LEVEL: LogLevel;
   DATABASE_USER: string;
   DATABASE_HOST: string;
