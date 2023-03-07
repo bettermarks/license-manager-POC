@@ -25,11 +25,11 @@ Create a 'dotenv' file:
 Create a file named '.env' in the root folder of the app and provide your database paramaters and credentials like so:
 
 ```
-DATABASE_USER=<<your 'postgres' user name (root user of the RDBMS)>>
-DATABASE_PASSWORD=<<your 'postgres' users (root user of the RDBMS) password>>
-DATABASE_HOST="localhost"
-DATABASE_PORT="5432"
-DATABASE_NAME=<<the name of the 'license-manager' database you will create in the following step (licm)>>
+DB_USER=<<your 'postgres' user name (root user of the RDBMS)>>
+DB_PASSWORD=<<your 'postgres' users (root user of the RDBMS) password>>
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_NAME=<<the name of the 'license-manager' database you will create in the following step (licm)>>
 ```
 Before you can start the application, you have to install a database. Please create a database manually
 on your local postgreSQL database using the SQL query

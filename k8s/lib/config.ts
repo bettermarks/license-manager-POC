@@ -11,14 +11,14 @@ import {
  * Information to go in secrets
  *
  * DB related:
- * - DATABASE_HOST
- * - DATABASE_PORT
- * - DATABASE_USER
- * - DATABASE_PASSWORD
- * - DATABASE_NAME
+ * - DB_HOST
+ * - DB_PORT
+ * - DB_USER
+ * - DB_PASSWORD
+ * - DB_NAME
  *
  * Application related:
- *
+ * - APM_SECRET_TOKEN
  */
 
 /**
@@ -29,10 +29,6 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     SEGMENT: Segment.LOC00,
     LOG_FORMAT: "console",
     LOG_LEVEL: LogLevel.DEBUG,
-    DATABASE_USER: "postgres",
-    DATABASE_HOST: "localhost",
-    DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm",
     APM_URL: "",
     APM_ENABLED: false,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
@@ -41,10 +37,6 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     SEGMENT: Segment.DEV00,
     LOG_FORMAT: "json",
     LOG_LEVEL: LogLevel.DEBUG,
-    DATABASE_USER: "postgres",
-    DATABASE_HOST: "localhost",
-    DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm",
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
@@ -53,10 +45,6 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     SEGMENT: Segment.CI00,
     LOG_FORMAT: "json",
     LOG_LEVEL: LogLevel.DEBUG,
-    DATABASE_USER: "postgres",
-    DATABASE_HOST: "localhost",
-    DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm",
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
@@ -65,10 +53,6 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     SEGMENT: Segment.PRO00,
     LOG_FORMAT: "json",
     LOG_LEVEL: LogLevel.INFO,
-    DATABASE_USER: "postgres",
-    DATABASE_HOST: "localhost",
-    DATABASE_PORT: "5432",
-    DATABASE_NAME: "licm",
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",

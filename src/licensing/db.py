@@ -19,11 +19,11 @@ def postgres_dsn(
 
 
 DATABASE_DSN = postgres_dsn(
-    settings.database_host,
-    settings.database_port,
-    settings.database_user,
-    settings.database_password,
-    settings.database_name,
+    settings.db_host,
+    settings.db_port,
+    settings.db_user,
+    settings.db_password,
+    settings.db_name,
 )
 
 # SQLAlchemy session

@@ -49,13 +49,13 @@ class Class_:
     level: int = 1
 
 
-TEST_DATABASE_NAME = "test_licensing"
+TEST_DB_NAME = "test_licensing"
 TEST_DATABASE_DSN = postgres_dsn(
-    settings.database_host,
-    settings.database_port,
-    settings.database_user,
-    settings.database_password,
-    TEST_DATABASE_NAME,
+    settings.db_host,
+    settings.db_port,
+    settings.db_user,
+    settings.db_password,
+    TEST_DB_NAME,
 )
 
 # we need that for setting up the DB tables ...

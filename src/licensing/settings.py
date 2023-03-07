@@ -8,11 +8,11 @@ log_format: str = config(
 )
 
 # DB settings
-database_user: str = config("DATABASE_USER")
-database_password: str = config("DATABASE_PASSWORD")
-database_host: str = config("DATABASE_HOST")
-database_port: str = config("DATABASE_PORT")
-database_name: str = config("DATABASE_NAME")
+db_user: str = config("DB_USER")
+db_password: str = config("DB_PASSWORD")
+db_host: str = config("DB_HOST")
+db_port: str = config("DB_PORT")
+db_name: str = config("DB_NAME")
 
 segment: str = config("SEGMENT")
 

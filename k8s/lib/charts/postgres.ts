@@ -19,11 +19,11 @@ export class PostgresChart extends Chart {
    * Secret with Postgres credentials
    *
    * keys:
-   * - DATABASE_HOST
-   * - DATABASE_PORT
-   * - DATABASE_USER
-   * - DATABASE_PASSWORD
-   * - DATABASE_NAME
+   * - DB_HOST
+   * - DB_PORT
+   * - DB_USER
+   * - DB_PASSWORD
+   * - DB_NAME
    * - POSTGRES_PASSWORD
    */
   readonly secret: ISecret;
@@ -37,10 +37,10 @@ export class PostgresChart extends Chart {
         namespace,
       },
       stringData: {
-        DATABASE_PORT: "5432",
-        DATABASE_USER: "postgres",
-        DATABASE_PASSWORD: "postgres",
-        DATABASE_NAME: "postgres",
+        DB_PORT: "5432",
+        DB_USER: "postgres",
+        DB_PASSWORD: "postgres",
+        DB_NAME: "postgres",
         POSTGRES_PASSWORD: "postgres",
         POSTGRES_USER: "postgres",
         POSTGRES_DB: "postgres",
@@ -139,8 +139,8 @@ export class PostgresChart extends Chart {
       },
     });
 
-    pgSecret.addStringData("DATABASE_HOST", pgService.name);
-    // pgSecret.addStringData("DATABASE_PORT", "5432");
+    pgSecret.addStringData("DB_HOST", pgService.name);
+    pgSecret.addStringData("DB_PORT", "5432");
     this.secret = pgSecret;
   }
 }
