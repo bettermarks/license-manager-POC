@@ -31,6 +31,7 @@ if (SEGMENT === Segment.LOC00) {
     image: IMAGE_NAME,
     segment: SEGMENT,
     postgresSecret: pgChart.secret.name,
+    applicationSecret: "loc00-application-secret",
     imagePullSecrets: [],
   });
   new IngressNginxChart(app, "ingress-nginx", {

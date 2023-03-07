@@ -11,11 +11,11 @@ on:
 
 env:
   SEGMENT: loc00
-  DATABASE_HOST: localhost
-  DATABASE_PORT: 5432
-  DATABASE_USER: postgres
-  DATABASE_PASSWORD: postgres
-  DATABASE_NAME: test_licensing
+  DB_HOST: localhost
+  DB_PORT: 5432
+  DB_USER: postgres
+  DB_PASSWORD: postgres
+  DB_NAME: test_licensing
 
 jobs:
   pytest:

@@ -5,9 +5,10 @@ generatorOptions:
   disableNameSuffixHash: true
 
 secretGenerator:
-  # - name: loc00-licensing-application-secret
-  #   envs:
-  #     - loc00/licensing-application-secret.env
+  - name: loc00-application-secret
+    namespace: "licensing"
+    envs:
+      - loc00/application-secret.env
   - name: loc00-tls-secret
     namespace: "licensing"
     type: "kubernetes.io/tls"

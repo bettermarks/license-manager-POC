@@ -14,7 +14,7 @@ describe("licensing-local-chart", () => {
       namespace: "dummy-namespace",
       segment: Segment.LOC00,
       postgresSecret: "pgChart.secret.name",
-      applicationSecret: "loc00-licensing-application-secret",
+      applicationSecret: "loc00-application-secret",
     });
     const results = Testing.synth(chart);
     expect(results).toMatchSnapshot();

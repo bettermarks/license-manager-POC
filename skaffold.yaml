@@ -5,10 +5,12 @@ build:
     - image: bm-licensing
       docker:
         dockerfile: k8s/Dockerfile.dev
+
 deploy:
   kustomize:
     paths:
       - "k8s"
+
 portForward:
   - resourceType: Service
     resourceName: ingress-nginx-controller

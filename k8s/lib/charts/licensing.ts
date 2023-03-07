@@ -30,11 +30,11 @@ export type LicensingChartProps = ChartProps & {
    * Name of the secret containing Postgres credentials
    *
    * Required keys:
-   * - DATABASE_HOST
-   * - DATABASE_PORT
-   * - DATABASE_USER
-   * - DATABASE_PASSWORD
-   * - DATABASE_NAME
+   * - DB_HOST
+   * - DB_PORT
+   * - DB_USER
+   * - DB_PASSWORD
+   * - DB_NAME
    */
   postgresSecret: string;
   /**
@@ -141,12 +141,12 @@ export class LicensingChart extends Chart {
       },
       ...(applicationSecret
         ? [
-            {
-              secretRef: {
-                name: applicationSecret,
-              },
+          {
+            secretRef: {
+              name: applicationSecret,
             },
-          ]
+          },
+        ]
         : []),
     ];
 
@@ -171,7 +171,7 @@ export class LicensingChart extends Chart {
           command: [
             "sh",
             "-c",
-            "until pg_isready --host ${DATABASE_HOST}; do sleep 1; done",
+            "until pg_isready --host ${DB_HOST}; do sleep 1; done",
           ],
           envFrom: applicationEnv,
           resources: {
