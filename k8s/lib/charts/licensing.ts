@@ -236,36 +236,38 @@ export class LicensingChart extends Chart {
       containerPort: 8000,
     });
 
-    /**
-     * Create ingress
-     */
-    new KubeIngress(this, `${name}-ingress`, {
-      metadata: {
-        name: `${name}-ingress`,
-      },
-      spec: {
-        ingressClassName: "nginx",
-        rules: [
-          {
-            http: {
-              paths: [
-                {
-                  path: "/",
-                  pathType: HttpIngressPathType.PREFIX,
-                  backend: {
-                    service: {
-                      name: licensingService.service!.name,
-                      port: {
-                        number: 80,
+    if (segment === Segment.LOC00) {
+      /**
+       * Create ingress
+       */
+      new KubeIngress(this, `${name}-ingress`, {
+        metadata: {
+          name: `${name}-ingress`,
+        },
+        spec: {
+          ingressClassName: "nginx",
+          rules: [
+            {
+              http: {
+                paths: [
+                  {
+                    path: "/",
+                    pathType: HttpIngressPathType.PREFIX,
+                    backend: {
+                      service: {
+                        name: licensingService.service!.name,
+                        port: {
+                          number: 80,
+                        },
                       },
                     },
                   },
-                },
-              ],
+                ],
+              },
             },
-          },
-        ],
-      },
-    });
+          ],
+        },
+      });
+    }
   }
 }
