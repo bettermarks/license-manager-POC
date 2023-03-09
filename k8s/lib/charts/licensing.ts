@@ -6,13 +6,10 @@ import {
   KubeIngress,
   Quantity,
   ResourceRequirements,
-  KubeRole,
-  KubeServiceAccount,
-  KubeRoleBinding,
 } from "../../imports/k8s";
 import { Construct } from "constructs";
-import { NodeSelector, Segment } from "../types";
 
+import { NodeSelector, Segment, Namespace } from "../types";
 import { LicensingService } from "../services/licensing-service";
 import { APPLICATION_CONFIG } from "../config";
 import { POSTGRES_IMAGE } from "../constants";
@@ -43,6 +40,7 @@ export type LicensingChartProps = ChartProps & {
    * Required keys:
    */
   applicationSecret?: string;
+  serviceAccountName: string;
   segment: Segment;
   name: string;
   nodeSelector?: NodeSelector;
@@ -69,60 +67,19 @@ export class LicensingChart extends Chart {
     super(scope, id, props);
 
     const {
-      namespace,
+      namespace = Namespace.LICENSING,
       apiReplicas = 1,
       apiResources,
       applicationSecret,
       image,
       loadFixturesJobResources,
       nodeSelector,
-      migrationJobResources,
       postgresSecret,
       segment,
+      serviceAccountName,
       name,
       imagePullSecrets = [],
     } = props;
-
-    const serviceAccount = new KubeServiceAccount(
-      this,
-      `${name}-service-account`,
-      {
-        metadata: {
-          name: `${name}-service-account`,
-          namespace,
-        },
-        imagePullSecrets: imagePullSecrets?.map((secretRef) => ({
-          name: secretRef,
-        })),
-      }
-    );
-
-    const role = new KubeRole(this, `${name}-role`, {
-      metadata: {
-        name: `${name}-role`,
-        namespace,
-      },
-      rules: [
-        {
-          apiGroups: [""],
-          resources: ["pods"],
-          verbs: ["get", "list", "watch"],
-        },
-      ],
-    });
-
-    new KubeRoleBinding(this, `${name}-role-binding`, {
-      metadata: {
-        name: `${name}-role-binding`,
-        namespace,
-      },
-      roleRef: {
-        apiGroup: role.apiGroup,
-        kind: role.kind,
-        name: role.name,
-      },
-      subjects: [{ kind: serviceAccount.kind, name: serviceAccount.name }],
-    });
 
     const applicationEnv: EnvFromSource[] = [
       {
@@ -159,7 +116,7 @@ export class LicensingChart extends Chart {
       name: apiName,
       namespace,
       replicas: apiReplicas,
-      serviceAccountName: serviceAccount.name,
+      serviceAccountName,
       nodeSelector: nodeSelector,
       deploymentId: `${apiName}-${deploymentId}`,
 
@@ -184,15 +141,6 @@ export class LicensingChart extends Chart {
               memory: Quantity.fromString("64Mi"),
             },
           },
-        },
-        {
-          name: `${apiName}-migration`,
-          image,
-          imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: ["bash", "-c"],
-          args: ["alembic upgrade head"],
-          envFrom: applicationEnv,
-          resources: migrationJobResources,
         },
         {
           name: `${apiName}-load-fixtures`,

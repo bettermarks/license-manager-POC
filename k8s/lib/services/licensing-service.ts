@@ -84,7 +84,7 @@ export class LicensingService extends Construct {
             },
           },
           spec: {
-            serviceAccountName: serviceAccountName,
+            serviceAccountName,
             nodeSelector: nodeSelector,
             ...(topologySpreadConstraints.length > 0 && {
               topologySpreadConstraints: topologySpreadConstraints,

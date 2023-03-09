@@ -7,6 +7,7 @@ import {
   ServiceType,
 } from "cdk8s-plus-24";
 import { Construct } from "constructs";
+import { Namespace } from "../types";
 import { IntOrString, KubeDeployment, KubeService } from "../../imports/k8s";
 
 interface PostgresChartProps extends ChartProps {
@@ -30,7 +31,7 @@ export class PostgresChart extends Chart {
 
   constructor(scope: Construct, id: string, props: PostgresChartProps) {
     super(scope, id, props);
-    const { name, namespace } = props;
+    const { name, namespace = Namespace.LICENSING } = props;
     const pgSecret = new Secret(this, "secret", {
       metadata: {
         name: name,
