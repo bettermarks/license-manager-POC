@@ -55,10 +55,6 @@ if (SEGMENT === Segment.LOC00) {
     apiResources: DEPLOYMENT_CONFIG[SEGMENT].apiResources,
     apiReplicas: DEPLOYMENT_CONFIG[SEGMENT].apiReplicas,
   });
-  new IngressNginxChart(app, "ingress-nginx", {
-    namespace: Namespace.LICENSING,
-    nodeSelector: APP_NODE_POOL_LABELS,
-  });
 }
 
 app.synth();

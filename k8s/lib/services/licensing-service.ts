@@ -98,10 +98,10 @@ export class LicensingService extends Construct {
     });
 
     if (!createDeploymentOnly && servicePort && containerPort) {
-      this.service = new KubeService(this, `${name}-service`, {
+      this.service = new KubeService(this, name, {
         metadata: {
-          name: `${name}-service`,
-          namespace: namespace,
+          name,
+          namespace,
         },
         spec: {
           type: ServiceType.CLUSTER_IP,

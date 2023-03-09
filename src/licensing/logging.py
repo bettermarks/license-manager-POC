@@ -9,6 +9,8 @@ Thanks to
 https://gist.github.com/nymous/f138c7f06062b7c43c060bf03759c29e
 """
 
+# TODO: add cloudflare-ray-id to logs ("cf_ray": "$http_cf_ray")
+
 
 class LogLevel:
     DEBUG = "debug"
