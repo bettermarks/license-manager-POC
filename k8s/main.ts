@@ -11,6 +11,7 @@ import {
   POSTGRES_SECRET,
   REGISTRY_CREDENTIALS,
 } from "./lib/constants";
+import { Namespace } from "./lib/types";
 import { MigrationJobChart } from "./lib/charts/migration-job";
 import { LicensingServiceAccount } from "./lib/service-account";
 
@@ -28,10 +29,12 @@ const licensingServiceAccount = new LicensingServiceAccount(app, "licensing-serv
 
 if (SEGMENT === Segment.LOC00) {
   const pgChart = new PostgresChart(app, "postgres", {
+    namespace: Namespace.LICENSING,
     image: POSTGRES_IMAGE,
     name: "licensing-db",
   });
   new MigrationJobChart(app, "migration", {
+    namespace: Namespace.LICENSING,
     name: "licensing",
     image: IMAGE_NAME,
     segment: SEGMENT,
@@ -40,6 +43,7 @@ if (SEGMENT === Segment.LOC00) {
     serviceAccountName: licensingServiceAccount.serviceAccount.name,
   });
   new LicensingChart(app, "licensing", {
+    namespace: Namespace.LICENSING,
     name: "licensing",
     image: IMAGE_NAME,
     segment: SEGMENT,
@@ -48,11 +52,13 @@ if (SEGMENT === Segment.LOC00) {
     serviceAccountName: licensingServiceAccount.serviceAccount.name,
   });
   new IngressNginxChart(app, "ingress-nginx", {
+    namespace: Namespace.LICENSING,
     replicas: 1,
     tlsSecret: "loc00-tls-secret",
   });
 } else {
   new MigrationJobChart(app, "migration", {
+    namespace: Namespace.LICENSING,
     name: "licensing",
     image: `${IMAGE_REPO}:${IMAGE_TAG}`,
     segment: SEGMENT,
@@ -62,6 +68,7 @@ if (SEGMENT === Segment.LOC00) {
     nodeSelector: APP_NODE_POOL_LABELS,
   });
   new LicensingChart(app, "licensing", {
+    namespace: Namespace.LICENSING,
     name: "licensing",
     image: `${IMAGE_REPO}:${IMAGE_TAG}`,
     segment: SEGMENT,
@@ -69,8 +76,6 @@ if (SEGMENT === Segment.LOC00) {
     applicationSecret: APPLICATION_SECRET,
     serviceAccountName: licensingServiceAccount.serviceAccount.name,
     nodeSelector: APP_NODE_POOL_LABELS,
-    loadFixturesJobResources:
-      DEPLOYMENT_CONFIG[SEGMENT].loadFixturesJobResources,
     apiResources: DEPLOYMENT_CONFIG[SEGMENT].apiResources,
     apiReplicas: DEPLOYMENT_CONFIG[SEGMENT].apiReplicas,
   });

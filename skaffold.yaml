@@ -12,6 +12,11 @@ profiles:
       kustomize:
         paths:
           - "k8s"
+    portForward:
+      - resourceType: Service
+        resourceName: ingress-nginx-controller
+        port: 443
+        localPort: 8443
   - name: run-api
     deploy:
       kubectl:

@@ -1,19 +1,16 @@
 import { Chart, ChartProps } from "cdk8s";
 import { HttpIngressPathType, ImagePullPolicy } from "cdk8s-plus-24";
+import { Construct } from "constructs";
 import {
   EnvFromSource,
   IntOrString,
-  KubeIngress,
-  Quantity,
-  ResourceRequirements,
+  KubeIngress, ResourceRequirements
 } from "../../imports/k8s";
-import { Construct } from "constructs";
 
-import { NodeSelector, Segment, Namespace } from "../types";
-import { LicensingService } from "../services/licensing-service";
 import { APPLICATION_CONFIG } from "../config";
-import { POSTGRES_IMAGE } from "../constants";
 import { LicensingConfigMap } from "../licensing-configmap";
+import { LicensingService } from "../services/licensing-service";
+import { Namespace, NodeSelector, Segment } from "../types";
 
 /**
  * This class is the implementation detail of Licensing deployment.
@@ -44,8 +41,6 @@ export type LicensingChartProps = ChartProps & {
   segment: Segment;
   name: string;
   nodeSelector?: NodeSelector;
-  migrationJobResources?: ResourceRequirements;
-  loadFixturesJobResources?: ResourceRequirements;
   apiResources?: ResourceRequirements;
   /**
    * API replicas
@@ -67,7 +62,6 @@ export class LicensingChart extends Chart {
       apiResources,
       applicationSecret,
       image,
-      loadFixturesJobResources,
       nodeSelector,
       postgresSecret,
       segment,
@@ -115,36 +109,6 @@ export class LicensingChart extends Chart {
       deploymentId: `${apiName}-${deploymentId}`,
 
       initContainers: [
-        {
-          name: `${apiName}-wait-for-database`,
-          image: POSTGRES_IMAGE,
-          imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: [
-            "sh",
-            "-c",
-            "until pg_isready --host ${DB_HOST}; do sleep 1; done",
-          ],
-          envFrom: applicationEnv,
-          resources: {
-            requests: {
-              cpu: Quantity.fromNumber(0.1),
-              memory: Quantity.fromString("32Mi"),
-            },
-            limits: {
-              cpu: Quantity.fromNumber(0.2),
-              memory: Quantity.fromString("64Mi"),
-            },
-          },
-        },
-        {
-          name: `${apiName}-load-fixtures`,
-          image,
-          imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: ["bash", "-c"],
-          args: [`echo "TODO: load_initial_products here"`],
-          envFrom: applicationEnv,
-          resources: loadFixturesJobResources,
-        },
       ],
       containers: [
         {

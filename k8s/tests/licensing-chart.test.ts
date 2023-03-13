@@ -17,11 +17,9 @@ describe("licensing-chart", () => {
         "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
       postgresSecret: "postgres-secret",
       applicationSecret: "application-secret",
+      serviceAccountName: "dummy-service-account",
       nodeSelector: APP_NODE_POOL_LABELS,
       segment: segment,
-      migrationJobResources: DEPLOYMENT_CONFIG[segment].migrationJobResources,
-      loadFixturesJobResources:
-        DEPLOYMENT_CONFIG[segment].loadFixturesJobResources,
       apiResources: DEPLOYMENT_CONFIG[segment].apiResources,
       apiReplicas: DEPLOYMENT_CONFIG[segment].apiReplicas,
     });
