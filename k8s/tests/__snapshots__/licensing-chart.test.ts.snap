@@ -56,12 +56,12 @@ Array [
   Object {
     "apiVersion": "v1",
     "data": Object {
-      "DATABASE_HOST": "localhost",
-      "DATABASE_NAME": "licm",
-      "DATABASE_PORT": "5432",
-      "DATABASE_USER": "postgres",
-      "LOG_HANDLER": "console",
+      "APM_ENABLED": "true",
+      "APM_TRANSACTION_SAMPLE_RATE": "0.1",
+      "APM_URL": "https://apm.bettermarks.com",
+      "LOG_FORMAT": "json",
       "LOG_LEVEL": "DEBUG",
+      "SEGMENT": "dev00",
     },
     "immutable": false,
     "kind": "ConfigMap",
@@ -78,7 +78,7 @@ Array [
       "namespace": "dummy-namespace",
     },
     "spec": Object {
-      "replicas": 3,
+      "replicas": 2,
       "selector": Object {
         "matchLabels": Object {
           "app": "licensing-api",
@@ -115,7 +115,7 @@ Array [
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -128,7 +128,7 @@ Array [
               ],
               "readinessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -136,11 +136,11 @@ Array [
               "resources": Object {
                 "limits": Object {
                   "cpu": 1,
-                  "memory": "1024Mi",
+                  "memory": "256Mi",
                 },
                 "requests": Object {
-                  "cpu": 0.5,
-                  "memory": "512Mi",
+                  "cpu": 0.2,
+                  "memory": "128Mi",
                 },
               },
             },
@@ -150,7 +150,7 @@ Array [
               "command": Array [
                 "sh",
                 "-c",
-                "until pg_isready --host \${DATABASE_HOST}; do sleep 1; done",
+                "until pg_isready --host \${DB_HOST}; do sleep 1; done",
               ],
               "envFrom": Array [
                 Object {
@@ -286,7 +286,7 @@ Array [
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": Object {
-      "name": "licensing-api-service",
+      "name": "licensing-api",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
@@ -300,38 +300,6 @@ Array [
         "app": "licensing-api",
       },
       "type": "ClusterIP",
-    },
-  },
-  Object {
-    "apiVersion": "networking.k8s.io/v1",
-    "kind": "Ingress",
-    "metadata": Object {
-      "name": "licensing-ingress",
-      "namespace": "dummy-namespace",
-    },
-    "spec": Object {
-      "ingressClassName": "nginx",
-      "rules": Array [
-        Object {
-          "host": "licensing.bettermarks.loc",
-          "http": Object {
-            "paths": Array [
-              Object {
-                "backend": Object {
-                  "service": Object {
-                    "name": "licensing-api-service",
-                    "port": Object {
-                      "number": 80,
-                    },
-                  },
-                },
-                "path": "/",
-                "pathType": "Prefix",
-              },
-            ],
-          },
-        },
-      ],
     },
   },
 ]
