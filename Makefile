@@ -23,8 +23,30 @@ k8s_pretty:
 .PHONY: init
 init:
 	kubectl create namespace licensing || true
-	skaffold run --cleanup=false
+	skaffold run --cleanup=false --profile init
 
-.PHONY: watch
-watch:
-	skaffold dev
+.PHONY: run-api
+run-api:
+	skaffold dev --profile run-api
+
+.PHONY: create-db
+create-db:
+	skaffold run --cleanup=false --profile create-db
+
+.PHONY: run-migration
+run-migration:
+	skaffold run --cleanup=false --profile run-migration
+
+.PHONY: start
+start:
+	make init
+	make create-db
+	make run-migration
+	kubectl wait --for=condition=complete --timeout=120s --namespace=licensing job/licensing-migration
+	make run-api
+
+.PHONY: delete
+delete:
+	skaffold delete -p init
+	skaffold delete -p run-api
+	skaffold delete -p create-db

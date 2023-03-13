@@ -38,7 +38,7 @@ export class IngressNginxChart extends Chart {
 
     const {
       version = "4.4.2",
-      namespace,
+      namespace = Namespace.LICENSING,
       nodeSelector,
       replicas = 3,
       tlsSecret,
@@ -80,7 +80,7 @@ export class IngressNginxChart extends Chart {
         "--version",
         version,
         "--namespace",
-        namespace ? namespace : Namespace.DEFAULT,
+        namespace,
       ],
       values: {
         controller: {
