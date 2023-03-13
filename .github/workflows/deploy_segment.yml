@@ -1,0 +1,102 @@
+name: Deploy segment
+
+on:
+  workflow_call:
+    inputs:
+      segment:
+        description: "Segment on which we deploy k8s files (dev00, ci00, pro00...)"
+        required: true
+        type: string
+
+      ref:
+        description: "
+          Which commit SHA or tag to checkout on.
+          The SHA will be use to tag the docker image"
+        required: true
+        type: string
+    secrets:
+      AWS_ECR_ACCOUNT_ID:
+        required: true
+      SECRET_MANAGER_ACCESS_KEY_ID:
+        required: true
+      SECRET_MANAGER_SECRET_ACCESS_KEY:
+        required: true
+
+env:
+  K8S_VERSION: 1.24.9
+
+jobs:
+  deploy_pacts_on_stage:
+    runs-on: buildjet-4vcpu-ubuntu-2204
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Compute Role
+        shell: bash
+        run: |
+          ACCOUNT_ID="${{ secrets.AWS_ECR_ACCOUNT_ID }}"
+          echo "ROLE_ARN=arn:aws:iam::$ACCOUNT_ID:role/github-cloudformation-readwrite" >> $GITHUB_ENV
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        id: aws-deploy-credentials
+        with:
+          role-to-assume: ${{ env.ROLE_ARN }}
+          aws-region: eu-central-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Check if image with tag ${{ inputs.ref }} exists on ECR
+        run: |
+          aws ecr describe-images --repository-name=bm-licensing --image-ids=imageTag=${{ inputs.ref }}
+
+      - name: Configure AWS credentials for SecretsManager
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.SECRET_MANAGER_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.SECRET_MANAGER_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Read secrets from aws secrets manager
+        uses: aws-actions/aws-secretsmanager-get-secrets@v1
+        with:
+          secret-ids: |
+            KUBECONFIG_CONTENT, ${{ format('ionos/{0}-k8s-cluster-{1}/kubeconfig', inputs.segment, env.K8S_VERSION) }}
+
+      - name: setup kubectl CLI
+        uses: azure/setup-kubectl@v3
+        with:
+          version: v1.24.6
+        id: install
+
+      - name: setup kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo $KUBECONFIG_CONTENT >> $HOME/.kube/config
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: k8s/.nvmrc
+
+      - name: Build k8s yaml files for segment ${{ inputs.segment }} with image tag ${{ inputs.ref }}
+        working-directory: k8s
+        run: |
+          npm ci
+          IMAGE_TAG=${{ inputs.ref }} SEGMENT=${{ inputs.segment }} npm run build
+
+      - name: Deploy on ${{ inputs.segment }}
+        working-directory: k8s
+        run: |
+          kubectl apply \
+            -f dist/licensing-service-account.k8s.yaml
+
+          kubectl apply \
+            -f dist/migration.k8s.yaml
+          kubectl wait --for=condition=complete --timeout=120s job/licensing-migration -n licensing
+
+          # deploy the rest (waits between services are done inside k8s files)
+          kubectl apply \
+            -f dist/licensing.k8s.yaml
