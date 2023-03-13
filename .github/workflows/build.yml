@@ -5,7 +5,6 @@ on:
     branches:
       - main
 
-
 jobs:
   build_image:
     runs-on: buildjet-4vcpu-ubuntu-2204
@@ -38,6 +37,18 @@ jobs:
           ECR_REPOSITORY: bm-licensing
           IMAGE_SHA: ${{ github.sha }}
         run: |
-            IMAGE_TAG=${{ github.sha }}
-            docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA -f k8s/Dockerfile .
-            docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA
+          IMAGE_TAG=${{ github.sha }}
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA -f k8s/Dockerfile .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_SHA
+
+  deploy_dev00:
+    needs:
+      - build_image
+    uses: ./.github/workflows/deploy_segment.yml
+    with:
+      segment: dev00
+      ref: ${{ github.sha }}
+    secrets:
+      SECRET_MANAGER_ACCESS_KEY_ID: ${{ secrets.DEV_SECRET_MANAGER_ACCESS_KEY_ID }}
+      SECRET_MANAGER_SECRET_ACCESS_KEY: ${{ secrets.DEV_SECRET_MANAGER_SECRET_ACCESS_KEY }}
+      AWS_ECR_ACCOUNT_ID: ${{ secrets.AWS_ECR_ACCOUNT_ID }}
