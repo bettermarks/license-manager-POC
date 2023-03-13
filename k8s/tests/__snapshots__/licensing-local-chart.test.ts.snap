@@ -56,12 +56,12 @@ Array [
   Object {
     "apiVersion": "v1",
     "data": Object {
-      "DATABASE_HOST": "localhost",
-      "DATABASE_NAME": "licm",
-      "DATABASE_PORT": "5432",
-      "DATABASE_USER": "postgres",
-      "LOG_HANDLER": "console",
+      "APM_ENABLED": "false",
+      "APM_TRANSACTION_SAMPLE_RATE": "0.1",
+      "APM_URL": "",
+      "LOG_FORMAT": "console",
       "LOG_LEVEL": "DEBUG",
+      "SEGMENT": "loc00",
     },
     "immutable": false,
     "kind": "ConfigMap",
@@ -107,7 +107,7 @@ Array [
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "loc00-licensing-application-secret",
+                    "name": "loc00-application-secret",
                   },
                 },
               ],
@@ -115,7 +115,7 @@ Array [
               "imagePullPolicy": "IfNotPresent",
               "livenessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -128,7 +128,7 @@ Array [
               ],
               "readinessProbe": Object {
                 "httpGet": Object {
-                  "path": "/status",
+                  "path": "/v1/status",
                   "port": 8000,
                 },
                 "initialDelaySeconds": 10,
@@ -140,7 +140,7 @@ Array [
               "command": Array [
                 "sh",
                 "-c",
-                "until pg_isready --host \${DATABASE_HOST}; do sleep 1; done",
+                "until pg_isready --host \${DB_HOST}; do sleep 1; done",
               ],
               "envFrom": Array [
                 Object {
@@ -155,7 +155,7 @@ Array [
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "loc00-licensing-application-secret",
+                    "name": "loc00-application-secret",
                   },
                 },
               ],
@@ -194,7 +194,7 @@ Array [
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "loc00-licensing-application-secret",
+                    "name": "loc00-application-secret",
                   },
                 },
               ],
@@ -223,7 +223,7 @@ Array [
                 },
                 Object {
                   "secretRef": Object {
-                    "name": "loc00-licensing-application-secret",
+                    "name": "loc00-application-secret",
                   },
                 },
               ],
@@ -241,7 +241,7 @@ Array [
     "apiVersion": "v1",
     "kind": "Service",
     "metadata": Object {
-      "name": "licensing-api-service",
+      "name": "licensing-api",
       "namespace": "dummy-namespace",
     },
     "spec": Object {
@@ -268,13 +268,12 @@ Array [
       "ingressClassName": "nginx",
       "rules": Array [
         Object {
-          "host": "licensing.bettermarks.loc",
           "http": Object {
             "paths": Array [
               Object {
                 "backend": Object {
                   "service": Object {
-                    "name": "licensing-api-service",
+                    "name": "licensing-api",
                     "port": Object {
                       "number": 80,
                     },

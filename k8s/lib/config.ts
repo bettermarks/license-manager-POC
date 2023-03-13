@@ -88,15 +88,15 @@ export const DEPLOYMENT_CONFIG: {
     },
     apiResources: {
       requests: {
-        cpu: Quantity.fromNumber(0.5),
-        memory: Quantity.fromString("512Mi"),
+        cpu: Quantity.fromNumber(0.2),
+        memory: Quantity.fromString("128Mi"),
       },
       limits: {
         cpu: Quantity.fromNumber(1),
-        memory: Quantity.fromString("1024Mi"),
+        memory: Quantity.fromString("256Mi"),
       },
     },
-    apiReplicas: 3,
+    apiReplicas: 2,
   },
   [Segment.CI00]: {
     migrationJobResources: {
@@ -121,12 +121,12 @@ export const DEPLOYMENT_CONFIG: {
     },
     apiResources: {
       requests: {
-        cpu: Quantity.fromNumber(1),
-        memory: Quantity.fromString("512Mi"),
+        cpu: Quantity.fromNumber(0.5),
+        memory: Quantity.fromString("256Mi"),
       },
       limits: {
-        cpu: Quantity.fromNumber(2),
-        memory: Quantity.fromString("1024Mi"),
+        cpu: Quantity.fromNumber(1),
+        memory: Quantity.fromString("512Mi"),
       },
     },
     apiReplicas: 3,
@@ -154,12 +154,12 @@ export const DEPLOYMENT_CONFIG: {
     },
     apiResources: {
       requests: {
-        cpu: Quantity.fromNumber(1),
-        memory: Quantity.fromString("512Mi"),
+        cpu: Quantity.fromNumber(0.5),
+        memory: Quantity.fromString("256Mi"),
       },
       limits: {
-        cpu: Quantity.fromNumber(2),
-        memory: Quantity.fromString("1024Mi"),
+        cpu: Quantity.fromNumber(1),
+        memory: Quantity.fromString("512Mi"),
       },
     },
     apiReplicas: 3,
