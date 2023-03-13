@@ -17,7 +17,5 @@ secretGenerator:
       - loc00/tls.crt
 
 resources:
-  # - namespace.yaml
   - dist/ingress-nginx.k8s.yaml
-  - dist/licensing.k8s.yaml
-  - dist/postgres.k8s.yaml
+  - dist/licensing-service-account.k8s.yaml

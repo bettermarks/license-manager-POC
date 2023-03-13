@@ -92,7 +92,7 @@ export class MigrationJobChart extends Chart {
      * Job for running database migration
      */
     new LicensingJob(this, "migrate", {
-      name: "glu-migration",
+      name: `${name}-migration`,
       namespace,
       nodeSelector: nodeSelector,
       serviceAccountName,
@@ -102,7 +102,7 @@ export class MigrationJobChart extends Chart {
           name: "wait-for-database-migration",
           image: POSTGRES_IMAGE,
           imagePullPolicy: ImagePullPolicy.IF_NOT_PRESENT,
-          command: ["sh", "-c", "until pg_isready --host ${GLU_DB_HOST}; do sleep 1; done"],
+          command: ["sh", "-c", "until pg_isready --host ${DB_HOST}; do sleep 1; done"],
           envFrom: applicationEnv,
           resources: {
             requests: {
