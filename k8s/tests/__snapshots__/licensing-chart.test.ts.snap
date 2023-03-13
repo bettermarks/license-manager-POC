@@ -94,87 +94,11 @@ Array [
               },
             },
           ],
-          "initContainers": Array [
-            Object {
-              "command": Array [
-                "sh",
-                "-c",
-                "until pg_isready --host \${DB_HOST}; do sleep 1; done",
-              ],
-              "envFrom": Array [
-                Object {
-                  "configMapRef": Object {
-                    "name": "licensing-configmap",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "postgres-secret",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "application-secret",
-                  },
-                },
-              ],
-              "image": "postgres:14",
-              "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-wait-for-database",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 0.2,
-                  "memory": "64Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "32Mi",
-                },
-              },
-            },
-            Object {
-              "args": Array [
-                "echo \\"TODO: load_initial_products here\\"",
-              ],
-              "command": Array [
-                "bash",
-                "-c",
-              ],
-              "envFrom": Array [
-                Object {
-                  "configMapRef": Object {
-                    "name": "licensing-configmap",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "postgres-secret",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "application-secret",
-                  },
-                },
-              ],
-              "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
-              "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-load-fixtures",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 1,
-                  "memory": "256Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "128Mi",
-                },
-              },
-            },
-          ],
+          "initContainers": Array [],
           "nodeSelector": Object {
             "nodetype": "application",
           },
+          "serviceAccountName": "dummy-service-account",
           "topologySpreadConstraints": Array [
             Object {
               "labelSelector": Object {

@@ -84,74 +84,7 @@ Array [
               },
             },
           ],
-          "initContainers": Array [
-            Object {
-              "command": Array [
-                "sh",
-                "-c",
-                "until pg_isready --host \${DB_HOST}; do sleep 1; done",
-              ],
-              "envFrom": Array [
-                Object {
-                  "configMapRef": Object {
-                    "name": "licensing-configmap",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "pgChart.secret.name",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "loc00-application-secret",
-                  },
-                },
-              ],
-              "image": "postgres:14",
-              "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-wait-for-database",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 0.2,
-                  "memory": "64Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "32Mi",
-                },
-              },
-            },
-            Object {
-              "args": Array [
-                "echo \\"TODO: load_initial_products here\\"",
-              ],
-              "command": Array [
-                "bash",
-                "-c",
-              ],
-              "envFrom": Array [
-                Object {
-                  "configMapRef": Object {
-                    "name": "licensing-configmap",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "pgChart.secret.name",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "loc00-application-secret",
-                  },
-                },
-              ],
-              "image": "bm-licensing",
-              "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-load-fixtures",
-            },
-          ],
+          "initContainers": Array [],
         },
       },
     },
