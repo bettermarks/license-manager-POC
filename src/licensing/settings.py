@@ -22,3 +22,7 @@ apm_enabled: str = config("APM_ENABLED", default=False, cast=bool)
 apm_transaction_sample_rate: float = config(
     "APM_TRANSACTION_SAMPLE_RATE", default=0.1, cast=float
 )
+
+glu_hierarchy_provider_url: str = config(
+    "GLU_HIERARCHY_PROVIDER_URL", default="http://0.0.0.0:5001/hierarchy"
+)

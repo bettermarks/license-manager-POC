@@ -36,6 +36,7 @@ export type ApplicationConfig = {
   APM_URL: string,
   APM_ENABLED: boolean,
   APM_TRANSACTION_SAMPLE_RATE: string,
+  GLU_HIERARCHY_PROVIDER_URL: string,
 };
 
 /**

@@ -3,6 +3,7 @@ from sqlalchemy.exc import IntegrityError
 from licensing.db import async_session_context
 from licensing.model.hierarchy_provider import HierarchyProvider
 from licensing.model.product import Product
+from licensing import settings
 
 INITIAL_PRODUCTS = [
     Product(
@@ -33,7 +34,7 @@ INITIAL_PRODUCTS = [
 
 INITIAL_HIERARCHY_PROVIDERS = [
     HierarchyProvider(
-        url="http://0.0.0.0:5001/hierarchy",
+        url=settings.glu_hierarchy_provider_url,
         short_name="glu",
         name="GLU user class management system",
         description=(

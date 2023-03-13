@@ -32,6 +32,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     APM_URL: "",
     APM_ENABLED: false,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
+    GLU_HIERARCHY_PROVIDER_URL: "https://glu.bettermarks.loc/hierarchy"
   },
   [Segment.DEV00]: {
     SEGMENT: Segment.DEV00,
@@ -40,6 +41,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
+    GLU_HIERARCHY_PROVIDER_URL: "https://glu-dev00.bettermarks.com/hierarchy"
   },
   [Segment.CI00]: {
     SEGMENT: Segment.CI00,
@@ -48,6 +50,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
+    GLU_HIERARCHY_PROVIDER_URL: "https://glu-ci00.bettermarks.com/hierarchy"
   },
   [Segment.PRO00]: {
     SEGMENT: Segment.PRO00,
@@ -56,6 +59,7 @@ export const APPLICATION_CONFIG: { [key: string]: ApplicationConfig } = {
     APM_URL: "https://apm.bettermarks.com",
     APM_ENABLED: true,
     APM_TRANSACTION_SAMPLE_RATE: "0.1",
+    GLU_HIERARCHY_PROVIDER_URL: "https://glu.bettermarks.com/hierarchy"
   },
 };
 
