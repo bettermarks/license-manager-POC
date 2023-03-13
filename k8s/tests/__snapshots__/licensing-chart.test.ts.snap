@@ -4,57 +4,6 @@ exports[`licensing-chart should match with snapshot 1`] = `
 Array [
   Object {
     "apiVersion": "v1",
-    "imagePullSecrets": Array [],
-    "kind": "ServiceAccount",
-    "metadata": Object {
-      "name": "licensing-service-account",
-      "namespace": "dummy-namespace",
-    },
-  },
-  Object {
-    "apiVersion": "rbac.authorization.k8s.io/v1",
-    "kind": "Role",
-    "metadata": Object {
-      "name": "licensing-role",
-      "namespace": "dummy-namespace",
-    },
-    "rules": Array [
-      Object {
-        "apiGroups": Array [
-          "",
-        ],
-        "resources": Array [
-          "pods",
-        ],
-        "verbs": Array [
-          "get",
-          "list",
-          "watch",
-        ],
-      },
-    ],
-  },
-  Object {
-    "apiVersion": "rbac.authorization.k8s.io/v1",
-    "kind": "RoleBinding",
-    "metadata": Object {
-      "name": "licensing-role-binding",
-      "namespace": "dummy-namespace",
-    },
-    "roleRef": Object {
-      "apiGroup": "rbac.authorization.k8s.io",
-      "kind": "Role",
-      "name": "licensing-role",
-    },
-    "subjects": Array [
-      Object {
-        "kind": "ServiceAccount",
-        "name": "licensing-service-account",
-      },
-    ],
-  },
-  Object {
-    "apiVersion": "v1",
     "data": Object {
       "APM_ENABLED": "true",
       "APM_TRANSACTION_SAMPLE_RATE": "0.1",
@@ -185,45 +134,6 @@ Array [
             },
             Object {
               "args": Array [
-                "alembic upgrade head",
-              ],
-              "command": Array [
-                "bash",
-                "-c",
-              ],
-              "envFrom": Array [
-                Object {
-                  "configMapRef": Object {
-                    "name": "licensing-configmap",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "postgres-secret",
-                  },
-                },
-                Object {
-                  "secretRef": Object {
-                    "name": "application-secret",
-                  },
-                },
-              ],
-              "image": "676249682729.dkr.ecr.eu-central-1.amazonaws.com/bm-glu:e6b588df29edbf984d876e195bdaee5230c5ad92",
-              "imagePullPolicy": "IfNotPresent",
-              "name": "licensing-api-migration",
-              "resources": Object {
-                "limits": Object {
-                  "cpu": 1,
-                  "memory": "256Mi",
-                },
-                "requests": Object {
-                  "cpu": 0.1,
-                  "memory": "128Mi",
-                },
-              },
-            },
-            Object {
-              "args": Array [
                 "echo \\"TODO: load_initial_products here\\"",
               ],
               "command": Array [
@@ -265,7 +175,6 @@ Array [
           "nodeSelector": Object {
             "nodetype": "application",
           },
-          "serviceAccountName": "licensing-service-account",
           "topologySpreadConstraints": Array [
             Object {
               "labelSelector": Object {

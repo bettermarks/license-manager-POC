@@ -52,11 +52,6 @@ export type LicensingChartProps = ChartProps & {
    * @default 3
    */
   apiReplicas?: number;
-  /**
-   * Secret names for AWS ECR registry
-   * @default []
-   */
-  imagePullSecrets?: ReadonlyArray<string>;
 };
 
 /**
@@ -78,7 +73,6 @@ export class LicensingChart extends Chart {
       segment,
       serviceAccountName,
       name,
-      imagePullSecrets = [],
     } = props;
 
     const applicationEnv: EnvFromSource[] = [

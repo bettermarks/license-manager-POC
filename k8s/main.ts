@@ -21,7 +21,7 @@ const IMAGE_REPO = `676249682729.dkr.ecr.eu-central-1.amazonaws.com/${IMAGE_NAME
 
 const app = new App();
 
-const licensingServiceAccount = new LicensingServiceAccount(app, "glu-service-account", {
+const licensingServiceAccount = new LicensingServiceAccount(app, "licensing-service-account", {
   name: "licensing",
   imagePullSecrets: SEGMENT === Segment.LOC00 ? [] : [REGISTRY_CREDENTIALS],
 });
@@ -46,7 +46,6 @@ if (SEGMENT === Segment.LOC00) {
     postgresSecret: pgChart.secret.name,
     applicationSecret: "loc00-application-secret",
     serviceAccountName: licensingServiceAccount.serviceAccount.name,
-    imagePullSecrets: [],
   });
   new IngressNginxChart(app, "ingress-nginx", {
     replicas: 1,
@@ -69,7 +68,6 @@ if (SEGMENT === Segment.LOC00) {
     postgresSecret: POSTGRES_SECRET,
     applicationSecret: APPLICATION_SECRET,
     serviceAccountName: licensingServiceAccount.serviceAccount.name,
-    imagePullSecrets: [REGISTRY_CREDENTIALS],
     nodeSelector: APP_NODE_POOL_LABELS,
     loadFixturesJobResources:
       DEPLOYMENT_CONFIG[SEGMENT].loadFixturesJobResources,

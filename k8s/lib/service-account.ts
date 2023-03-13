@@ -4,6 +4,9 @@ import { Chart } from "cdk8s";
 import { Namespace } from "./types";
 
 export type LicensingServiceAccountProps = {
+  /**
+   * Secret names for AWS ECR registry
+   */
   imagePullSecrets: ReadonlyArray<string>;
   namespace?: string;
   name: string;
